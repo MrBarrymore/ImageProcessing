@@ -1,19 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.IO;
+using System.Drawing.Imaging;
 
 namespace ImageProcessingLaba1
 {
     public struct RGB
     {
-        public float R;
-        public float G;
-        public float B;
+        public int R;
+        public int G;
+        public int B;
     }
 
-    class ConvolutionMatrix
+    class Filters
     {
         public static UInt32[,] matrix_filtration(int W, int H, UInt32[,] pixel, int N, double[,] matryx)
         {
@@ -66,12 +72,12 @@ namespace ImageProcessingLaba1
                     for (k = 0; k < N; k++)
                         for (m = 0; m < N; m++)
                         {
-                            ColorOfCell = calculationOfColor(tmppixel[i - gap + k, j - gap + m], matryx[k, m]);
+                            ColorOfCell = Transformations.calculationOfColor(tmppixel[i - gap + k, j - gap + m], matryx[k, m]);
                             ColorOfPixel.R += ColorOfCell.R;
                             ColorOfPixel.G += ColorOfCell.G;
                             ColorOfPixel.B += ColorOfCell.B;
                         }
-                    //контролируем переполнение переменных
+
                     if (ColorOfPixel.R < 0) ColorOfPixel.R = 0;
                     if (ColorOfPixel.R > 255) ColorOfPixel.R = 255;
                     if (ColorOfPixel.G < 0) ColorOfPixel.G = 0;
@@ -79,29 +85,66 @@ namespace ImageProcessingLaba1
                     if (ColorOfPixel.B < 0) ColorOfPixel.B = 0;
                     if (ColorOfPixel.B > 255) ColorOfPixel.B = 255;
 
-                    newpixel[i - gap, j - gap] = build(ColorOfPixel);
+                    newpixel[i - gap, j - gap] = Transformations.build(ColorOfPixel);
                 }
 
+            /*
+            //контролируем переполнение переменных
+            for (i = 0; i < newpixel.GetLength(0); i++)
+                for (j = 0; j < newpixel.GetLength(1); j++)
+                {
+                    ColorOfPixel = Transformations.calculationOfColor(newpixel[i,j], 1);                   
+                    if (ColorOfPixel.R < 0) ColorOfPixel.R = 0;
+                    if (ColorOfPixel.R > 255) ColorOfPixel.R = 255;
+                    if (ColorOfPixel.G < 0) ColorOfPixel.G = 0;
+                    if (ColorOfPixel.G > 255) ColorOfPixel.G = 255;
+                    if (ColorOfPixel.B < 0) ColorOfPixel.B = 0;
+                    if (ColorOfPixel.B > 255) ColorOfPixel.B = 255;
+                    newpixel[i, j] = Transformations.build(ColorOfPixel);
+                }
+                */
             return newpixel;
         }
 
-        //вычисление нового цвета
-        public static RGB calculationOfColor(UInt32 pixel, double coefficient)
+        // Преобразование в оттенки серого
+        public static UInt32[,] ConvertToGray(UInt32[,] points)
         {
-            RGB Color = new RGB();
-            Color.R = (float)(coefficient * ((pixel & 0x00FF0000) >> 16));
-            Color.G = (float)(coefficient * ((pixel & 0x0000FF00) >> 8));
-            Color.B = (float)(coefficient * (pixel & 0x000000FF));
-            return Color;
+            RGB[,] RGBpixels = Transformations.FromUInt32ToRGB(points);
+
+            for (int y = 0; y < points.GetLength(0); y++)
+            {
+                for (int x = 0; x < points.GetLength(1); x++)
+                {
+                    int sr = (RGBpixels[y, x].R + RGBpixels[y, x].G + RGBpixels[y, x].B) / 3;
+                    RGBpixels[y, x].R = RGBpixels[y, x].G = RGBpixels[y, x].B = sr;
+                }
+            }
+
+            for (int y = 0; y < points.GetLength(0); y++)
+            {
+                for (int x = 0; x < points.GetLength(1); x++)
+                {
+                    points[y, x] = Transformations.build(RGBpixels[y, x]);
+                }
+            }
+
+            return points;
         }
 
-        //сборка каналов
-        public static UInt32 build(RGB ColorOfPixel)
-        {
-            UInt32 Color;
-            Color = 0xFF000000 | ((UInt32)ColorOfPixel.R << 16) | ((UInt32)ColorOfPixel.G << 8) | ((UInt32)ColorOfPixel.B);
-            return Color;
-        }
+        //увеличение резкости резкости
+        public const int N1 = 3;
+        public static double[,] sharpness = new double[N1, N1] {{-1, -1, -1},
+                                                               {-1,  9, -1},
+                                                               {-1, -1, -1}};
+
+        //Оператор собеля
+        public const int NSob = 3;
+        public static double[,] SubelX = new double[NSob, NSob] {{1, 0, -1},
+                                                                {2, 0, -2},
+                                                                {1, 0, -1}};
+        public static double[,] SubelY = new double[NSob, NSob] {{1, 2, 1},
+                                                                {0, 0, 0},
+                                                                {-1, -2, -1}};
 
     }
 }
