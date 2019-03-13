@@ -22,7 +22,7 @@ namespace ImageProcessingLaba1
 
         public static Bitmap image;
         public static string full_name_of_image = "\0";
-
+        public static UInt32[,] pixels;
 
         public struct RGB
         {
@@ -31,60 +31,136 @@ namespace ImageProcessingLaba1
             public int B;
         };
 
-        public RGB[,] BitmapToByteRgbNaive(Bitmap bmp)
+        private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            int width = bmp.Width,
-                height = bmp.Height;
-            RGB[,] res = new RGB[height, width];
-            for (int y = 0; y < height; ++y)
+            #region          
+            /*
+            OpenFileDialog open_dialog = new OpenFileDialog();
+            open_dialog.Filter = "Image Files(*.BMP;*.JPG;*.GIF;*.PNG)|*.BMP;*.JPG;*.GIF;*.PNG|All files (*.*)|*.*";
+            if (open_dialog.ShowDialog() == DialogResult.OK)
             {
-                for (int x = 0; x < width; ++x)
+                try
                 {
-                    Color color = bmp.GetPixel(x, y);
-                    res[y, x].R = color.R;
-                    res[y, x].G = color.G;
-                    res[y, x].B = color.B;
+                    full_name_of_image = open_dialog.FileName;
+
+                    image = new Bitmap(open_dialog.FileName);
+
+                    RGB[,] pixels;
+
+                    this.pictureBox1.Size = image.Size;
+                    this.pictureBox2.Size = image.Size;
+
+                    this.Height = this.pictureBox2.Height + 75;
+
+
+                    //получение матрицы с пикселями
+                    pixels = new RGB[image.Height, image.Width];
+                    pixels = BitmapToByteRgb(image);
+
+
+                    // Записываем рисунок в текстовый файл 
+                    // ByteWriteFile(pixel, Height, Width);
+
+
+                    pictureBox1.Image = image;
+                    // pictureBox1.Invalidate();
+
+
+                    pixels = ConvertToGray(pixels);
+
+
+                    // Выводим обработанное изображение
+                    for (int y = 0; y < Height; ++y)
+                    {
+                        UInt32 point;
+                        for (int x = 0; x < Width; ++x)
+                        {
+                            point = 0xFF000000 | ((UInt32)pixels[y, x].R << 16) | ((UInt32)pixels[y, x].G << 8) | ((UInt32)pixels[y, x].B);
+
+                            image.SetPixel(x, y, Color.FromArgb((int)point));
+                        }
+                    }
+
+                    pictureBox2.Image = image;
                 }
+                catch
+                {
+                    full_name_of_image = "\0";
+                    DialogResult rezult = MessageBox.Show("Невозможно открыть выбранный файл",
+                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }  */
+            #endregion
+
+            try
+            {
+                image = new Bitmap("C:\\Users\\Лаборатория\\Desktop\\Универ\\Интелектуальные технологии обработки изображений\\Л. Р. №1\\Cat1.jpg");
+
+                RGB[,] RGBpixels;
+
+                // Выводим исходное изображение
+                this.pictureBox1.Size = image.Size;
+                pictureBox1.Image = image;
+                pictureBox1.Invalidate();
+
+                // this.Width = image.Width + 40;
+                this.Height = image.Height + 100;
+
+                pixels = new UInt32[image.Height, image.Width];
+                for (int y = 0; y < image.Height; y++)
+                    for (int x = 0; x < image.Width; x++)
+                        pixels[y, x] = (UInt32)(image.GetPixel(x, y).ToArgb());
+
+                //получение матрицы с пикселями
+                RGBpixels = new RGB[image.Height, image.Width];
+                RGBpixels = BitmapToByteRgb(image);
+
+
+                // Записываем рисунок в текстовый файл 
+                // ByteWriteFile(pixel, Height, Width);
+
+                pixels = ConvertToGray(pixels);
+
+
+              //  Bitmap Outimage2 = new Bitmap(image.Height, image.Width);
+
+                Bitmap Outimage2 = new Bitmap("C:\\Users\\Лаборатория\\Desktop\\Универ\\Интелектуальные технологии обработки изображений\\Л. Р. №1\\Cat1.jpg");
+
+                for (int y = 0; y < image.Height; y++)
+                    for (int x = 0; x < image.Width; x++)
+                    {
+                        Outimage2.SetPixel(x, y, Color.FromArgb((int)pixels[y,x]));
+                    }
+
+                this.pictureBox2.Size = Outimage2.Size;
+                pictureBox2.Image = Outimage2;
             }
-            return res;
+            catch
+            {
+                full_name_of_image = "\0";
+                DialogResult rezult = MessageBox.Show("Невозможно открыть выбранный файл",
+                "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
         }
 
-        public Bitmap RgbToBitmap(RGB [,] pixel)
-        {
-            Bitmap bmp;
-            int height = pixel.GetLength(1);
-            int width = pixel.GetLength(0);
-
-            RGB[,] res = new RGB[height, width];
-            for (int y = 0; y < height; ++y)
-            {
-                for (int x = 0; x < width; ++x)
-                {
-                    pixel = image.GetPixel(x, y);
-                    bmp.SetPixel(x, y, pixel);
-                }
-            }
-            return bmp;
-        }
-
-
-        public void ByteWriteFile(RGB [,] pixel, int H, int W)
+        public void ByteWriteFile(RGB[,] pixel, int H, int W)
         {
             StreamWriter sw = new StreamWriter("pass.txt");
             string s1 = " ";
-                for (int y = 0; y < H; y++)
+            for (int y = 0; y < H; y++)
+            {
+                s1 = "";
+                for (int x = 0; x < W; x++)
                 {
-                    s1 = "";
-                    for (int x = 0; x < W; x++)
-                    {
-                        s1 += "(" + pixel[y, x].R + " ";
-                        s1 += pixel[y, x].G + " ";
-                        s1 += pixel[y, x].B + ") " + " ";
+                    s1 += "(" + pixel[y, x].R + " ";
+                    s1 += pixel[y, x].G + " ";
+                    s1 += pixel[y, x].B + ") " + " ";
                 }
-                    s1 += "\n";
-                    sw.Write(s1);
-                }
-                s1 += "\n";      
+                s1 += "\n";
+                sw.Write(s1);
+            }
+            s1 += "\n";
             sw.Close();
         }
 
@@ -119,68 +195,58 @@ namespace ImageProcessingLaba1
         }
         */
 
-        public RGB[,] ConvertToGray(RGB [,] pixel)
+        public RGB[,] FromUInt32ToRGB(UInt32[,] points)
         {
+            RGB [,] RGBpixels = new RGB[points.GetLength(0), points.GetLength(1)]; ;
 
+            for (int y = 0; y < points.GetLength(0); y++)
+            {
+                for (int x = 0; x < points.GetLength(1); x++)
+                {
+                    RGBpixels[y, x].R = (int)((points[y,x] & 0x00FF0000) >> 16);
+                    RGBpixels[y, x].G = (int)((points[y,x] & 0x0000FF00) >> 8);
+                    RGBpixels[y, x].B = (int)(points[y,x] & 0x000000FF);
+                }
+            }
+            return RGBpixels;
+        }
 
-
-            return pixel;
+        //сборка каналов
+        public static UInt32 build(RGB ColorOfPixel)
+        {
+            UInt32 Color;
+            Color = 0xFF000000 | ((UInt32)ColorOfPixel.R << 16) | ((UInt32)ColorOfPixel.G << 8) | ((UInt32)ColorOfPixel.B);
+            return Color;
         }
 
 
-
-        private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
+        public UInt32[,] ConvertToGray(UInt32[,] points)
         {
-            OpenFileDialog open_dialog = new OpenFileDialog();
-            open_dialog.Filter = "Image Files(*.BMP;*.JPG;*.GIF;*.PNG)|*.BMP;*.JPG;*.GIF;*.PNG|All files (*.*)|*.*";
-            if (open_dialog.ShowDialog() == DialogResult.OK)
+            RGB[,] RGBpixels = FromUInt32ToRGB(points);
+
+            for (int y = 0; y < points.GetLength(0); y++)
             {
-                try
+                for (int x = 0; x < points.GetLength(1); x++)
                 {
-                    full_name_of_image = open_dialog.FileName;
-                    image = new Bitmap(open_dialog.FileName);
-
-                    RGB[,] pixel;
-
-                    this.pictureBox1.Size = image.Size;
-                    this.pictureBox2.Size = image.Size;
-
-                    this.Height = this.pictureBox2.Height + 75;
-
-
-                    //получение матрицы с пикселями
-                    pixel = new RGB[image.Height, image.Width];
-                    pixel = BitmapToByteRgbNaive(image);
-
-
-                    // Записываем рисунок в текстовый файл 
-                    // ByteWriteFile(pixel, Height, Width);
-
-
-                    pictureBox1.Image = image;
-                    // pictureBox1.Invalidate();
-
-
-                    pixel = ConvertToGray(pixel);
-
-
-                    for (int y = 0; y < Height; ++y)
-                    {
-                        for (int x = 0; x < Width; ++x)
-                        {
-                             image.SetPixel(x, y, pixel);
-                        }
-                    }
-
-                    pictureBox2.Image = image;
-                }
-                catch
-                {
-                    full_name_of_image = "\0";
-                    DialogResult rezult = MessageBox.Show("Невозможно открыть выбранный файл",
-                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    int sr = (RGBpixels[y, x].R + RGBpixels[y, x].G + RGBpixels[y, x].B) / 3;
+                    RGBpixels[y, x].R = RGBpixels[y, x].G = RGBpixels[y, x].B = sr;
                 }
             }
+
+            for (int y = 0; y < points.GetLength(0); y++)
+            {
+                for (int x = 0; x < points.GetLength(1); x++)
+                {
+                    points[y,x] = build(RGBpixels[y, x]);
+                }
+            }
+
+            return points;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void сохранитьКакToolStripMenuItem_Click(object sender, EventArgs e)
@@ -209,5 +275,7 @@ namespace ImageProcessingLaba1
 
             }
         }
+
+
     }
 }
