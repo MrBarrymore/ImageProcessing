@@ -20,10 +20,9 @@ namespace ImageProcessingLaba1
             int i, j;
             int W = pixel.GetLength(1);
             int H = pixel.GetLength(0);
-            int gapX = (int)(matryx.GetLength(1));
-            int gapY = (int)(matryx.GetLength(0));
-
-
+            int gapX = matryx.GetLength(1);
+            int gapY = matryx.GetLength(0);
+            
             int tmpH = H + 2 * gapY, tmpW = W + 2 * gapX;
             double[,] tmppixel = new double[tmpH, tmpW];
             double[,] newpixel = new double[H, W];
@@ -36,10 +35,9 @@ namespace ImageProcessingLaba1
             else if(Edgemode == 3) tmppixel = WrapImage(pixel, gapX, gapY); 
             else { EdgeCoppy(pixel, gapX, gapY); }
 
-
             //применение ядра свертки
             double GrayPixel = 0;
-
+                    
             for (i = gapY; i < tmpH - gapY; i++)
                 for (j = gapX; j < tmpW - gapX; j++)
                 {
@@ -47,7 +45,7 @@ namespace ImageProcessingLaba1
                     for (int k = 0; k < matryx.GetLength(0); k++)
                         for (int m = 0; m < matryx.GetLength(1); m++)
                         {
-                            GrayPixel += Transformations.calculationOfColor(tmppixel[i - gapY + k, j - gapX + m], matryx[k, m]);
+                            GrayPixel += Transformations.calculationOfColor(tmppixel[i + k - (int)(gapY/2), j + m - (int)(gapX / 2)], matryx[k, m]);
                         }
 
                     newpixel[i - gapY, j - gapX] = GrayPixel;
@@ -56,8 +54,7 @@ namespace ImageProcessingLaba1
             return newpixel;
         }
 
-
-        public static double [,] OutsideZero(double [,] pixel, int gapX, int gapY) {
+        public static double[,] OutsideZero(double [,] pixel, int gapX, int gapY) {
             int i, j;
             int W = pixel.GetLength(1);
             int H = pixel.GetLength(0);

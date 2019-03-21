@@ -23,7 +23,6 @@ namespace ImageProcessingLaba1
         {
             InitializeComponent();
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
 
             //....... для тестов
             /*
@@ -42,11 +41,10 @@ namespace ImageProcessingLaba1
             */
         }
 
-
         private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
         {
             #region          
-            /*
+            
             OpenFileDialog open_dialog = new OpenFileDialog();
             open_dialog.Filter = "Image Files(*.BMP;*.JPG;*.GIF;*.PNG)|*.BMP;*.JPG;*.GIF;*.PNG|All files (*.*)|*.*";
             if (open_dialog.ShowDialog() == DialogResult.OK)
@@ -56,10 +54,6 @@ namespace ImageProcessingLaba1
                     full_name_of_image = open_dialog.FileName;
 
                     image = new Bitmap(open_dialog.FileName);
-
-
-                    this.Height = this.pictureBox2.Height + 75;
-
 
                     pictureBox1.Image = image;
                    
@@ -71,8 +65,6 @@ namespace ImageProcessingLaba1
                             Color color = image.GetPixel(x, y);
                             pixels[y, x] = color.R * 0.299 + color.G * 0.587 + color.B * 0.114;
                         }
-
-
                 }
                 catch
                 {
@@ -80,16 +72,17 @@ namespace ImageProcessingLaba1
                     DialogResult rezult = MessageBox.Show("Невозможно открыть выбранный файл",
                     "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-            }  */
+            }
             #endregion
 
+            #region Code for testing
+            /*
             try
             {
-                image = new Bitmap("..\\..\\..\\..\\cube.jpg");
+                image = new Bitmap("..\\..\\..\\..\\Cat1.jpg");
                 full_name_of_image = "******";
                 
                 // Выводим исходное изображение
-                this.Height = image.Height + 50;
                 pictureBox1.Image = image;
                 pictureBox1.Invalidate();
 
@@ -108,39 +101,10 @@ namespace ImageProcessingLaba1
                 DialogResult rezult = MessageBox.Show("Невозможно открыть выбранный файл",
                 "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            */
+            #endregion
+
         }
-
-
-        /*
-        public unsafe static byte[,,] BitmapToByteRgb(Bitmap bmp)
-        {
-            int width = bmp.Width,
-                height = bmp.Height;
-            byte[,,] res = new byte[3, height, width];
-
-            BitmapData bd = bmp.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadOnly,
-                PixelFormat.Format24bppRgb);
-            try
-            {
-                byte* curpos;
-                for (int h = 0; h < height; h++)
-                {
-                    curpos = ((byte*)bd.Scan0) + h * bd.Stride;
-                    for (int w = 0; w < width; w++)
-                    {
-                        res[2, h, w] = *(curpos++);
-                        res[1, h, w] = *(curpos++);
-                        res[0, h, w] = *(curpos++);
-                    }
-                }
-            }
-            finally
-            {
-                bmp.UnlockBits(bd);
-            }
-            return res;
-        }
-        */
 
         private void сохранитьКакToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -164,7 +128,6 @@ namespace ImageProcessingLaba1
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
-
             }
         }
 
@@ -176,7 +139,8 @@ namespace ImageProcessingLaba1
 
         private void фильтрГауссаToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            GaussForm _gaussForm = new GaussForm(pixels);
+            _gaussForm.ShowDialog();
         }
     }
 }
