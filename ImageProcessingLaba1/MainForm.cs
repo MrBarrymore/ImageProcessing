@@ -14,15 +14,33 @@ namespace ImageProcessingLaba1
 {
     public partial class MainForm : Form
     {
+        public static Bitmap image;
+        public static string full_name_of_image = "\0";
+        public static double[,] pixels;
+
 
         public MainForm()
         {
             InitializeComponent();
-        }
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
 
-        public static Bitmap image;
-        public static string full_name_of_image = "\0";
-        public static UInt32[,] pixels;
+            //....... для тестов
+            /*
+            image = new Bitmap("..\\..\\..\\..\\cube.jpg");
+            pixels = new double[image.Height, image.Width];
+            for (int y = 0; y < image.Height; y++)
+                for (int x = 0; x < image.Width; x++)
+                {
+                    Color p = image.GetPixel(x, y);
+                    pixels[y, x] = p.R * 0.299 + p.G * .587 + p.B * 0.114;
+                }
+
+            SobelForm _sobelForm = new SobelForm(pixels);
+            _sobelForm.ShowDialog();
+            //////////////////////
+            */
+        }
 
 
         private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
@@ -39,43 +57,22 @@ namespace ImageProcessingLaba1
 
                     image = new Bitmap(open_dialog.FileName);
 
-                    RGB[,] pixels;
-
-                    this.pictureBox1.Size = image.Size;
-                    this.pictureBox2.Size = image.Size;
 
                     this.Height = this.pictureBox2.Height + 75;
 
 
-                    //получение матрицы с пикселями
-                    pixels = new RGB[image.Height, image.Width];
-                    pixels = BitmapToByteRgb(image);
-
-
-                    // Записываем рисунок в текстовый файл 
-                    // ByteWriteFile(pixel, Height, Width);
-
-
                     pictureBox1.Image = image;
-                    // pictureBox1.Invalidate();
-
-
-                    pixels = ConvertToGray(pixels);
-
-
-                    // Выводим обработанное изображение
-                    for (int y = 0; y < Height; ++y)
-                    {
-                        UInt32 point;
-                        for (int x = 0; x < Width; ++x)
+                   
+                    //получение матрицы с пикселями
+                    pixels = new double[image.Height, image.Width];
+                    for (int y = 0; y < image.Height; y++)
+                        for (int x = 0; x < image.Width; x++)
                         {
-                            point = 0xFF000000 | ((UInt32)pixels[y, x].R << 16) | ((UInt32)pixels[y, x].G << 8) | ((UInt32)pixels[y, x].B);
-
-                            image.SetPixel(x, y, Color.FromArgb((int)point));
+                            Color color = image.GetPixel(x, y);
+                            pixels[y, x] = color.R * 0.299 + color.G * 0.587 + color.B * 0.114;
                         }
-                    }
 
-                    pictureBox2.Image = image;
+
                 }
                 catch
                 {
@@ -88,21 +85,22 @@ namespace ImageProcessingLaba1
 
             try
             {
-                image = new Bitmap("C:\\Users\\Лаборатория\\Desktop\\Универ\\Интелектуальные технологии обработки изображений\\Л. Р. №1\\Figures.jpg");
+                image = new Bitmap("..\\..\\..\\..\\cube.jpg");
                 full_name_of_image = "******";
+                
                 // Выводим исходное изображение
-                this.pictureBox1.Size = image.Size;
-                this.Height = image.Height + 100;
-                pictureBox1.Size = image.Size;
+                this.Height = image.Height + 50;
                 pictureBox1.Image = image;
                 pictureBox1.Invalidate();
-                // this.Width = image.Width * 2 + 40;
 
                 //получение матрицы с пикселями
-                pixels = new UInt32[image.Height, image.Width];
+                pixels = new double[image.Height, image.Width];
                 for (int y = 0; y < image.Height; y++)
                     for (int x = 0; x < image.Width; x++)
-                        pixels[y, x] = (UInt32)(image.GetPixel(x, y).ToArgb());          
+                    {
+                        Color color = image.GetPixel(x, y);
+                        pixels[y, x] = color.R * 0.299 + color.G * 0.587 + color.B * 0.114;
+                    }
             }
             catch
             {
@@ -112,14 +110,6 @@ namespace ImageProcessingLaba1
             }
         }
 
-        private void записатьВТекстовыйФайлToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            // Записываем рисунок в текстовый файл
-            RGB[,] RGBp = new RGB[image.Height, image.Width];
-            RGBp = Transformations.FromUInt32ToRGB(pixels);
-
-            Transformations.ByteWriteFile(RGBp, image.Height, image.Width);
-        }
 
         /*
         public unsafe static byte[,,] BitmapToByteRgb(Bitmap bmp)
@@ -156,7 +146,6 @@ namespace ImageProcessingLaba1
         {
             if (pictureBox1.Image != null)
             {
-                //string format = full_name_of_image.Substring(full_name_of_image.Length - 4, 4);
                 SaveFileDialog savedialog = new SaveFileDialog();
                 savedialog.Title = "Сохранить картинку как...";
                 savedialog.OverwritePrompt = true;
@@ -179,39 +168,15 @@ namespace ImageProcessingLaba1
             }
         }
 
-
-        private void оттенкиСерогоToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            pixels = Filters.ConvertToGray(pixels);
-
-            Bitmap Outimage2 = new Bitmap(pixels.GetLength(1), pixels.GetLength(0));
-
-            for (int y = 0; y < image.Height; y++)
-                for (int x = 0; x < image.Width; x++)
-                {
-                    Outimage2.SetPixel(x, y, Color.FromArgb((int)pixels[y, x]));
-                }
-
-            this.pictureBox2.Size = Outimage2.Size;
-            pictureBox2.Image = Outimage2;
-        }
-
-        private void увеличитьРезкостьToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (full_name_of_image != "\0")
-            {
-                pixels = Filters.matrix_filtration(image.Width, image.Height, pixels, Filters.N1, Filters.sharpness);
-
-                image = Transformations.FromUInt32ToBitmap(pixels, image.Height, image.Width);
-                pictureBox2.Image = image;
-            }
-
-        }
-
         private void операторСобеляToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SobelForm _sobelForm = new SobelForm(pixels);
             _sobelForm.ShowDialog();
+        }
+
+        private void фильтрГауссаToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

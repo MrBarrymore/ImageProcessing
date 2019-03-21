@@ -12,26 +12,104 @@ using System.Drawing.Imaging;
 
 namespace ImageProcessingLaba1
 {
-    public struct RGB
-    {
-        public int R;
-        public int G;
-        public int B;
-    }
 
     class Filters
     {
-        public static UInt32[,] matrix_filtration(int W, int H, UInt32[,] pixel, int N, double[,] matryx)
+        public static double[,] matrix_filtration(double[,] pixel, double[,] matryx, int Edgemode)
         {
-            int i, j, k, m, gap = (int)(N / 2);
-            int tmpH = H + 2 * gap, tmpW = W + 2 * gap;
-            UInt32[,] tmppixel = new UInt32[tmpH, tmpW];
-            UInt32[,] newpixel = new UInt32[H, W];
+            int i, j;
+            int W = pixel.GetLength(1);
+            int H = pixel.GetLength(0);
+            int gapX = (int)(matryx.GetLength(1));
+            int gapY = (int)(matryx.GetLength(0));
+
+
+            int tmpH = H + 2 * gapY, tmpW = W + 2 * gapX;
+            double[,] tmppixel = new double[tmpH, tmpW];
+            double[,] newpixel = new double[H, W];
 
             //заполнение временного расширенного изображения
-            //углы
-            for (i = 0; i < gap; i++)
-                for (j = 0; j < gap; j++)
+
+            if (Edgemode == 0) tmppixel = OutsideZero(pixel, gapX, gapY);
+            else if (Edgemode == 1) tmppixel = EdgeCoppy(pixel, gapX, gapY);
+            else if(Edgemode == 2) tmppixel = EdgeReflection(pixel, gapX, gapY);
+            else if(Edgemode == 3) tmppixel = WrapImage(pixel, gapX, gapY); 
+            else { EdgeCoppy(pixel, gapX, gapY); }
+
+
+            //применение ядра свертки
+            double GrayPixel = 0;
+
+            for (i = gapY; i < tmpH - gapY; i++)
+                for (j = gapX; j < tmpW - gapX; j++)
+                {
+                    GrayPixel = 0;
+                    for (int k = 0; k < matryx.GetLength(0); k++)
+                        for (int m = 0; m < matryx.GetLength(1); m++)
+                        {
+                            GrayPixel += Transformations.calculationOfColor(tmppixel[i - gapY + k, j - gapX + m], matryx[k, m]);
+                        }
+
+                    newpixel[i - gapY, j - gapX] = GrayPixel;
+                }
+
+            return newpixel;
+        }
+
+
+        public static double [,] OutsideZero(double [,] pixel, int gapX, int gapY) {
+            int i, j;
+            int W = pixel.GetLength(1);
+            int H = pixel.GetLength(0);
+
+            int tmpH = H + 2 * gapY, tmpW = W + 2 * gapX;
+            double[,] tmppixel = new double[tmpH, tmpW];
+
+            for (i = 0; i < gapY; i++)
+                for (j = 0; j < gapX; j++)
+                {
+                    tmppixel[i, j] = 0;
+                    tmppixel[i, tmpW - 1 - j] = 0;
+                    tmppixel[tmpH - 1 - i, j] = 0;
+                    tmppixel[tmpH - 1 - i, tmpW - 1 - j] = 0;
+                }
+
+            //крайние левая и правая стороны
+            for (i = gapY; i < tmpH - gapY; i++)
+                for (j = 0; j < gapX; j++)
+                {
+                    tmppixel[i, j] = 0;
+                    tmppixel[i, tmpW - 1 - j] = 0;
+                }
+
+            //крайние верхняя и нижняя стороны
+            for (i = 0; i < gapY; i++)
+                for (j = gapX; j < tmpW - gapX; j++)
+                {
+                    tmppixel[i, j] = 0;
+                    tmppixel[tmpH - 1 - i, j] = 0;
+                }
+
+            //центр
+            for (i = 0; i < H; i++)
+                for (j = 0; j < W; j++)
+                    tmppixel[i + gapY, j + gapX] = pixel[i, j];
+
+            return tmppixel;
+        }
+
+        public static double[,] EdgeCoppy(double[,] pixel, int gapX, int gapY)
+        {
+            int i, j;
+            int W = pixel.GetLength(1);
+            int H = pixel.GetLength(0);
+
+            int tmpH = H + 2 * gapY, tmpW = W + 2 * gapX;
+            double[,] tmppixel = new double[tmpH, tmpW];
+
+
+            for (i = 0; i < gapY; i++)
+                for (j = 0; j < gapX; j++)
                 {
                     tmppixel[i, j] = pixel[0, 0];
                     tmppixel[i, tmpW - 1 - j] = pixel[0, W - 1];
@@ -40,111 +118,114 @@ namespace ImageProcessingLaba1
                 }
 
             //крайние левая и правая стороны
-            for (i = gap; i < tmpH - gap; i++)
-                for (j = 0; j < gap; j++)
+            for (i = gapY; i < tmpH - gapY; i++)
+                for (j = 0; j < gapX; j++)
                 {
-                    tmppixel[i, j] = pixel[i - gap, j];
-                    tmppixel[i, tmpW - 1 - j] = pixel[i - gap, W - 1 - j];
+                    tmppixel[i, j] = pixel[i - gapY, j];
+                    tmppixel[i, tmpW - 1 - j] = pixel[i - gapY, W - 1 - j];
                 }
 
             //крайние верхняя и нижняя стороны
-            for (i = 0; i < gap; i++)
-                for (j = gap; j < tmpW - gap; j++)
+            for (i = 0; i < gapY; i++)
+                for (j = gapX; j < tmpW - gapX; j++)
                 {
-                    tmppixel[i, j] = pixel[i, j - gap];
-                    tmppixel[tmpH - 1 - i, j] = pixel[H - 1 - i, j - gap];
+                    tmppixel[i, j] = pixel[i, j - gapX];
+                    tmppixel[tmpH - 1 - i, j] = pixel[H - 1 - i, j - gapX];
                 }
 
             //центр
             for (i = 0; i < H; i++)
                 for (j = 0; j < W; j++)
-                    tmppixel[i + gap, j + gap] = pixel[i, j];
-            
-            //применение ядра свертки
-            RGB ColorOfPixel = new RGB();
-            RGB ColorOfCell = new RGB();
-            for (i = gap; i < tmpH - gap; i++)
-                for (j = gap; j < tmpW - gap; j++)
-                {
-                    ColorOfPixel.R = 0;
-                    ColorOfPixel.G = 0;
-                    ColorOfPixel.B = 0;
-                    for (k = 0; k < N; k++)
-                        for (m = 0; m < N; m++)
-                        {
-                            ColorOfCell = Transformations.calculationOfColor(tmppixel[i - gap + k, j - gap + m], matryx[k, m]);
-                            ColorOfPixel.R += ColorOfCell.R;
-                            ColorOfPixel.G += ColorOfCell.G;
-                            ColorOfPixel.B += ColorOfCell.B;
-                        }
+                    tmppixel[i + gapY, j + gapX] = pixel[i, j];
 
-                    if (ColorOfPixel.R < 0) ColorOfPixel.R = 0;
-                    if (ColorOfPixel.R > 255) ColorOfPixel.R = 255;
-                    if (ColorOfPixel.G < 0) ColorOfPixel.G = 0;
-                    if (ColorOfPixel.G > 255) ColorOfPixel.G = 255;
-                    if (ColorOfPixel.B < 0) ColorOfPixel.B = 0;
-                    if (ColorOfPixel.B > 255) ColorOfPixel.B = 255;
-
-                    newpixel[i - gap, j - gap] = Transformations.build(ColorOfPixel);
-                }
-
-            /*
-            //контролируем переполнение переменных
-            for (i = 0; i < newpixel.GetLength(0); i++)
-                for (j = 0; j < newpixel.GetLength(1); j++)
-                {
-                    ColorOfPixel = Transformations.calculationOfColor(newpixel[i,j], 1);                   
-                    if (ColorOfPixel.R < 0) ColorOfPixel.R = 0;
-                    if (ColorOfPixel.R > 255) ColorOfPixel.R = 255;
-                    if (ColorOfPixel.G < 0) ColorOfPixel.G = 0;
-                    if (ColorOfPixel.G > 255) ColorOfPixel.G = 255;
-                    if (ColorOfPixel.B < 0) ColorOfPixel.B = 0;
-                    if (ColorOfPixel.B > 255) ColorOfPixel.B = 255;
-                    newpixel[i, j] = Transformations.build(ColorOfPixel);
-                }
-                */
-            return newpixel;
+            return tmppixel;
         }
 
-        // Преобразование в оттенки серого
-        public static UInt32[,] ConvertToGray(UInt32[,] points)
+        public static double[,] EdgeReflection(double[,] pixel, int gapX, int gapY)
         {
-            RGB[,] RGBpixels = Transformations.FromUInt32ToRGB(points);
+            int i, j;
+            int W = pixel.GetLength(1);
+            int H = pixel.GetLength(0);
 
-            for (int y = 0; y < points.GetLength(0); y++)
-            {
-                for (int x = 0; x < points.GetLength(1); x++)
+            int tmpH = H + 2 * gapY, tmpW = W + 2 * gapX;
+            double[,] tmppixel = new double[tmpH, tmpW];
+
+
+            for (i = 0; i < gapY; i++)
+                for (j = 0; j < gapX; j++)
                 {
-                    int sr = (RGBpixels[y, x].R + RGBpixels[y, x].G + RGBpixels[y, x].B) / 3;
-                    RGBpixels[y, x].R = RGBpixels[y, x].G = RGBpixels[y, x].B = sr;
+                    tmppixel[i, j] = pixel[0, 0];
+                    tmppixel[i, tmpW - 1 - j] = pixel[0, W - 1];
+                    tmppixel[tmpH - 1 - i, j] = pixel[H - 1, 0];
+                    tmppixel[tmpH - 1 - i, tmpW - 1 - j] = pixel[H - 1, W - 1];
                 }
-            }
 
-            for (int y = 0; y < points.GetLength(0); y++)
-            {
-                for (int x = 0; x < points.GetLength(1); x++)
+            //крайние левая и правая стороны
+            for (i = gapY; i < tmpH - gapY; i++)
+                for (j = 0; j < gapX; j++)
                 {
-                    points[y, x] = Transformations.build(RGBpixels[y, x]);
+                    tmppixel[i, j] = pixel[i - gapY, j];
+                    tmppixel[i, tmpW - 1 - j] = pixel[i - gapY, W - 1 - j];
                 }
-            }
 
-            return points;
+            //крайние верхняя и нижняя стороны
+            for (i = 0; i < gapY; i++)
+                for (j = gapX; j < tmpW - gapX; j++)
+                {
+                    tmppixel[i, j] = pixel[i, j - gapX];
+                    tmppixel[tmpH - 1 - i, j] = pixel[H - 1 - i, j - gapX];
+                }
+
+            //центр
+            for (i = 0; i < H; i++)
+                for (j = 0; j < W; j++)
+                    tmppixel[i + gapY, j + gapX] = pixel[i, j];
+
+            return tmppixel;
         }
 
-        //увеличение резкости резкости
-        public const int N1 = 3;
-        public static double[,] sharpness = new double[N1, N1] {{-1, -1, -1},
-                                                               {-1,  9, -1},
-                                                               {-1, -1, -1}};
+        public static double[,] WrapImage(double[,] pixel, int gapX, int gapY)
+        {
+            int i, j;
+            int W = pixel.GetLength(1);
+            int H = pixel.GetLength(0);
 
-        //Оператор собеля
-        public const int NSob = 3;
-        public static double[,] SubelX = new double[NSob, NSob] {{1, 0, -1},
-                                                                {2, 0, -2},
-                                                                {1, 0, -1}};
-        public static double[,] SubelY = new double[NSob, NSob] {{1, 2, 1},
-                                                                {0, 0, 0},
-                                                                {-1, -2, -1}};
+            int tmpH = H + 2 * gapY, tmpW = W + 2 * gapX;
+            double[,] tmppixel = new double[tmpH, tmpW];
+
+            // Углы
+            for (i = 0; i < gapY; i++)
+                for (j = 0; j < gapX; j++)
+                {
+                    tmppixel[i, j] = pixel[0, W - 1];
+                    tmppixel[i, tmpW - 1 - j] = pixel[0, 0];
+                    tmppixel[tmpH - 1 - i, j] = pixel[H - 1, W - 1];
+                    tmppixel[tmpH - 1 - i, tmpW - 1 - j] = pixel[H - 1, 0];
+                }
+
+            //крайние левая и правая стороны
+            for (i = gapY; i < tmpH - gapY; i++)
+                for (j = 0; j < gapX; j++)
+                {
+                    tmppixel[i, j] = pixel[i - gapY, W - gapX];
+                    tmppixel[i, tmpW - 1 - j] = pixel[i - gapY, j];
+                }
+
+            //крайние верхняя и нижняя стороны
+            for (i = 0; i < gapY; i++)
+                for (j = gapX; j < tmpW - gapX; j++)
+                {
+                    tmppixel[i, j] = pixel[H - 1 - i, j - gapX];
+                    tmppixel[tmpH - 1 - i, j] = pixel[i, j - gapX];
+                }
+
+            //центр
+            for (i = 0; i < H; i++)
+                for (j = 0; j < W; j++)
+                    tmppixel[i + gapY, j + gapX] = pixel[i, j];
+
+            return tmppixel;
+        }
 
     }
 }

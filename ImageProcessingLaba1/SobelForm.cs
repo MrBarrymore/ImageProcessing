@@ -17,87 +17,89 @@ namespace ImageProcessingLaba1
             InitializeComponent();
         }
 
-        UInt32[,] _pixels;
         Bitmap image;
+        double[,] _pixels;
 
-        public SobelForm(UInt32[,] pixels)
+        public SobelForm(double[,] pixels)
         {
             InitializeComponent();
-
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
             _pixels = pixels;
+
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        void СountGradient(double[,] MatrixX1, double[,] MatrixX2, double[,] MatrixY1, double[,] MatrixY2)
         {
-            double[,] VelGr = new double[3, 3];
-            double O = 0;
-            UInt32[,] pixels1 = Filters.ConvertToGray(_pixels);
-            UInt32[,] pixels2 = Filters.ConvertToGray(_pixels);
-            UInt32[,] pixels3 = Filters.ConvertToGray(_pixels); 
+            double[,] pixels1;
+            double[,] pixels2;
+            double[,] pixels3 = new double[_pixels.GetLength(0), _pixels.GetLength(1)];
 
-            // Вычисляем величину градиента
-            for (int i = 0; i < 3; i++)
-            {
-                for (int j = 0; j < 3; j++)
-                {
-                    VelGr[i, j] = Math.Sqrt(Math.Pow(Filters.SubelX[i, j], 2) + Math.Pow(Filters.SubelY[i, j], 2));
-                }
-            }
+            int Edgemode = 0;
+            if (RB_Zero.Checked == true) Edgemode = 0;
+            if (RB_EdgeCoppy.Checked == true) Edgemode = 1;
+            if (RB_EdgeReflection.Checked == true) Edgemode = 2;
+            if (RB_WrapImage.Checked == true) Edgemode = 3;
 
-            pixels1 = Filters.matrix_filtration(_pixels.GetLength(1), _pixels.GetLength(0), _pixels, Filters.NSob, Filters.SubelX);
-            image = Transformations.FromUInt32ToBitmap(pixels1, pixels1.GetLength(0), pixels1.GetLength(1));
+            // Считаем частную производную по X (сепарабельно)
+            pixels1 = Filters.matrix_filtration(_pixels, MatrixX1, Edgemode);
+            pixels1 = Filters.matrix_filtration(pixels1, MatrixX2, Edgemode);
+            image = Transformations.FromUInt32ToBitmap(pixels1);
             pictureBox1.Image = image;
 
-
-            pixels2 = Filters.matrix_filtration(_pixels.GetLength(1), _pixels.GetLength(0), _pixels, Filters.NSob, Filters.SubelY);
-
-            image = Transformations.FromUInt32ToBitmap(pixels2, pixels2.GetLength(0), pixels2.GetLength(1));
+            // Считаем частную производную по Y (сепарабельно)
+            pixels2 = Filters.matrix_filtration(_pixels, MatrixY1, Edgemode);
+            pixels2 = Filters.matrix_filtration(pixels2, MatrixY2, Edgemode);
+            image = Transformations.FromUInt32ToBitmap(pixels2);
             pictureBox2.Image = image;
 
+            // Вычисляем величину градиента
             for (int y = 0; y < _pixels.GetLength(0); y++)
             {
                 for (int x = 0; x < _pixels.GetLength(1); x++)
                 {
-                    pixels3[y,x] = (UInt32)Math.Sqrt(Math.Pow(pixels1[y, x], 2) + Math.Pow(pixels2[y, x], 2));
+                    pixels3[y, x] = Math.Sqrt(Math.Pow(pixels1[y, x], 2) + Math.Pow(pixels2[y, x], 2));
                 }
             }
-
-            image = Transformations.FromUInt32ToBitmap(pixels3, pixels3.GetLength(0), pixels3.GetLength(1));
-            pictureBox2.Image = image;
-                     
+            image = Transformations.FromUInt32ToBitmap(pixels3);
+            pictureBox3.Image = image;
         }
 
-        static double [,] Addition(double[,] a, double[,] b)
+        private void button1_Click(object sender, EventArgs e)
         {
-            if (a.GetLength(1) != b.GetLength(0)) throw new Exception("Матрицы нельзя сложить");
-            double[,] r = new double[a.GetLength(0), b.GetLength(1)];
-
-            for (int i = 0; i < b.GetLength(1); i++)
-            {
-                for (int j = 0; j < b.GetLength(0); j++)
-                {
-                    r[i, j] += a[i, j] + b[i, j];
-                }
-            }
-            return r;
+            if (RB_Sobel.Checked == true) СountGradient(SubelSepX1, SubelSepX2, SubelSepY1, SubelSepY2);
+            if (RB_Pruitt.Checked == true) СountGradient(PruittSepX1, PruittSepX2, PruittSepY1, PruittSepY2);
+            if (RB_Shchar.Checked == true) СountGradient(ShcharSepX1, ShcharSepX2, ShcharSepY1, ShcharSepY2);
         }
 
+        //Оператор собеля
+        public const int NSob = 3;
+        public static double[,] SubelX = new double[NSob, NSob] {{1, 0, -1},
+                                                                {2, 0, -2},
+                                                                {1, 0, -1}};
 
-        static double[,] Multiplication(double[,] a, double[,] b)
-        {
-            if (a.GetLength(1) != b.GetLength(0)) throw new Exception("Матрицы нельзя перемножить");
-            double[,] r = new double[a.GetLength(0), b.GetLength(1)];
-            for (int i = 0; i < a.GetLength(0); i++)
-            {
-                for (int j = 0; j < b.GetLength(1); j++)
-                {
-                    for (int k = 0; k < b.GetLength(0); k++)
-                    {
-                        r[i, j] += a[i, k] * b[k, j];
-                    }
-                }
-            }
-            return r;
-        }
+        public static double[,] SubelY = new double[NSob, NSob] {{1, 2, 1},
+                                                                {0, 0, 0},
+                                                                {-1, -2, -1}};
+
+        // Задание Оператора Собеля для сепорабельных вычислений
+        public static double[,] SubelSepX1 = new double[1, NSob] { { 1, 2, 1 } };
+        public static double[,] SubelSepX2 = new double[NSob, 1] { { 1 }, { 0 }, { -1 } };
+        public static double[,] SubelSepY1 = new double[1, NSob] { { 1, 0, -1 } };
+        public static double[,] SubelSepY2 = new double[NSob, 1] { { 1 }, { 2 }, { 1 } };
+
+
+        // Задание Оператора Прюитта для сепорабельных вычислений
+        public static double[,] PruittSepX1 = new double[1, NSob] { { 1, 1, 1 } };
+        public static double[,] PruittSepX2 = new double[NSob, 1] { { 1 }, { 0 }, { -1 } };
+        public static double[,] PruittSepY1 = new double[1, NSob] { { 1, 0, -1 } };
+        public static double[,] PruittSepY2 = new double[NSob, 1] { { 1 }, { 1 }, { 1 } };
+
+        // Задание Оператора Прюитта для сепорабельных вычислений
+        public static double[,] ShcharSepX1 = new double[1, NSob] { { 3, 10, 3 } };
+        public static double[,] ShcharSepX2 = new double[NSob, 1] { { 1 }, { 0 }, { -1 } };
+        public static double[,] ShcharSepY1 = new double[1, NSob] { { 1, 0, -1 } };
+        public static double[,] ShcharSepY2 = new double[NSob, 1] { { 3 }, { 10 }, { 3 } };
     }
 }
