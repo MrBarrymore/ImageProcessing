@@ -23,10 +23,10 @@ namespace ImageProcessingLaba1
         {
             InitializeComponent();
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-
+            pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             //....... для тестов
-            /*
-            image = new Bitmap("..\\..\\..\\..\\cube.jpg");
+            
+            image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Cat1.jpg");
             pixels = new double[image.Height, image.Width];
             for (int y = 0; y < image.Height; y++)
                 for (int x = 0; x < image.Width; x++)
@@ -35,16 +35,15 @@ namespace ImageProcessingLaba1
                     pixels[y, x] = p.R * 0.299 + p.G * .587 + p.B * 0.114;
                 }
 
-            SobelForm _sobelForm = new SobelForm(pixels);
-            _sobelForm.ShowDialog();
+            pictureBox1.Image = image;
             //////////////////////
-            */
+            GaussForm _gaussForm = new GaussForm(pixels);
+            _gaussForm.ShowDialog();
+       
         }
 
         private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            #region          
-            
+        {         
             OpenFileDialog open_dialog = new OpenFileDialog();
             open_dialog.Filter = "Image Files(*.BMP;*.JPG;*.GIF;*.PNG)|*.BMP;*.JPG;*.GIF;*.PNG|All files (*.*)|*.*";
             if (open_dialog.ShowDialog() == DialogResult.OK)
@@ -73,7 +72,7 @@ namespace ImageProcessingLaba1
                     "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            #endregion
+            
 
             #region Code for testing
             /*
@@ -108,6 +107,8 @@ namespace ImageProcessingLaba1
 
         private void сохранитьКакToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            pictureBox2.Image = image;           
+
             if (pictureBox1.Image != null)
             {
                 SaveFileDialog savedialog = new SaveFileDialog();
@@ -135,6 +136,7 @@ namespace ImageProcessingLaba1
         {
             SobelForm _sobelForm = new SobelForm(pixels);
             _sobelForm.ShowDialog();
+            this.Enabled = false;
         }
 
         private void фильтрГауссаToolStripMenuItem_Click(object sender, EventArgs e)

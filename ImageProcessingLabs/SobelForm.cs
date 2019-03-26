@@ -19,6 +19,7 @@ namespace ImageProcessingLaba1
 
         Bitmap image;
         double[,] _pixels;
+        MainForm _mainForm = new MainForm();
 
         public SobelForm(double[,] pixels)
         {
@@ -28,6 +29,7 @@ namespace ImageProcessingLaba1
             pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
             _pixels = pixels;
 
+            this.Load += new EventHandler(button1_Click);
         }
 
         void СountGradient(double[,] MatrixX1, double[,] MatrixX2, double[,] MatrixY1, double[,] MatrixY2)
@@ -71,17 +73,12 @@ namespace ImageProcessingLaba1
             if (RB_Sobel.Checked == true) СountGradient(SubelSepX1, SubelSepX2, SubelSepY1, SubelSepY2);
             if (RB_Pruitt.Checked == true) СountGradient(PruittSepX1, PruittSepX2, PruittSepY1, PruittSepY2);
             if (RB_Shchar.Checked == true) СountGradient(ShcharSepX1, ShcharSepX2, ShcharSepY1, ShcharSepY2);
+            MainForm.image = this.image;
+            _mainForm.pictureBox2.Image = image;
         }
 
         //Оператор собеля
         public const int NSob = 3;
-        public static double[,] SubelX = new double[NSob, NSob] {{1, 0, -1},
-                                                                {2, 0, -2},
-                                                                {1, 0, -1}};
-
-        public static double[,] SubelY = new double[NSob, NSob] {{1, 2, 1},
-                                                                {0, 0, 0},
-                                                                {-1, -2, -1}};
 
         // Задание Оператора Собеля для сепорабельных вычислений
         public static double[,] SubelSepX1 = new double[1, NSob] { { 1, 2, 1 } };
@@ -101,5 +98,10 @@ namespace ImageProcessingLaba1
         public static double[,] ShcharSepX2 = new double[NSob, 1] { { 1 }, { 0 }, { -1 } };
         public static double[,] ShcharSepY1 = new double[1, NSob] { { 1, 0, -1 } };
         public static double[,] ShcharSepY2 = new double[NSob, 1] { { 3 }, { 10 }, { 3 } };
+
+        private void SobelForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+          //  MainForm.Enabled = false;
+        }
     }
 }
