@@ -46,7 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ImageMethods.cs" />
+    <Compile Include="Math\BuildingPyramid.cs" />
+    <Compile Include="Math\ConvolutionMatrix.cs" />
+    <Compile Include="Math\ConvolutionMatrixFactory.cs" />
     <Compile Include="GaussForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -99,8 +101,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Math\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

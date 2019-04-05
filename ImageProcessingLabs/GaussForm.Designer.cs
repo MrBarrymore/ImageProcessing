@@ -57,6 +57,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.comboBox3 = new System.Windows.Forms.ComboBox();
             this.comboBox4 = new System.Windows.Forms.ComboBox();
+            this.RB_White = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -90,10 +91,11 @@
             this.groupBox2.Controls.Add(this.RB_WrapImage);
             this.groupBox2.Controls.Add(this.RB_EdgeReflection);
             this.groupBox2.Controls.Add(this.RB_EdgeCoppy);
+            this.groupBox2.Controls.Add(this.RB_White);
             this.groupBox2.Controls.Add(this.RB_Zero);
             this.groupBox2.Location = new System.Drawing.Point(278, 19);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(269, 122);
+            this.groupBox2.Size = new System.Drawing.Size(269, 134);
             this.groupBox2.TabIndex = 10;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Способ  обработки краевых эффектов";
@@ -101,7 +103,7 @@
             // RB_WrapImage
             // 
             this.RB_WrapImage.AutoSize = true;
-            this.RB_WrapImage.Location = new System.Drawing.Point(6, 88);
+            this.RB_WrapImage.Location = new System.Drawing.Point(6, 105);
             this.RB_WrapImage.Name = "RB_WrapImage";
             this.RB_WrapImage.Size = new System.Drawing.Size(177, 17);
             this.RB_WrapImage.TabIndex = 8;
@@ -113,7 +115,7 @@
             // 
             this.RB_EdgeReflection.AutoSize = true;
             this.RB_EdgeReflection.Checked = true;
-            this.RB_EdgeReflection.Location = new System.Drawing.Point(6, 68);
+            this.RB_EdgeReflection.Location = new System.Drawing.Point(6, 85);
             this.RB_EdgeReflection.Name = "RB_EdgeReflection";
             this.RB_EdgeReflection.Size = new System.Drawing.Size(181, 17);
             this.RB_EdgeReflection.TabIndex = 8;
@@ -124,7 +126,7 @@
             // RB_EdgeCoppy
             // 
             this.RB_EdgeCoppy.AutoSize = true;
-            this.RB_EdgeCoppy.Location = new System.Drawing.Point(6, 45);
+            this.RB_EdgeCoppy.Location = new System.Drawing.Point(6, 62);
             this.RB_EdgeCoppy.Name = "RB_EdgeCoppy";
             this.RB_EdgeCoppy.Size = new System.Drawing.Size(180, 17);
             this.RB_EdgeCoppy.TabIndex = 8;
@@ -137,10 +139,10 @@
             this.RB_Zero.AutoSize = true;
             this.RB_Zero.Location = new System.Drawing.Point(6, 22);
             this.RB_Zero.Name = "RB_Zero";
-            this.RB_Zero.Size = new System.Drawing.Size(78, 17);
+            this.RB_Zero.Size = new System.Drawing.Size(107, 17);
             this.RB_Zero.TabIndex = 8;
             this.RB_Zero.TabStop = true;
-            this.RB_Zero.Text = "Снаружи 0";
+            this.RB_Zero.Text = "Снаружи черное";
             this.RB_Zero.UseVisualStyleBackColor = true;
             // 
             // button2
@@ -375,6 +377,17 @@
             this.comboBox4.TabIndex = 12;
             this.comboBox4.SelectedIndexChanged += new System.EventHandler(this.ShowNewImage);
             // 
+            // RB_White
+            // 
+            this.RB_White.AutoSize = true;
+            this.RB_White.Location = new System.Drawing.Point(6, 43);
+            this.RB_White.Name = "RB_White";
+            this.RB_White.Size = new System.Drawing.Size(102, 17);
+            this.RB_White.TabIndex = 8;
+            this.RB_White.TabStop = true;
+            this.RB_White.Text = "Снаружи белое";
+            this.RB_White.UseVisualStyleBackColor = true;
+            // 
             // GaussForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -435,5 +448,6 @@
         private System.Windows.Forms.Label lbl_EffectiveSigmaValue;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.RadioButton RB_White;
     }
 }

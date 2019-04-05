@@ -25,8 +25,8 @@ namespace ImageProcessingLabs
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             //....... для тестов
 
-
-            image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Cat1.jpg");
+            //image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Cat1.jpg");
+            image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Lenna.png");
             _pixels = new double[image.Height, image.Width];
             for (int y = 0; y < image.Height; y++)
                 for (int x = 0; x < image.Width; x++)
@@ -73,36 +73,6 @@ namespace ImageProcessingLabs
                 }
             }
             
-
-            #region Code for testing
-            /*
-            try
-            {
-                image = new Bitmap("..\\..\\..\\..\\Cat1.jpg");
-                full_name_of_image = "******";
-                
-                // Выводим исходное изображение
-                pictureBox1.Image = image;
-                pictureBox1.Invalidate();
-
-                //получение матрицы с пикселями
-                pixels = new double[image.Height, image.Width];
-                for (int y = 0; y < image.Height; y++)
-                    for (int x = 0; x < image.Width; x++)
-                    {
-                        Color color = image.GetPixel(x, y);
-                        pixels[y, x] = color.R * 0.299 + color.G * 0.587 + color.B * 0.114;
-                    }
-            }
-            catch
-            {
-                full_name_of_image = "\0";
-                DialogResult rezult = MessageBox.Show("Невозможно открыть выбранный файл",
-                "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            */
-            #endregion
-
         }
 
         private void сохранитьКакToolStripMenuItem_Click(object sender, EventArgs e)

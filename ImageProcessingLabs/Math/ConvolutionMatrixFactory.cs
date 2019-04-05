@@ -4,20 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
+
 namespace ImageProcessingLabs
 {
-    class ImageMethods
+    class ConvolutionMatrixFactory
     {
         public static double[,] _pixels;
     
         public List<double[,]> picturePiramid = new List<double[,]>();
 
-        public ImageMethods()
+        double[,] Pyramidpixels;
+
+        public ConvolutionMatrixFactory()
         {
 
         }
 
-        public ImageMethods(double[] pixel)
+        public ConvolutionMatrixFactory(double[] pixel)
         {
 
         }
@@ -60,7 +64,6 @@ namespace ImageProcessingLabs
                     newpixel += bufpixel * svMatrix[i1, j1];
                 }
             }
-
             return newpixel;
         }
 
@@ -72,26 +75,26 @@ namespace ImageProcessingLabs
                     if (x < 0 || x >= _pixels.GetLength(1) || y < 0 || y >= _pixels.GetLength(0))
                         return 0;
                     return _pixels[y, x];
-             //   case 2:
-               //     if (x < 0 || x >= _pixels.GetLength(1) || y < 0 || y >= _pixels.GetLength(1)) 
-                 //       return 255;
-                   // return _pixels[y, x];
                 case 1:
+                    if (x < 0 || x >= _pixels.GetLength(1) || y < 0 || y >= _pixels.GetLength(1)) 
+                        return 255;
+                    return _pixels[y, x];
+                case 2:
                     x = border(0, x, _pixels.GetLength(1) - 1);
                     y = border(y, 0, _pixels.GetLength(0) - 1);
                     return _pixels[y, x];
-                case 2:
+                case 3:
                     x = (x + _pixels.GetLength(1)) % _pixels.GetLength(1);
                     y = (y + _pixels.GetLength(0)) % _pixels.GetLength(0);
                     return _pixels[y, x];
-                case 3:
+                case 4:
                     x = Math.Abs(x);
                     y = Math.Abs(y);
                     if (x >= _pixels.GetLength(1)) x = _pixels.GetLength(1) - (x - _pixels.GetLength(1) + 1);
                     if (y >= _pixels.GetLength(0)) y = _pixels.GetLength(0) - (y - _pixels.GetLength(0) + 1);
                     return _pixels[y, x];
                 default:
-                    return 0;
+                    return 255;
             }
         }
 
