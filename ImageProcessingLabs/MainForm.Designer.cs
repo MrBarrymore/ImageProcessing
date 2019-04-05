@@ -1,4 +1,4 @@
-﻿namespace ImageProcessingLaba1
+﻿namespace ImageProcessingLabs
 {
     partial class MainForm
     {

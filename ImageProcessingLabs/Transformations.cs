@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Drawing.Imaging;
 
-namespace ImageProcessingLaba1
+namespace ImageProcessingLabs
 {
     class Transformations
     {

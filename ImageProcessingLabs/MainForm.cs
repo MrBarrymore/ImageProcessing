@@ -10,14 +10,13 @@ using System.Windows.Forms;
 using System.IO;
 using System.Drawing.Imaging;
 
-namespace ImageProcessingLaba1
+namespace ImageProcessingLabs
 {
     public partial class MainForm : Form
     {
         public static Bitmap image;
         public static string full_name_of_image = "\0";
-        public static double[,] pixels;
-
+        public static double[,] _pixels;
 
         public MainForm()
         {
@@ -25,19 +24,20 @@ namespace ImageProcessingLaba1
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             //....... для тестов
-            
+
+
             image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Cat1.jpg");
-            pixels = new double[image.Height, image.Width];
+            _pixels = new double[image.Height, image.Width];
             for (int y = 0; y < image.Height; y++)
                 for (int x = 0; x < image.Width; x++)
                 {
                     Color p = image.GetPixel(x, y);
-                    pixels[y, x] = p.R * 0.299 + p.G * .587 + p.B * 0.114;
+                    _pixels[y, x] = p.R * 0.299 + p.G * .587 + p.B * 0.114;
                 }
 
             pictureBox1.Image = image;
             //////////////////////
-            GaussForm _gaussForm = new GaussForm(pixels);
+            GaussForm _gaussForm = new GaussForm(_pixels);
             _gaussForm.ShowDialog();
        
         }
@@ -55,14 +55,14 @@ namespace ImageProcessingLaba1
                     image = new Bitmap(open_dialog.FileName);
 
                     pictureBox1.Image = image;
-                   
+
                     //получение матрицы с пикселями
-                    pixels = new double[image.Height, image.Width];
+                    _pixels = new double[image.Height, image.Width];
                     for (int y = 0; y < image.Height; y++)
                         for (int x = 0; x < image.Width; x++)
                         {
                             Color color = image.GetPixel(x, y);
-                            pixels[y, x] = color.R * 0.299 + color.G * 0.587 + color.B * 0.114;
+                            _pixels[y, x] = color.R * 0.299 + color.G * 0.587 + color.B * 0.114;
                         }
                 }
                 catch
@@ -134,14 +134,14 @@ namespace ImageProcessingLaba1
 
         private void операторСобеляToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SobelForm _sobelForm = new SobelForm(pixels);
+            SobelForm _sobelForm = new SobelForm(_pixels);
             _sobelForm.ShowDialog();
             this.Enabled = false;
         }
 
         private void фильтрГауссаToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            GaussForm _gaussForm = new GaussForm(pixels);
+            GaussForm _gaussForm = new GaussForm(_pixels);
             _gaussForm.ShowDialog();
         }
     }

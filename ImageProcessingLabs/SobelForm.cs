@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ImageProcessingLaba1
+namespace ImageProcessingLabs
 {
     public partial class SobelForm : Form
     {
@@ -45,14 +45,14 @@ namespace ImageProcessingLaba1
             if (RB_WrapImage.Checked == true) Edgemode = 3;
 
             // Считаем частную производную по X (сепарабельно)
-            pixels1 = Filters.matrix_filtration(_pixels, MatrixX1, Edgemode);
-            pixels1 = Filters.matrix_filtration(pixels1, MatrixX2, Edgemode);
+            pixels1 = ImageMethods.processNonSeparable(_pixels, MatrixX1, Edgemode);
+            pixels1 = ImageMethods.processNonSeparable(pixels1, MatrixX2, Edgemode);
             image = Transformations.FromUInt32ToBitmap(pixels1);
             pictureBox1.Image = image;
 
             // Считаем частную производную по Y (сепарабельно)
-            pixels2 = Filters.matrix_filtration(_pixels, MatrixY1, Edgemode);
-            pixels2 = Filters.matrix_filtration(pixels2, MatrixY2, Edgemode);
+            pixels2 = ImageMethods.processNonSeparable(_pixels, MatrixY1, Edgemode);
+            pixels2 = ImageMethods.processNonSeparable(pixels2, MatrixY2, Edgemode);
             image = Transformations.FromUInt32ToBitmap(pixels2);
             pictureBox2.Image = image;
 

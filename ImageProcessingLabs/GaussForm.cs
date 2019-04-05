@@ -7,8 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
-namespace ImageProcessingLaba1
+namespace ImageProcessingLabs
 {
     public partial class GaussForm : Form
     {
@@ -17,12 +18,16 @@ namespace ImageProcessingLaba1
             InitializeComponent();
         }
 
+        // Глобальные переменные 
         Bitmap image, bufImage;
+
+        static List<double[,]> picturePiramid = new List<double[,]>();
+
         static double[,] _pixels;
         double[,] sigmas;
         int Edgemode = 0;
 
-        public GaussForm(double [,] pixels)
+        public GaussForm(double[,] pixels)
         {
             InitializeComponent();
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
@@ -30,79 +35,57 @@ namespace ImageProcessingLaba1
             _pixels = pixels;
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-            if (RB_Zero.Checked == true) Edgemode = 0;
-            if (RB_EdgeCoppy.Checked == true) Edgemode = 1;
-            if (RB_EdgeReflection.Checked == true) Edgemode = 2;
-            if (RB_WrapImage.Checked == true) Edgemode = 3;
-  
-            image = Transformations.FromUInt32ToBitmap(_pixels);
-            pictureBox1.Image = image;
-            int sigma = Convert.ToInt32(textBox1.Text);
-            double[,] GaussMatrix = new double[sigma, sigma];
-            GaussMatrix = CountGaussMatrix(GaussMatrix, sigma);
-
-            double[,] Gausspixels = Filters.matrix_filtration(_pixels, GaussMatrix, Edgemode);
-            image = Transformations.FromUInt32ToBitmap(Gausspixels);
-            pictureBox2.Image = image;
-        }
-
-        double [,] CountGaussMatrix(double [,] gaussMatrix, double sigma) 
-        {
-            for (int y = 0; y < (int)sigma; y ++)
-            {
-                for (int x = 0; x < (int)sigma; x++)
-                {
-                    int x1 = x - (int)(sigma / 2);
-                    int y1 = y - (int)(sigma / 2);
-                    gaussMatrix[y, x] = (1 / (Math.PI * 2 * Math.Pow(sigma, 2)) ) * Math.Exp( - (Math.Pow(x1, 2) + Math.Pow(y1, 2)) / (2 * Math.Pow(sigma, 2)));
-                }
-            }
-            return gaussMatrix;
-        }
-
-
         private void button2_Click(object sender, EventArgs e)
         {
+
             if (RB_Zero.Checked == true) Edgemode = 0;
             if (RB_EdgeCoppy.Checked == true) Edgemode = 1;
             if (RB_EdgeReflection.Checked == true) Edgemode = 2;
             if (RB_WrapImage.Checked == true) Edgemode = 3;
 
             int numOctaves = CountOctava(_pixels);
-            double sigma0 = Convert.ToInt32(textBox3.Text);
+            double sigmaA = Convert.ToDouble(textBox2.Text);
+            double sigma0 = Convert.ToDouble(textBox3.Text);
             int levels = Convert.ToInt32(comboBox2.Text);
-            sigmas = new double[numOctaves, levels]; // Массив значений сигм на каждом этапе преобразований
+            sigmas = new double[numOctaves, levels + 1]; // Массив значений сигм на каждом этапе преобразований
 
             image = Transformations.FromUInt32ToBitmap(_pixels);
             pictureBox1.Image = image;
 
+            DeletePictures();
             image.Save("..\\..\\..\\..\\Output\\" + "Исходное изображение.png");
+
+            double[,] GaussMatrix0 = CountGaussMatrix(sigmaA);
+            _pixels = ImageMethods.processNonSeparable(_pixels, GaussMatrix0, 1);
+            image = Transformations.FromUInt32ToBitmap(_pixels);
+            pictureBox2.Image = image;
+            picturePiramid.Add(_pixels);
+
 
             // Строим пирамиду изображения
             for (int i = 0; i < numOctaves; i++)
             {
-                double[,] Pyramidpixels = BuildNewLevel(_pixels.GetLength(0) / (int)(Math.Pow(2, i)), (int)(_pixels.GetLength(1) / (int)(Math.Pow(2, i))), i);
+                double[,] Pyramidpixels;
+                if (i == 0) Pyramidpixels = picturePiramid[0];
+                else Pyramidpixels = BuildNewLevel(picturePiramid[i]);
 
                 double sigma = sigma0;
 
-                for (int j = 0; j < levels; j++)
+                for (int j = 0; j <= levels; j++)
                 {
-                    sigma = Math.Pow((double)Math.Pow(2d, 1d / levels), j) * sigma0; // Пересчитываем сигму
+                    sigma = Math.Pow(Math.Pow(2d, 1d / levels), j) * sigma0; // Пересчитываем сигму
 
-                    double[,] GaussMatrix = new double[(int)sigma, (int)sigma];
-                    GaussMatrix = CountGaussMatrix(GaussMatrix, sigma);
-                    Pyramidpixels = Filters.matrix_filtration(Pyramidpixels, GaussMatrix, 1);
+                    double[,] GaussMatrix;
+                    GaussMatrix = CountGaussMatrix(sigma);
+                    Pyramidpixels = ImageMethods.processNonSeparable(Pyramidpixels, GaussMatrix, 1);
+
 
                     bufImage = Transformations.FromUInt32ToBitmap(Pyramidpixels);
                     bufImage.Save("..\\..\\..\\..\\Output\\" + "Октава " + i + " Уровень " + j + " Знач.сигма " + sigma + ".png");
                     sigmas[i, j] = sigma; // Записываем значения сигм на каждом этапе преобразований
                 }
 
-                image = Transformations.FromUInt32ToBitmap(Pyramidpixels);
-                pictureBox2.Image = image;
+                picturePiramid.Add(Pyramidpixels);
             }
 
             // Задаем новые значения для элементов управления выводом изображений
@@ -110,7 +93,7 @@ namespace ImageProcessingLaba1
             comboBox4.Items.Clear();
             comboBox3.Text = Convert.ToString(0);
             comboBox4.Text = Convert.ToString(0);
-            for (int i = 0; i < numOctaves; i++) comboBox3.Items.Add(i);           
+            for (int i = 0; i < numOctaves; i++) comboBox3.Items.Add(i);
             for (int i = 0; i < levels; i++) comboBox4.Items.Add(i);
 
             // Заполняем выходные данные
@@ -128,10 +111,39 @@ namespace ImageProcessingLaba1
             showImage();
         }
 
+        double[,] CountGaussMatrix(int radius, double sigma)
+        {
+            double[,] gaussMatrix = new double[2 * radius + 1, 2 * radius + 1];
+
+            double coef = 1 / (2 * Math.PI * sigma * sigma);
+            for (int x = -radius; x <= radius; x++)
+            {
+                for (int y = -radius; y <= radius; y++)
+                {
+                    gaussMatrix[x + radius, y + radius] = coef * Math.Exp(-(x * x + y * y) / (2 * sigma * sigma));
+                }
+            }
+            return gaussMatrix;
+        }
+
+        double[,] CountGaussMatrix(double sigma)
+        {
+            return CountGaussMatrix((int)Math.Ceiling(sigma) * 3, sigma);
+        }
+
+        void DeletePictures()
+        {
+            DirectoryInfo dirInfo = new DirectoryInfo("..\\..\\..\\..\\Output\\");
+            foreach (FileInfo file in dirInfo.GetFiles())
+            {
+                file.Delete();
+            }
+        }
+
         void showImage()
         {
-            if (checkBoxRealSize.Checked == true) pictureBox3.SizeMode = PictureBoxSizeMode.Normal;
-            else pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
+            if (checkBoxRealSize.Checked == true) pictureBox2.SizeMode = PictureBoxSizeMode.Normal;
+            else pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
 
             try
             {
@@ -139,9 +151,9 @@ namespace ImageProcessingLaba1
                 int j = Convert.ToInt32(comboBox4.Text);
 
                 image = new Bitmap("..\\..\\..\\..\\Output\\" + "Октава " + (i) + " Уровень " + (j) + " Знач.сигма " + sigmas[i, j] + ".png");
-                pictureBox3.Image = image;
+                pictureBox2.Image = image;
                 lbl_SigmaValue.Text = "Значение сигмы: " + Convert.ToString(sigmas[i, j]);
-                lbl_EffectiveSigmaValue.Text = "Эффективное значение сигмы: " + sigmas[0, 0]* Math.Pow(2, i);
+                lbl_EffectiveSigmaValue.Text = "Эффективное значение сигмы: " + sigmas[0, 0] * Math.Pow(2, i);
             }
             catch
             {
@@ -150,7 +162,7 @@ namespace ImageProcessingLaba1
             }
         }
 
-        int CountOctava(double [,] _pixels)
+        int CountOctava(double[,] _pixels)
         {
             int octava = 0;
 
@@ -161,18 +173,19 @@ namespace ImageProcessingLaba1
             return octava;
         }
 
-        static double [,] BuildNewLevel( int Width, int Height, int octava)
+        static double[,] BuildNewLevel(double[,] Pyramidpixels)
         {
-            double[,] Pyramidpixels = new double[Width, Height];
+            double[,] thisLevel = new double[(int)(Pyramidpixels.GetLength(0) / 2), (int)(Pyramidpixels.GetLength(1) / 2)];
 
-            for (int y = 0; y < Pyramidpixels.GetLength(0); y++)
+            for (int y = 0; y < thisLevel.GetLength(0); y++)
             {
-                for (int x = 0; x < Pyramidpixels.GetLength(1); x++)
+                for (int x = 0; x < thisLevel.GetLength(1); x++)
                 {
-                    Pyramidpixels[y, x] = _pixels[(int)(y * (Math.Pow(2, octava) )), (int)(x * (Math.Pow(2, octava) ))];
+                    thisLevel[y, x] = Pyramidpixels[(int)(y * 2), (int)(x * 2)];
                 }
             }
-            return Pyramidpixels;
+
+            return thisLevel;
         }
 
     }
