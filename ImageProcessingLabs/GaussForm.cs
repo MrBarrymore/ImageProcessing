@@ -25,7 +25,8 @@ namespace ImageProcessingLabs
 
         static double[,] _pixels;
         double[,] sigmas;
-        int Edgemode = 0;
+     
+        BorderHandling borderHandling;
 
         public GaussForm(double[,] pixels)
         {
@@ -34,9 +35,10 @@ namespace ImageProcessingLabs
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             _pixels = pixels;
         }
-
+    
         private void button2_Click(object sender, EventArgs e)
         {
+            int Edgemode = 0;
             if (RB_Zero.Checked == true) Edgemode = 0;
             if (RB_White.Checked == true) Edgemode = 1;
             if (RB_EdgeCoppy.Checked == true) Edgemode = 2;
@@ -44,7 +46,7 @@ namespace ImageProcessingLabs
             if (RB_WrapImage.Checked == true) Edgemode = 4;
 
             int numOctaves = BuildingPyramid.CountOctava(_pixels);
-            double sigmaA = Convert.ToDouble(textBox2.Text);
+            double sigmaStart = Convert.ToDouble(textBox2.Text);
             double sigma0 = Convert.ToDouble(textBox3.Text);
             int levels = Convert.ToInt32(comboBox2.Text);
             sigmas = new double[numOctaves, levels + 1]; // Массив значений сигм на каждом этапе преобразований
@@ -55,7 +57,7 @@ namespace ImageProcessingLabs
             image.Save("..\\..\\..\\..\\Output\\" + "Исходное изображение.png");
 
 
-            buildPiramid(Convert.ToDouble(textBox2.Text), Convert.ToDouble(textBox3.Text), BuildingPyramid.CountOctava(_pixels), Convert.ToInt32(comboBox2.Text));
+            buildPiramid(Convert.ToDouble(textBox2.Text), Convert.ToDouble(textBox3.Text), BuildingPyramid.CountOctava(_pixels), Convert.ToInt32(comboBox2.Text), Edgemode);
 
             // Задаем новые значения для элементов управления выводом изображений
             comboBox3.Items.Clear();
@@ -70,34 +72,52 @@ namespace ImageProcessingLabs
             lbl_LevelsInOctava.Text = "Уровней в октаве: " + Convert.ToString(levels);
         }
 
-        public void buildPiramid( double sigmaA, double sigma0, int numOctaves, int levels)
+        public void buildPiramid( double sigmaA, double sigmaStart, int numOctaves, int levels, int Edgemode)
         {
-            double[,] GaussMatrix0 = ConvolutionMatrix.CountGaussMatrix(sigmaA);
+            double sigma0 = sigmaStart;
+            double[,] GaussMatrix0 = ConvolutionMatrix.CountGaussMatrix(Math.Sqrt(sigmaA*sigmaA + sigma0*sigma0));
             _pixels = ConvolutionMatrixFactory.processNonSeparable(_pixels, GaussMatrix0, Edgemode);
             image = Transformations.FromUInt32ToBitmap(_pixels);
             pictureBox2.Image = image;
-            picturePiramid.Add(_pixels);
+            picturePiramid.Add(_pixels); // Добавляем 0 уровень пирамиды 
 
             // Строим пирамиду изображения
             for (int i = 0; i < numOctaves; i++)
             {
                 double[,] Pyramidpixels;
                 if (i == 0) Pyramidpixels = picturePiramid[0];
-                else Pyramidpixels = BuildingPyramid.BuildNewLevel(picturePiramid[i]);
+                else
+                {
+                    Pyramidpixels = BuildingPyramid.BuildNewLevel(picturePiramid[i]);
+                    picturePiramid.Add(Pyramidpixels);
+                }
 
-                double sigma = sigma0;
                 for (int j = 0; j <= levels; j++)
                 {
-                    sigma = Math.Pow(Math.Pow(2d, 1d / levels), j) * sigma0; // Пересчитываем сигму
+                    double sigma;
+                    if (j == 0)
+                    {
+                        sigma = sigma0 = sigmaStart;
+                        bufImage = Transformations.FromUInt32ToBitmap(Pyramidpixels);
+                        bufImage.Save("..\\..\\..\\..\\Output\\" + "Октава " + i + " Уровень " + j + " Знач.сигма " + sigma0 + ".png");
+                    }
+                    else
+                    {
+                        sigmaA = sigmas[i, j - 1];
+                        sigma0 = Math.Pow(Math.Pow(2d, 1d / levels), j) * sigmaStart;
 
-                    double[,] GaussMatrix;
-                    GaussMatrix = ConvolutionMatrix.CountGaussMatrix(sigma);
-                    Pyramidpixels = ConvolutionMatrixFactory.processNonSeparable(Pyramidpixels, GaussMatrix, Edgemode);
+                        sigma = Math.Sqrt(sigmaA * sigmaA + sigma0 * sigma0);
 
-                    // Cохранение картинки
-                    bufImage = Transformations.FromUInt32ToBitmap(Pyramidpixels);
-                    bufImage.Save("..\\..\\..\\..\\Output\\" + "Октава " + i + " Уровень " + j + " Знач.сигма " + sigma + ".png");
-                    sigmas[i, j] = sigma; // Записываем значения сигм на каждом этапе преобразований
+                        double[,] GaussMatrix;
+                        GaussMatrix = ConvolutionMatrix.CountGaussMatrix(sigma);
+                        Pyramidpixels = ConvolutionMatrixFactory.processNonSeparable(Pyramidpixels, GaussMatrix, Edgemode);
+
+                        // Cохранение картинки
+                        bufImage = Transformations.FromUInt32ToBitmap(Pyramidpixels);
+                        bufImage.Save("..\\..\\..\\..\\Output\\" + "Октава " + i + " Уровень " + j + " Знач.сигма " + sigma0 + ".png");
+                        sigmas[i, j] = sigma; // Записываем значения сигм на каждом этапе преобразований
+
+                    }
                 }
                 picturePiramid.Add(Pyramidpixels);
             }

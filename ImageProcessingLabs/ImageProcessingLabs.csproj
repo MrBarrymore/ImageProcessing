@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="enums\BorderHandling.cs" />
     <Compile Include="Math\BuildingPyramid.cs" />
     <Compile Include="Math\ConvolutionMatrix.cs" />
     <Compile Include="Math\ConvolutionMatrixFactory.cs" />

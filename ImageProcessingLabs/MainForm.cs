@@ -25,8 +25,8 @@ namespace ImageProcessingLabs
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             //....... для тестов
 
-            //image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Cat1.jpg");
-            image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Lenna.png");
+            image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Cat1.jpg");
+         //   image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Lenna.png");
             _pixels = new double[image.Height, image.Width];
             for (int y = 0; y < image.Height; y++)
                 for (int x = 0; x < image.Width; x++)

@@ -8,13 +8,14 @@ using System.Threading.Tasks;
 
 namespace ImageProcessingLabs
 {
+    public enum BorderHandling { Black, White, Coppy, Wrap, Mirror };
+
+
     class ConvolutionMatrixFactory
     {
         public static double[,] _pixels;
     
         public List<double[,]> picturePiramid = new List<double[,]>();
-
-        double[,] Pyramidpixels;
 
         public ConvolutionMatrixFactory()
         {
@@ -26,7 +27,7 @@ namespace ImageProcessingLabs
 
         }
 
-        public static double[,] processNonSeparable(double[,] pixels, double[,] matryx, int Edgemode)
+        public static double[,] processNonSeparable(double[,] pixels, double[,] matryx, int borderHandling)
         {
             double[,] newpixels = new double[pixels.GetLength(0), pixels.GetLength(1)];
             _pixels = pixels;
@@ -34,14 +35,14 @@ namespace ImageProcessingLabs
             for (int y = 0; y < pixels.GetLength(0); y++)
                 for (int x = 0; x < pixels.GetLength(1); x++)
                 {
-                    newpixels[y, x] = GetNewPixel(y, x, pixels, matryx, Edgemode);
+                    newpixels[y, x] = GetNewPixel(y, x, pixels, matryx, borderHandling);
                 }
 
             return newpixels;
         }
 
 
-        public static double GetNewPixel(int cy, int cx, double[,] pixels, double[,] svMatrix, int Edgemode)
+        public static double GetNewPixel(int cy, int cx, double[,] pixels, double[,] svMatrix, int borderHandling)
         {
             double newpixel = 0;
            
@@ -57,8 +58,8 @@ namespace ImageProcessingLabs
 
                     double bufpixel = 0;
                     // Обработка краевых эффектов
-                    if (y < 0 || y >= pixels.GetLength(0)) bufpixel = getOutPixel(y, x, Edgemode);
-                    else if (x < 0 || x >= pixels.GetLength(1)) bufpixel = getOutPixel(y, x, Edgemode);
+                    if (y < 0 || y >= pixels.GetLength(0)) bufpixel = getOutPixel(y, x, borderHandling);
+                    else if (x < 0 || x >= pixels.GetLength(1)) bufpixel = getOutPixel(y, x, borderHandling);
                     else bufpixel = pixels[y1, x1];
 
                     newpixel += bufpixel * svMatrix[i1, j1];
@@ -67,16 +68,16 @@ namespace ImageProcessingLabs
             return newpixel;
         }
 
-        private static double getOutPixel(int y, int x, int Edgemode)
+        private static double getOutPixel(int y, int x, int borderHandling)
         {
-            switch (Edgemode)
+            switch (borderHandling)
             {
                 case 0:
                     if (x < 0 || x >= _pixels.GetLength(1) || y < 0 || y >= _pixels.GetLength(0))
                         return 0;
                     return _pixels[y, x];
                 case 1:
-                    if (x < 0 || x >= _pixels.GetLength(1) || y < 0 || y >= _pixels.GetLength(1)) 
+                    if (x < 0 || x >= _pixels.GetLength(1) || y < 0 || y >= _pixels.GetLength(0)) 
                         return 255;
                     return _pixels[y, x];
                 case 2:
@@ -98,12 +99,19 @@ namespace ImageProcessingLabs
             }
         }
 
-        private static int border(int y, int x, object p)
+        private static int border(int y, int x, int Length)
         {
-            if (y == 0) return 0;
+            int res = 0;
 
-            
-            return 0;
+            if (x > Length) res = Length;
+            else if (x < 0) res = 0;
+            else if (y > Length) res = Length;
+            else if (y < 0) res = 0;
+            else { 
+                if (x != 0) res = x;
+                if (y != 0) res = y;
+            }
+            return res;
         }
 
     }
