@@ -37,6 +37,7 @@
             this.операторСобеляToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.фильтрГауссаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.интересныеТочкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
@@ -89,7 +90,8 @@
             // 
             this.toolStripMenuItem2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.операторСобеляToolStripMenuItem,
-            this.фильтрГауссаToolStripMenuItem});
+            this.фильтрГауссаToolStripMenuItem,
+            this.интересныеТочкиToolStripMenuItem});
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
             this.toolStripMenuItem2.Size = new System.Drawing.Size(69, 20);
             this.toolStripMenuItem2.Text = "Фильтры";
@@ -116,6 +118,13 @@
             this.pictureBox2.Size = new System.Drawing.Size(515, 368);
             this.pictureBox2.TabIndex = 2;
             this.pictureBox2.TabStop = false;
+            // 
+            // интересныеТочкиToolStripMenuItem
+            // 
+            this.интересныеТочкиToolStripMenuItem.Name = "интересныеТочкиToolStripMenuItem";
+            this.интересныеТочкиToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.интересныеТочкиToolStripMenuItem.Text = "Интересные точки";
+            this.интересныеТочкиToolStripMenuItem.Click += new System.EventHandler(this.интересныеТочкиToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -147,6 +156,7 @@
         private System.Windows.Forms.ToolStripMenuItem операторСобеляToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem фильтрГауссаToolStripMenuItem;
         public System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.ToolStripMenuItem интересныеТочкиToolStripMenuItem;
     }
 }
 

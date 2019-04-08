@@ -37,9 +37,11 @@ namespace ImageProcessingLabs
 
             pictureBox1.Image = image;
             //////////////////////
-            GaussForm _gaussForm = new GaussForm(_pixels);
-            _gaussForm.ShowDialog();
-       
+            //GaussForm _gaussForm = new GaussForm(_pixels);
+            //_gaussForm.ShowDialog();
+            InterestingPointForm _interestingPointForm = new InterestingPointForm(_pixels);
+            _interestingPointForm.ShowDialog();
+
         }
 
         private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
@@ -113,6 +115,12 @@ namespace ImageProcessingLabs
         {
             GaussForm _gaussForm = new GaussForm(_pixels);
             _gaussForm.ShowDialog();
+        }
+
+        private void интересныеТочкиToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InterestingPointForm _interestingPointForm = new InterestingPointForm(_pixels);
+            _interestingPointForm.ShowDialog();
         }
     }
 }

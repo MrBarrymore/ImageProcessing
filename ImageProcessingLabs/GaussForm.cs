@@ -54,7 +54,7 @@ namespace ImageProcessingLabs
             image = Transformations.FromUInt32ToBitmap(_pixels);
             pictureBox1.Image = image;
             DeletePictures();
-            image.Save("..\\..\\..\\..\\Output\\" + "Исходное изображение.png");
+            image.Save("..\\..\\..\\Output\\" + "Исходное изображение.png");
 
 
             buildPiramid(Convert.ToDouble(textBox2.Text), Convert.ToDouble(textBox3.Text), BuildingPyramid.CountOctava(_pixels), Convert.ToInt32(comboBox2.Text), Edgemode);
@@ -97,9 +97,10 @@ namespace ImageProcessingLabs
                     double sigma;
                     if (j == 0)
                     {
-                        sigma = sigma0 = sigmaStart;
+                        sigma0 = sigmaStart;
                         bufImage = Transformations.FromUInt32ToBitmap(Pyramidpixels);
-                        bufImage.Save("..\\..\\..\\..\\Output\\" + "Октава " + i + " Уровень " + j + " Знач.сигма " + sigma0 + ".png");
+                        bufImage.Save("..\\..\\..\\Output\\" + "Октава " + i + " Уровень " + j + " Знач.сигма " + sigma0 + ".png");
+                        sigmas[i, j] = sigma0;
                     }
                     else
                     {
@@ -114,8 +115,8 @@ namespace ImageProcessingLabs
 
                         // Cохранение картинки
                         bufImage = Transformations.FromUInt32ToBitmap(Pyramidpixels);
-                        bufImage.Save("..\\..\\..\\..\\Output\\" + "Октава " + i + " Уровень " + j + " Знач.сигма " + sigma0 + ".png");
-                        sigmas[i, j] = sigma; // Записываем значения сигм на каждом этапе преобразований
+                        bufImage.Save("..\\..\\..\\Output\\" + "Октава " + i + " Уровень " + j + " Знач.сигма " + sigma0 + ".png");
+                        sigmas[i, j] = sigma0; // Записываем значения сигм на каждом этапе преобразований
 
                     }
                 }
@@ -137,7 +138,7 @@ namespace ImageProcessingLabs
 
         void DeletePictures()
         {
-            DirectoryInfo dirInfo = new DirectoryInfo("..\\..\\..\\..\\Output\\");
+            DirectoryInfo dirInfo = new DirectoryInfo("..\\..\\..\\Output\\");
             foreach (FileInfo file in dirInfo.GetFiles())
             {
                 file.Delete();
@@ -154,10 +155,10 @@ namespace ImageProcessingLabs
                 int i = Convert.ToInt32(comboBox3.Text);
                 int j = Convert.ToInt32(comboBox4.Text);
 
-                image = new Bitmap("..\\..\\..\\..\\Output\\" + "Октава " + (i) + " Уровень " + (j) + " Знач.сигма " + sigmas[i, j] + ".png");
+                image = new Bitmap("..\\..\\..\\Output\\" + "Октава " + (i) + " Уровень " + (j) + " Знач.сигма " + sigmas[i, j] + ".png");
                 pictureBox2.Image = image;
                 lbl_SigmaValue.Text = "Значение сигмы: " + Convert.ToString(sigmas[i, j]);
-                lbl_EffectiveSigmaValue.Text = "Эффективное значение сигмы: " + sigmas[0, 0] * Math.Pow(2, i);
+                lbl_EffectiveSigmaValue.Text = "Эффективное значение сигмы: " + sigmas[i, j] * Math.Pow(2, i);
             }
             catch
             {
