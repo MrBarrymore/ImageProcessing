@@ -74,7 +74,6 @@ namespace ImageProcessingLabs
             if (RB_Pruitt.Checked == true) СountGradient(PruittSepX1, PruittSepX2, PruittSepY1, PruittSepY2);
             if (RB_Shchar.Checked == true) СountGradient(ShcharSepX1, ShcharSepX2, ShcharSepY1, ShcharSepY2);
             MainForm.image = this.image;
-            _mainForm.pictureBox2.Image = image;
         }
 
         //Оператор собеля
