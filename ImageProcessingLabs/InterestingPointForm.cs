@@ -8,20 +8,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using ImageProcessingLabs.Points;
 
 namespace ImageProcessingLabs
 {
     public partial class InterestingPointForm : Form
     {
         private static double[,] _pixels, outputPixel;
+        private static double[,] MoravecMatrix;
         private Bitmap image;
-
-        // Задание Оператора Собеля для сепорабельных вычислений
-        public static double[,] SubelSepX1 = new double[1, 3] { { 1, 2, 1 } };
-        public static double[,] SubelSepX2 = new double[3, 1] { { 1 }, { 0 }, { -1 } };
-        public static double[,] SubelSepY1 = new double[1, 3] { { 1, 0, -1 } };
-        public static double[,] SubelSepY2 = new double[3, 1] { { 1 }, { 2 }, { 1 } };
-
 
         public InterestingPointForm()
         {
@@ -43,255 +38,163 @@ namespace ImageProcessingLabs
 
         private void FindPointButton_Click(object sender, EventArgs e)
         {
-            if (RB_DoMoravec.Checked == true) DoMoravec();
+            if (RB_DoMoravec.Checked == true)
+            {
+                int minValue = Convert.ToInt32(textBox1.Text);
+                int windowSize = Convert.ToInt32(textBox2.Text);
+                int shiftSize = Convert.ToInt32(textBox3.Text);
+                int locMaxRadius = 5;
+
+                MoravecMatrix = null;
+                MoravecMatrix = Moravec.DoMoravec(windowSize, shiftSize, locMaxRadius, _pixels);
+                DrawPoints(MoravecMatrix, minValue);
+            }
+
             if (RB_DoHarris.Checked == true) DoHarris();
         }
 
-
-        public void DoMoravec()
-        {
-            _pixels = (double[,])outputPixel.Clone();
-
-            int minValue = Convert.ToInt32(textBox1.Text);
-            int windowSize = Convert.ToInt32(textBox2.Text);
-            int shiftSize = Convert.ToInt32(textBox3.Text);
-            int locMaxRadius = 5;
-
-            double[,] mistakeMatrix = new double[(int)_pixels.GetLength(0), (int)_pixels.GetLength(1)];
-        //    double[,] newPixels = new double[(int)_pixels.GetLength(0), (int)_pixels.GetLength(1)];
-
-            _pixels = DoSobelSeparable(_pixels);
-
-            for (int y = 0; y < _pixels.GetLength(0); y++)
-            {
-                for (int x = 0; x < _pixels.GetLength(1); x++)
-                {
-                    double[] mistake = new double[8];
-                    double[,] mainWindow = GetMainWindow(windowSize, y, x); // Формируем исходное окно
-
-                    for (int shiftMode = 0; shiftMode < 8; shiftMode++) // Формируем сдвинутое окно
-                    {
-                        double[,] shiftWindow = GetShiftWindow(windowSize, y, x, shiftSize, shiftMode);
-                        mistake[shiftMode] = GetMistake(mainWindow, shiftWindow);
-                    }
-
-                    mistakeMatrix[y, x] = mistake.Min(); // Получаем значение оператора Моравика в каждой точке изображения  
-                }
-            }
-
-            mistakeMatrix = GetLocalMax(mistakeMatrix, locMaxRadius); // Поиск локальных максимумов 
-
-            DrawPoints(mistakeMatrix, minValue);
-
-        }
+        private static double MIN_PROBABILITY = 0.01;
 
         public void DoHarris()
         {
             _pixels = (double[,])outputPixel.Clone();
 
-            int minValue = Convert.ToInt32(textBox1.Text);
+           // int minValue = Convert.ToInt32(textBox1.Text);
             int windowSize = Convert.ToInt32(textBox2.Text);
             int shiftSize = Convert.ToInt32(textBox3.Text);
-            int locMaxRadius = 5;
 
-            double[,] mistakeMatrix = new double[(int)_pixels.GetLength(0), (int)_pixels.GetLength(1)];
+            double[,] harrisMat = new double[(int)_pixels.GetLength(0), (int)_pixels.GetLength(1)];
+            _pixels = CommonMath.DoSobelSeparable(_pixels); // Считаем градиент в каждой точке 
 
-            _pixels = DoSobelSeparable(_pixels);
+
+            harrisMat = GetHarrisMatrix(windowSize, (int)_pixels.GetLength(0), (int)_pixels.GetLength(1));
+
+
+            List<InterestingPoint> candidates =
+                getCandidates(harrisMat, harrisMat.GetLength(0), harrisMat.GetLength(1));
+
+            candidates = candidates.Where(x => x.probability > 0.01).ToList();
+
+            DrawPoints(candidates);
+
+        }
+
+
+        double [,] GetHarrisMatrix(int windowSize, int width, int height)
+        {
+            double[,] harrisMat = new double[width, height];
+
+            double[,] SobelX = CommonMath.GetSobelX(_pixels);
+            double[,] SobelY = CommonMath.GetSobelY(_pixels);
 
             for (int y = 0; y < _pixels.GetLength(0); y++)
             {
                 for (int x = 0; x < _pixels.GetLength(1); x++)
                 {
-                    double[] mistake = new double[8];
-                    double[,] mainWindow = GetMainWindow(windowSize, y, x); // Формируем исходное окно
-
-                    for (int shiftMode = 0; shiftMode < 8; shiftMode++) // Формируем сдвинутое окно
+                    double[,] mainWindow = GetMainWindow(windowSize, y, x); // Формируем исходное окно                  
+                    double[,] gauss = ConvolutionMatrix.CountGaussMatrix(2);
+                    
+                    // Считаем матрицу H
+                    double[,] currentMatrix = new double[2, 2];
+                    for (int u = -(windowSize - 1); u <= (windowSize - 1); u++)
                     {
-                        double[,] shiftWindow = GetShiftWindow(windowSize, y, x, shiftSize, shiftMode);
-                        mistake[shiftMode] = GetMistake(mainWindow, shiftWindow);
+                        for (int v = -(windowSize - 1); v <= (windowSize - 1); v++)
+                        {
+                            double Ix = CommonMath.getPixel(SobelX, x + u, y + v, 3);
+                            double Iy = CommonMath.getPixel(SobelY, x + u, y + v, 3);
+
+                            double gaussPoint = CommonMath.getPixel(gauss, u + (windowSize - 1), 0 , 3) * CommonMath.getPixel(gauss, u + (windowSize - 1), v + (windowSize - 1), 3); 
+
+                            currentMatrix[0, 0] += Math.Pow(Ix, 2) * gaussPoint;
+                            currentMatrix[0, 1] += Ix * Iy * gaussPoint;
+                            currentMatrix[1, 0] += Ix * Iy * gaussPoint;
+                            currentMatrix[1, 1] += Math.Pow(Iy, 2) * gaussPoint;
+                        }
                     }
 
-                    mistakeMatrix[y, x] = mistake.Min(); // Получаем значение оператора Моравика в каждой точке изображения  
+                    double[] eigenvalues = getEigenvalues(currentMatrix);
+                    harrisMat[y, x] = Math.Min(eigenvalues[0], eigenvalues[1]);
+
                 }
             }
 
-            mistakeMatrix = GetLocalMax(mistakeMatrix, locMaxRadius); // Поиск локальных максимумов 
-
-            DrawPoints(mistakeMatrix, minValue);
-
+            return harrisMat;
         }
-
-
-
-        public double [,] DoSobelSeparable(double[,] pixel)
+   
+        static public double[] getEigenvalues(double[,] matrix) // Считаем собственные числа 
         {
-            // Считаем частную производную по X (сепарабельно)
-            double[,] pixelX = ConvolutionMatrixFactory.processNonSeparable(_pixels, SubelSepX1, 3);
-            pixelX = ConvolutionMatrixFactory.processNonSeparable(pixelX, SubelSepX2, 3);
-            // Считаем частную производную по Y (сепарабельно)
-            double[,] pixelY = ConvolutionMatrixFactory.processNonSeparable(_pixels, SubelSepY1, 3);
-            pixelY = ConvolutionMatrixFactory.processNonSeparable(pixelY, SubelSepY2, 3);
+            double[] eigenvalues = new double[2];
 
-            // Вычисляем величину градиента
-            for (int y = 0; y < _pixels.GetLength(0); y++)
+            double a = 1;
+            double b = -matrix[0,0] - matrix[1,1];
+            double c = matrix[0,0] * matrix[1,1] - matrix[0,1] * matrix[1,0];
+            double d = Math.Pow(b,2) - 4 * a * c;
+            if (Math.Abs(d) < 1e-4)
+                d = 0;
+            if (d < 0)
             {
-                for (int x = 0; x < _pixels.GetLength(1); x++)
+                return eigenvalues;
+            }
+
+            eigenvalues[0] = (-b + Math.Sqrt(d)) / (2 * a);
+            eigenvalues[1] = (-b - Math.Sqrt(d)) / (2 * a);
+
+            return eigenvalues;
+        }
+
+        private static int[] dx = { -1, 0, 1, -1, 1, -1, 0, -1 };
+        private static int[] dy = { -1, -1, -1, 0, 0, 1, 1, 1 };
+
+        public static List<InterestingPoint> getCandidates(double[,] harrisMatrix, int width, int height)
+        {
+            List<InterestingPoint> candidates = new List<InterestingPoint>();
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
                 {
-                    pixel[y, x] = Math.Sqrt(Math.Pow(pixelX[y, x], 2) + Math.Pow(pixelY[y, x], 2));
+                    bool ok = true;
+                    double currentValue = harrisMatrix[i, j];
+                    for (int k = 0; k < dx.GetLength(0) && ok; k++)
+                    {
+                        if (i + dx[k] < 0 ||
+                            i + dx[k] >= width ||
+                            j + dy[k] < 0 ||
+                            j + dy[k] >= height) continue;
+                        if (currentValue < CommonMath.getPixel(harrisMatrix, i + dx[k], j + dy[k],3))
+                            ok = false;
+                    }
+                    if (ok)
+                    {
+                        candidates.Add(new InterestingPoint(i,j, currentValue));
+                    }
                 }
             }
-            return pixel;
+            return candidates;
         }
+
 
         public double [,] GetMainWindow(int windowSize, int y, int x)
         {
             double[,] mainWindow = new double[windowSize, windowSize];
             for (int wy = 0; wy < windowSize; wy++)
                 for (int wx = 0; wx < windowSize; wx++)
-                    mainWindow[wy, wx] = getPixel(y + wy, x + wx, 3);
+                    mainWindow[wy, wx] = CommonMath.getPixel(_pixels, y + wy, x + wx, 3);
 
             return mainWindow;
         }
 
-        public double [,] GetShiftWindow(int windowSize, int y, int x, int shiftSize, int shiftMode)
-        {
-
-            double[,] shiftWindow = new double[windowSize, windowSize];
-            for (int wy = 0; wy < windowSize; wy++)
-                for (int wx = 0; wx < windowSize; wx++)
-                {
-                    switch (shiftMode)
-                    {
-                        case 0: // Сдвиг Вверх
-                            shiftWindow[wy, wx] = getPixel(y + wy - shiftSize, x + wx, 3);
-                            continue;
-                        case 1: // Сдвиг Вправо-Вверх
-                            shiftWindow[wy, wx] = getPixel(y + wy - shiftSize, x + wx + shiftSize, 3);
-                            continue;
-                        case 2: // Сдвиг Вправо
-                            shiftWindow[wy, wx] = getPixel(y + wy, x + wx + shiftSize, 3);
-                            continue;
-                        case 3: // Сдвиг Вправо-Вниз
-                            shiftWindow[wy, wx] = getPixel(y + wy + shiftSize, x + wx + shiftSize, 3);
-                            continue;
-                        case 4: // Сдвиг Вниз
-                            shiftWindow[wy, wx] = getPixel(y + wy + shiftSize, x + wx, 3);
-                            continue;
-                        case 5: // Сдвиг Влево-Вниз
-                            shiftWindow[wy, wx] = getPixel(y + wy + shiftSize, x + wx - shiftSize, 3);
-                            continue;
-                        case 6: // Сдвиг Влево
-                            shiftWindow[wy, wx] = getPixel(y + wy, x + wy - shiftSize, 3);
-                            continue;
-                        case 7: // Сдвиг Влево-Вверх
-                            shiftWindow[wy, wx] = getPixel(y + wy - shiftSize, x + wy - shiftSize, 3);
-                            continue;
-                    }
-                }
-
-            return shiftWindow;
-        }
-
-        public double GetMistake(double[,] mainWindow, double [,] shiftWindow)
-        {
-            double mistake = 0;
-
-            for (int y = 0; y < mainWindow.GetLength(0); y++)           
-                for (int x = 0; x < mainWindow.GetLength(0); x++)
-                {
-                    mistake += Math.Pow(mainWindow[y, x] - shiftWindow[y, x], 2);
-                }
-            return mistake;
-        }
-
-        private static double getPixel(int y, int x, int borderHandling)
-        {
-            switch (borderHandling)
-            {
-                case 0:
-                    if (x < 0 || x >= _pixels.GetLength(1) || y < 0 || y >= _pixels.GetLength(0))
-                        return 0;
-                    return _pixels[y, x];
-                case 1:
-                    if (x < 0 || x >= _pixels.GetLength(1) || y < 0 || y >= _pixels.GetLength(0))
-                        return 255;
-                    return _pixels[y, x];
-                case 2:
-                    x = border(0, x, _pixels.GetLength(1) - 1);
-                    y = border(y, 0, _pixels.GetLength(0) - 1);
-                    return _pixels[y, x];
-                case 3:
-                    x = (x + _pixels.GetLength(1)) % _pixels.GetLength(1);
-                    y = (y + _pixels.GetLength(0)) % _pixels.GetLength(0);
-                    return _pixels[y, x];
-                case 4:
-                    x = Math.Abs(x);
-                    y = Math.Abs(y);
-                    if (x >= _pixels.GetLength(1)) x = _pixels.GetLength(1) - (x - _pixels.GetLength(1) + 1);
-                    if (y >= _pixels.GetLength(0)) y = _pixels.GetLength(0) - (y - _pixels.GetLength(0) + 1);
-                    return _pixels[y, x];
-                default:
-                    return 255;
-            }
-        }
-
-        private static int border(int y, int x, int Length)
-        {
-            int res = 0;
-
-            if (x > Length) res = Length;
-            else if (x < 0) res = 0;
-            else if (y > Length) res = Length;
-            else if (y < 0) res = 0;
-            else
-            {
-                if (x != 0) res = x;
-                if (y != 0) res = y;
-            }
-            return res;
-        }
-
-
-        public double[,] GetLocalMax(double[,] pixel, int locMaxRadius) // Написать метод вычисления локальных максимумов 
-        {
-            double [,] localMaxPixel = new double[pixel.GetLength(0), pixel.GetLength(1)];
-
-            for (int y = locMaxRadius; y < pixel.GetLength(0) - locMaxRadius; y = y + locMaxRadius)
-            {
-                
-                for (int x = locMaxRadius; x < pixel.GetLength(1) - locMaxRadius; x = x + locMaxRadius)
-                {
-                    int ymax = 0, xmax = 0, buf = 0;
-
-                    for (int ly = y; ly < y + locMaxRadius; ly++)                  
-                        for (int lx = x; lx < x + locMaxRadius; lx++)
-                        {
-                            if (_pixels[ly, lx] > buf)
-                            {
-                                ymax = ly;
-                                xmax = lx;                             
-                            }
-                        }
-                    localMaxPixel[ymax, xmax] = _pixels[ymax, xmax];
-                }
-            }
-
-            return localMaxPixel;
-        }
-
-
-        public void DrawPoints(double[,] mistakeMatrix, int minValue)
+        public void DrawPoints(double[,] DrawMatrix, int minValue)
         {
             image = Transformations.FromUInt32ToBitmap(outputPixel);
             Graphics graph = Graphics.FromImage(image);
             Pen pen = new Pen(Color.Blue);
 
-            ByteWriteFile(mistakeMatrix);
+            ByteWriteFile(DrawMatrix);
 
-            for (int y = 0; y < mistakeMatrix.GetLength(0); y++)
-                for (int x = 0; x < mistakeMatrix.GetLength(1); x++)
+            for (int y = 0; y < DrawMatrix.GetLength(0); y++)
+                for (int x = 0; x < DrawMatrix.GetLength(1); x++)
                 {
-                    if (mistakeMatrix[y, x] > minValue)
+                    if (DrawMatrix[y, x] > minValue)
                     {
                         graph.DrawEllipse(pen, x, y, 2, 2);
                     }
@@ -299,6 +202,23 @@ namespace ImageProcessingLabs
 
             pictureBox2.Image = image;
         }
+
+        public void DrawPoints(List<InterestingPoint> point)
+        {
+            image = Transformations.FromUInt32ToBitmap(outputPixel);
+            Graphics graph = Graphics.FromImage(image);
+            Pen pen = new Pen(Color.Blue);
+
+           // ByteWriteFile(DrawMatrix);
+           foreach (var interestingPoint in point)
+           {
+               graph.DrawEllipse(pen, interestingPoint.x - 1, interestingPoint.y - 1, 2, 2);
+           }
+
+
+            pictureBox2.Image = image;
+        }
+
 
         // Вспомагательные методы 
 
