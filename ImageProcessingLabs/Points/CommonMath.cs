@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace ImageProcessingLabs.Points
 {
@@ -13,6 +14,10 @@ namespace ImageProcessingLabs.Points
         public static double[,] SubelSepX2 = new double[3, 1] { { 1 }, { 0 }, { -1 } };
         public static double[,] SubelSepY1 = new double[1, 3] { { 1, 0, -1 } };
         public static double[,] SubelSepY2 = new double[3, 1] { { 1 }, { 2 }, { 1 } };
+
+
+        private static int[] dx = { -1, 0, 1, -1, 1, -1, 0, -1 };
+        private static int[] dy = { -1, -1, -1, 0, 0, 1, 1, 1 };
 
         public static double[,] DoSobelSeparable(double[,] pixels)
         {
@@ -34,7 +39,6 @@ namespace ImageProcessingLabs.Points
             return pixels;
         }
 
-
         public static double[,] GetSobelX(double[,] pixels)
         {
             // Считаем частную производную по X (сепарабельно)
@@ -50,8 +54,6 @@ namespace ImageProcessingLabs.Points
             pixelY = ConvolutionMatrixFactory.processNonSeparable(pixelY, SubelSepY2, 3);
             return pixelY;
         }
-
-
 
         public static double getPixel(double [,] _pixels, int y, int x, int borderHandling)
         {
@@ -101,6 +103,32 @@ namespace ImageProcessingLabs.Points
             return res;
         }
 
+        public static List<InterestingPoint> getCandidates(double[,] harrisMatrix, int width, int height)
+        {
+            List<InterestingPoint> candidates = new List<InterestingPoint>();
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    bool ok = true;
+                    double currentValue = harrisMatrix[i, j];
+                    for (int k = 0; k < dx.GetLength(0) && ok; k++)
+                    {
+                        if (i + dx[k] < 0 ||
+                            i + dx[k] >= width ||
+                            j + dy[k] < 0 ||
+                            j + dy[k] >= height) continue;
+                        if (currentValue < CommonMath.getPixel(harrisMatrix, i + dx[k], j + dy[k], 3))
+                            ok = false;
+                    }
+                    if (ok)
+                    {
+                        candidates.Add(new InterestingPoint(i, j, currentValue));
+                    }
+                }
+            }
+            return candidates;
+        }
 
     }
 }

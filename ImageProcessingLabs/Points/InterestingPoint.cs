@@ -22,5 +22,10 @@ namespace ImageProcessingLabs
             this.probability = probability;
         }
 
+        public static double Distance(InterestingPoint a, InterestingPoint b)
+        {
+            return Math.Sqrt(Math.Pow(a.x - b.y, 2) + Math.Pow(a.x - b.y, 2));
+        }
+
     }
 }
