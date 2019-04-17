@@ -34,12 +34,10 @@
             this.RB_DoMoravec = new System.Windows.Forms.RadioButton();
             this.FindPointButton = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label4 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
-            this.textBox7 = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -49,6 +47,8 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.textBox7 = new System.Windows.Forms.TextBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
@@ -56,6 +56,8 @@
             this.label9 = new System.Windows.Forms.Label();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.label10 = new System.Windows.Forms.Label();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -81,11 +83,13 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.checkBox2);
+            this.groupBox1.Controls.Add(this.checkBox1);
             this.groupBox1.Controls.Add(this.RB_DoHarris);
             this.groupBox1.Controls.Add(this.RB_DoMoravec);
             this.groupBox1.Location = new System.Drawing.Point(366, 92);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(345, 62);
+            this.groupBox1.Size = new System.Drawing.Size(345, 124);
             this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Выбор метода поиска точек:";
@@ -135,15 +139,6 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Входные данные (Харрис)";
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(8, 24);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(217, 13);
-            this.label4.TabIndex = 14;
-            this.label4.Text = "Максимальное кол-во интересных точек:";
-            // 
             // label6
             // 
             this.label6.AutoSize = true;
@@ -177,14 +172,6 @@
             this.label8.Size = new System.Drawing.Size(115, 13);
             this.label8.TabIndex = 14;
             this.label8.Text = "Пороговое значение:";
-            // 
-            // textBox7
-            // 
-            this.textBox7.Location = new System.Drawing.Point(227, 19);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(100, 20);
-            this.textBox7.TabIndex = 13;
-            this.textBox7.Text = "250";
             // 
             // groupBox4
             // 
@@ -271,6 +258,23 @@
             this.textBox2.TabIndex = 13;
             this.textBox2.Text = "3";
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(8, 24);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(217, 13);
+            this.label4.TabIndex = 14;
+            this.label4.Text = "Максимальное кол-во интересных точек:";
+            // 
+            // textBox7
+            // 
+            this.textBox7.Location = new System.Drawing.Point(227, 19);
+            this.textBox7.Name = "textBox7";
+            this.textBox7.Size = new System.Drawing.Size(100, 20);
+            this.textBox7.TabIndex = 13;
+            this.textBox7.Text = "250";
+            // 
             // pictureBox2
             // 
             this.pictureBox2.BackColor = System.Drawing.SystemColors.ButtonHighlight;
@@ -283,7 +287,7 @@
             // pictureBox1
             // 
             this.pictureBox1.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.pictureBox1.Location = new System.Drawing.Point(12, 12);
+            this.pictureBox1.Location = new System.Drawing.Point(18, 12);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(562, 385);
             this.pictureBox1.TabIndex = 13;
@@ -339,6 +343,26 @@
             this.label10.Size = new System.Drawing.Size(176, 13);
             this.label10.TabIndex = 18;
             this.label10.Text = "Отображенно интересных точек: ";
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(15, 101);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(284, 17);
+            this.checkBox1.TabIndex = 6;
+            this.checkBox1.Text = "Карта локальных максимумов оператора Харриса";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
+            // checkBox2
+            // 
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Location = new System.Drawing.Point(15, 78);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(208, 17);
+            this.checkBox2.TabIndex = 6;
+            this.checkBox2.Text = "Карта откликов оператора Харриса";
+            this.checkBox2.UseVisualStyleBackColor = true;
             // 
             // InterestingPointForm
             // 
@@ -398,5 +422,7 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox checkBox2;
     }
 }

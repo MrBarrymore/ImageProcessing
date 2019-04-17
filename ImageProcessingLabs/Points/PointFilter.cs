@@ -30,6 +30,7 @@ namespace ImageProcessingLabs.Points
                     r = middle;
                 }
             }
+
             List<InterestingPoint> Filter = filter(interestingPoints, l);
             return Filter.GetRange(0, Math.Min(Filter.Count, maxSize));
         }

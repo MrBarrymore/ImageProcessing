@@ -24,10 +24,11 @@ namespace ImageProcessingLabs
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             //....... для тестов
 
-          //  image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Cat1.jpg");
-            image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Lenna.png");
-           // image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\3d.png");
-          //  image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Star.jpg");
+            //  image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Cat1.jpg");
+             image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Lenna.png");
+            //image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\111.png");
+            // image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\3d.png");
+            //  image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Star.jpg");
             //  image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Figures.jpg");
 
             _pixels = new double[image.Height, image.Width];

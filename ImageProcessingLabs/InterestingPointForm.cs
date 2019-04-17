@@ -49,6 +49,7 @@ namespace ImageProcessingLabs
                 if (filter_checkBox.Checked == true) { 
                 int maxCountPoints = Convert.ToInt32(textBox7.Text);
                 List<InterestingPoint> subList = PointFilter.filterPoints(MoravecMatrix, maxCountPoints); // Фильтр точек
+                    label9.Text = "Найдено интересных точек: " + MoravecMatrix.Count;
                     label10.Text = "Отображенно интересных точек: " + subList.Count;
                     DrawPoints(subList);
                 }
@@ -60,47 +61,46 @@ namespace ImageProcessingLabs
                 }
 
             }
+
             if (RB_DoHarris.Checked == true)
             {
                 double minValue = Convert.ToDouble(textBox5.Text);
                 int windowSize = Convert.ToInt32(textBox6.Text);
                 List<InterestingPoint> HarrisMatrix = Harris.DoHarris(minValue, windowSize,_pixels);
-
-                if (filter_checkBox.Checked == true)
+                
+                ///////////
+                if (checkBox2.Checked == true)
                 {
-                    int maxCountPoints = Convert.ToInt32(textBox7.Text);
-                    List<InterestingPoint> subList = PointFilter.filterPoints(HarrisMatrix, maxCountPoints); // Фильтр точек
-                    DrawPoints(subList);
-                    label10.Text = "Отображенно интересных точек: " + subList.Count;
+                    List<InterestingPoint> SubHarrisMatrix = Harris.DoHarris(windowSize, _pixels, 2);
+                    label9.Text = "Найдено откликов: " + SubHarrisMatrix.Count;
+                    DrawMap(SubHarrisMatrix);
                 }
                 else
-                { 
-                    label10.Text = "Отображенно интересных точек: " + HarrisMatrix.Count;
-                    label9.Text = "Найдено интересных точек: " + HarrisMatrix.Count;
-                    DrawPoints(HarrisMatrix);
-                }
-            }
-        }
-
-        public void DrawPoints(double[,] DrawMatrix, int minValue)
-        {
-            image = Transformations.FromUInt32ToBitmap(outputPixel);
-            Graphics graph = Graphics.FromImage(image);
-            Color pen = Color.Blue;
-
-           // ByteWriteFile(DrawMatrix);
-
-            for (int y = 0; y < DrawMatrix.GetLength(0); y++)
-                for (int x = 0; x < DrawMatrix.GetLength(1); x++)
+                if (checkBox1.Checked == true)
                 {
-                    if (DrawMatrix[y, x] > minValue)
-                    {
-                        graph.FillEllipse(new SolidBrush(pen), x - 1, y - 1, 3, 3);
-                    }
-                }
+                    List<InterestingPoint> SubHarrisMatrix = Harris.DoHarris(windowSize, _pixels, 1);
+                    DrawMap(SubHarrisMatrix);
+                    label9.Text = "Найдено локальных максимумов: " + SubHarrisMatrix.Count;
+                }              
 
-            pictureBox2.Image = image;
-            image.Save("..\\..\\..\\..\\Output\\OutputPicture.png");
+                else if (filter_checkBox.Checked == true)
+                    {
+                        int maxCountPoints = Convert.ToInt32(textBox7.Text);
+                        List<InterestingPoint> subList = PointFilter.filterPoints(HarrisMatrix, maxCountPoints); // Фильтр точек
+                        DrawPoints(subList);
+                        label9.Text = "Найдено интересных точек: " + HarrisMatrix.Count;
+                        label10.Text = "Отображенно интересных точек: " + subList.Count;
+                    }
+                    else
+                    { 
+                        label10.Text = "Отображенно интересных точек: " + HarrisMatrix.Count;
+                        label9.Text = "Найдено интересных точек: " + HarrisMatrix.Count;
+                        DrawPoints(HarrisMatrix);
+                    }
+                    
+            }
+
+
         }
 
         public void DrawPoints(List<InterestingPoint> point)
@@ -110,9 +110,9 @@ namespace ImageProcessingLabs
             Color pen = Color.Blue;
             // ByteWriteFile(DrawMatrix);
             foreach (var interestingPoint in point)
-           {
-               graph.FillEllipse(new SolidBrush(pen), interestingPoint.y - 1, interestingPoint.x - 1, 3, 3);
-           }
+            {
+                graph.FillEllipse(new SolidBrush(pen), interestingPoint.y - 1, interestingPoint.x - 1, 3, 3);
+            }
 
             pictureBox2.Image = image;
 
@@ -121,6 +121,31 @@ namespace ImageProcessingLabs
 
 
         // Вспомагательные методы 
+
+        public void DrawMap(List<InterestingPoint> point)
+        {
+
+            Graphics graph = Graphics.FromImage(image);
+            Color pen = Color.White;
+
+            double[,] blackMatrix = new double[_pixels.GetLength(0), _pixels.GetLength(1)];
+
+            for (int y = 0; y < _pixels.GetLength(0); y++)
+            for (int x = 0; x < _pixels.GetLength(1); x++)
+            {
+                blackMatrix[y, x] = 0;
+            }
+
+            foreach (var interestingPoint in point)
+            {
+                blackMatrix[interestingPoint.x, interestingPoint.y] = interestingPoint.probability * 255;
+            }
+
+            image = Transformations.FromUInt32ToBitmap(blackMatrix);
+            pictureBox2.Image = image;
+            image.Save("..\\..\\..\\..\\Output\\OutputPicture.png");
+        }
+
 
         public static void ByteWriteFile(double [,] pixel)
         {

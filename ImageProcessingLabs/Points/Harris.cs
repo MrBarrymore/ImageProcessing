@@ -10,9 +10,6 @@ namespace ImageProcessingLabs.Points
     {
         private static double[,] _pixels;
 
-        private static int[] dx = { -1, 0, 1, -1, 1, -1, 0, -1 };
-        private static int[] dy = { -1, -1, -1, 0, 0, 1, 1, 1 };
-
         public static List <InterestingPoint> DoHarris(double minValue, int windowSize, double[,] pixels)
         {
             _pixels = (double[,])pixels.Clone();
@@ -28,6 +25,30 @@ namespace ImageProcessingLabs.Points
             return candidates;
         }
 
+
+        public static List<InterestingPoint> DoHarris(int windowSize, double[,] pixels, int test)
+        {
+            _pixels = (double[,])pixels.Clone();
+            _pixels = CommonMath.DoSobelSeparable(_pixels); // Считаем градиент в каждой точке 
+
+            double[,] harrisMat = GetHarrisMatrix(windowSize, (int)_pixels.GetLength(0), (int)_pixels.GetLength(1)); // Полчаем матрицу откликов оператоа Харриса
+  
+            List<InterestingPoint> candidates = new List<InterestingPoint>();
+
+            for (int y = 0; y < harrisMat.GetLength(0); y++)
+                for (int x = 0; x < harrisMat.GetLength(1); x++)
+                {
+                    double currentValue = harrisMat[y, x];
+                    candidates.Add(new InterestingPoint(y, x, currentValue));
+                }
+
+            if (test == 1)
+                candidates =  CommonMath.getCandidates(harrisMat, harrisMat.GetLength(0), harrisMat.GetLength(1));
+
+            return candidates;
+        }
+
+
         public static double[,] GetHarrisMatrix(int windowSize, int width, int height)
         {
             double[,] harrisMat = new double[width, height];
@@ -40,7 +61,8 @@ namespace ImageProcessingLabs.Points
                 for (int x = 0; x < _pixels.GetLength(1); x++)
                 {
                     double[,] mainWindow = GetMainWindow(windowSize, y, x); // Формируем исходное окно                  
-                    double[,] gauss = ConvolutionMatrix.CountGaussMatrix(2);
+
+                    double[,] gauss = ConvolutionMatrix.CountGaussMatrix(0.6);
 
                     // Считаем матрицу H
                     double[,] currentMatrix = new double[2, 2];
@@ -50,13 +72,13 @@ namespace ImageProcessingLabs.Points
                         {
                             double Ix = CommonMath.getPixel(SobelX, y + v, x + u, 3);
                             double Iy = CommonMath.getPixel(SobelY, y + v, x + u, 3);
-
+                        
                             double gaussPoint = CommonMath.getPixel(gauss, u + (windowSize - 1), 0, 3) * CommonMath.getPixel(gauss, u + (windowSize - 1), v + (windowSize - 1), 3);
-
-                            currentMatrix[0, 0] += Math.Pow(Iy, 2) * gaussPoint;
+                        
+                            currentMatrix[0, 0] += Math.Pow(Ix, 2) * gaussPoint;
                             currentMatrix[0, 1] += Ix * Iy * gaussPoint;
                             currentMatrix[1, 0] += Ix * Iy * gaussPoint;
-                            currentMatrix[1, 1] += Math.Pow(Ix, 2) * gaussPoint;
+                            currentMatrix[1, 1] += Math.Pow(Iy, 2) * gaussPoint;
                         }
                     }
 
