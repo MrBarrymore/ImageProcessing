@@ -16,22 +16,46 @@ namespace ImageProcessingLabs.Points
     {
         private static double[,] _pixels;
 
-        public static List<InterestingPoint> DoMoravec(int minValue, int windowSize, int shiftSize, int locMaxRadius, double[,] pixels)
+        public static List<InterestingPoint> DoMoravec(double minValue, int windowSize, int shiftSize, int locMaxRadius, double[,] pixels)
         {
             _pixels = (double[,])pixels.Clone();
 
             double[,] mistakeMatrix = new double[_pixels.GetLength(0), _pixels.GetLength(1)];
+
             _pixels = CommonMath.DoSobelSeparable(_pixels); // Считаем градиент в каждой точке 
 
             mistakeMatrix = GetMinimums(mistakeMatrix, windowSize, shiftSize);
 
-            mistakeMatrix = GetLocalMax(mistakeMatrix, locMaxRadius); // Поиск локальных максимумов 
+            mistakeMatrix = Normalization(mistakeMatrix, 0, 1);
 
             List<InterestingPoint> candidates =
-               CommonMath.getCandidates(mistakeMatrix, mistakeMatrix.GetLength(0), mistakeMatrix.GetLength(1));
-            candidates = candidates.Where(x => x.probability > 150).ToList();
+               CommonMath.getCandidates(mistakeMatrix, mistakeMatrix.GetLength(0), mistakeMatrix.GetLength(1), locMaxRadius);
+            candidates = candidates.Where(x => x.probability > minValue).ToList();
 
             return candidates;
+        }
+
+        private static double[,] Normalization(double[,] source, double newMin, double newMax)
+        {
+            var result = new double[source.GetLength(0), source.GetLength(1)];
+
+            double min = source[0, 0], max = source[0, 0];
+            foreach (var value in source)
+            {
+                if (double.IsNaN(value))
+                    continue;
+
+                min = Math.Min(min, value);
+                max = Math.Max(max, value);
+            }
+
+            for (var i = 0; i < source.GetLength(0); i++)
+            for (var j = 0; j < source.GetLength(1); j++)
+            {
+                result[i, j] = (source[i, j] - min) * (newMax - newMin) / (max - min) + newMin;
+            }
+
+            return result;
         }
 
         public static double[,] GetMinimums(double[,] mistakeMatrix, int windowSize, int shiftSize)

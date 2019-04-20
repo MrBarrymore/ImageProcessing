@@ -30,6 +30,8 @@
         {
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.RB_DoHarris = new System.Windows.Forms.RadioButton();
             this.RB_DoMoravec = new System.Windows.Forms.RadioButton();
             this.FindPointButton = new System.Windows.Forms.Button();
@@ -56,8 +58,6 @@
             this.label9 = new System.Windows.Forms.Label();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.label10 = new System.Windows.Forms.Label();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -93,6 +93,26 @@
             this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Выбор метода поиска точек:";
+            // 
+            // checkBox2
+            // 
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Location = new System.Drawing.Point(15, 78);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(208, 17);
+            this.checkBox2.TabIndex = 6;
+            this.checkBox2.Text = "Карта откликов оператора Харриса";
+            this.checkBox2.UseVisualStyleBackColor = true;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(15, 101);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(284, 17);
+            this.checkBox1.TabIndex = 6;
+            this.checkBox1.Text = "Карта локальных максимумов оператора Харриса";
+            this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // RB_DoHarris
             // 
@@ -154,7 +174,7 @@
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(100, 20);
             this.textBox5.TabIndex = 13;
-            this.textBox5.Text = "0,2";
+            this.textBox5.Text = "0,05";
             // 
             // textBox6
             // 
@@ -223,7 +243,7 @@
             this.textBox4.Name = "textBox4";
             this.textBox4.Size = new System.Drawing.Size(100, 20);
             this.textBox4.TabIndex = 13;
-            this.textBox4.Text = "5";
+            this.textBox4.Text = "1";
             // 
             // textBox3
             // 
@@ -231,7 +251,7 @@
             this.textBox3.Name = "textBox3";
             this.textBox3.Size = new System.Drawing.Size(100, 20);
             this.textBox3.TabIndex = 13;
-            this.textBox3.Text = "2";
+            this.textBox3.Text = "1";
             // 
             // textBox1
             // 
@@ -239,7 +259,7 @@
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(100, 20);
             this.textBox1.TabIndex = 13;
-            this.textBox1.Text = "100";
+            this.textBox1.Text = "0,05";
             // 
             // label7
             // 
@@ -343,26 +363,6 @@
             this.label10.Size = new System.Drawing.Size(176, 13);
             this.label10.TabIndex = 18;
             this.label10.Text = "Отображенно интересных точек: ";
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(15, 101);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(284, 17);
-            this.checkBox1.TabIndex = 6;
-            this.checkBox1.Text = "Карта локальных максимумов оператора Харриса";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            // 
-            // checkBox2
-            // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(15, 78);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(208, 17);
-            this.checkBox2.TabIndex = 6;
-            this.checkBox2.Text = "Карта откликов оператора Харриса";
-            this.checkBox2.UseVisualStyleBackColor = true;
             // 
             // InterestingPointForm
             // 

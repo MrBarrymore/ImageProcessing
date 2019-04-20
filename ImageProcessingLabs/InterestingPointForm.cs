@@ -39,7 +39,7 @@ namespace ImageProcessingLabs
         {
             if (RB_DoMoravec.Checked == true)
             {
-                int minValue = Convert.ToInt32(textBox1.Text);
+                double minValue = Convert.ToDouble(textBox1.Text);
                 int windowSize = Convert.ToInt32(textBox2.Text);
                 int shiftSize = Convert.ToInt32(textBox3.Text);
                 int locMaxRadius = Convert.ToInt32(textBox4.Text);
@@ -66,7 +66,7 @@ namespace ImageProcessingLabs
             {
                 double minValue = Convert.ToDouble(textBox5.Text);
                 int windowSize = Convert.ToInt32(textBox6.Text);
-                List<InterestingPoint> HarrisMatrix = Harris.DoHarris(minValue, windowSize,_pixels);
+                List<InterestingPoint> HarrisMatrix = Harris.DoHarris(minValue, windowSize, _pixels);
                 
                 ///////////
                 if (checkBox2.Checked == true)
@@ -96,11 +96,8 @@ namespace ImageProcessingLabs
                         label10.Text = "Отображенно интересных точек: " + HarrisMatrix.Count;
                         label9.Text = "Найдено интересных точек: " + HarrisMatrix.Count;
                         DrawPoints(HarrisMatrix);
-                    }
-                    
+                    }                
             }
-
-
         }
 
         public void DrawPoints(List<InterestingPoint> point)
@@ -111,7 +108,7 @@ namespace ImageProcessingLabs
             // ByteWriteFile(DrawMatrix);
             foreach (var interestingPoint in point)
             {
-                graph.FillEllipse(new SolidBrush(pen), interestingPoint.y - 1, interestingPoint.x - 1, 3, 3);
+                graph.FillEllipse(new SolidBrush(pen), interestingPoint.x, interestingPoint.y, 2, 2);
             }
 
             pictureBox2.Image = image;

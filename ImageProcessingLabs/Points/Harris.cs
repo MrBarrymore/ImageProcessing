@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ImageProcessingLabs.Points
 {
@@ -10,19 +8,53 @@ namespace ImageProcessingLabs.Points
     {
         private static double[,] _pixels;
 
-        public static List <InterestingPoint> DoHarris(double minValue, int windowSize, double[,] pixels)
+        public static List<InterestingPoint> DoHarris(double minValue, int windowSize, double[,] pixels)
         {
-            _pixels = (double[,])pixels.Clone();
-            _pixels = CommonMath.DoSobelSeparable(_pixels); // Считаем градиент в каждой точке 
+            _pixels = (double[,]) pixels.Clone();
+            int radius = (int) (windowSize / 2);
+            // Считаем градиент в каждой точке
+            _pixels = CommonMath.DoSobelSeparable(_pixels);
 
-            double[,] harrisMat = GetHarrisMatrix(windowSize, (int)_pixels.GetLength(0), (int)_pixels.GetLength(1)); // Полчаем матрицу откликов оператоа Харриса
+            // Полчаем матрицу откликов оператоа Харриса
+            var harrisMat = GetHarrisMatrix(windowSize,
+                radius,
+                _pixels.GetLength(0),
+                _pixels.GetLength(1)
+                );
 
-            List<InterestingPoint> candidates =
-               CommonMath.getCandidates(harrisMat, harrisMat.GetLength(0), harrisMat.GetLength(1)); // Находим точки локального максимума отклика оператора Харриса
+            // Нормализуем значения отклика Харриса
+            var harris = Normalization(harrisMat, 0, 1);
 
-            candidates = candidates.Where(x => x.probability > minValue).ToList();
+            // Находим точки локального максимума отклика оператора Харриса
+            var candidates = CommonMath.getCandidates(harris,
+                harris.GetLength(0),
+                harris.GetLength(1),
+                radius);
 
-            return candidates;
+            return candidates.Where(x => x.probability > minValue).ToList();
+        }
+
+        private static double[,] Normalization(double[,] source, double newMin, double newMax)
+        {
+            var result = new double[source.GetLength(0), source.GetLength(1)];
+
+            double min = source[0, 0], max = source[0, 0];
+            foreach (var value in source)
+            {
+                if (double.IsNaN(value))
+                    continue;
+
+                min = Math.Min(min, value);
+                max = Math.Max(max, value);
+            }
+
+            for (var i = 0; i < source.GetLength(0); i++)
+            for (var j = 0; j < source.GetLength(1); j++)
+            {
+                result[i, j] = (source[i, j] - min) * (newMax - newMin) / (max - min) + newMin;
+            }
+
+            return result;
         }
 
 
@@ -30,8 +62,8 @@ namespace ImageProcessingLabs.Points
         {
             _pixels = (double[,])pixels.Clone();
             _pixels = CommonMath.DoSobelSeparable(_pixels); // Считаем градиент в каждой точке 
-
-            double[,] harrisMat = GetHarrisMatrix(windowSize, (int)_pixels.GetLength(0), (int)_pixels.GetLength(1)); // Полчаем матрицу откликов оператоа Харриса
+            int radius = (int)(windowSize / 2);
+            double[,] harrisMat = GetHarrisMatrix(windowSize, (int)(windowSize / 2), (int)_pixels.GetLength(0), (int)_pixels.GetLength(1)); // Полчаем матрицу откликов оператоа Харриса
   
             List<InterestingPoint> candidates = new List<InterestingPoint>();
 
@@ -43,13 +75,13 @@ namespace ImageProcessingLabs.Points
                 }
 
             if (test == 1)
-                candidates =  CommonMath.getCandidates(harrisMat, harrisMat.GetLength(0), harrisMat.GetLength(1));
+                candidates =  CommonMath.getCandidates(harrisMat, harrisMat.GetLength(0), harrisMat.GetLength(1), radius);
 
             return candidates;
         }
 
 
-        public static double[,] GetHarrisMatrix(int windowSize, int width, int height)
+        public static double[,] GetHarrisMatrix(int windowSize, int windowRadius, int width, int height)
         {
             double[,] harrisMat = new double[width, height];
 
@@ -66,14 +98,14 @@ namespace ImageProcessingLabs.Points
 
                     // Считаем матрицу H
                     double[,] currentMatrix = new double[2, 2];
-                    for (int u = -(windowSize - 1); u <= (windowSize - 1); u++)
+                    for (int u = -windowRadius; u <= windowRadius; u++)
                     {
-                        for (int v = -(windowSize - 1); v <= (windowSize - 1); v++)
+                        for (int v = -windowRadius; v <= windowRadius; v++)
                         {
-                            double Ix = CommonMath.getPixel(SobelX, y + v, x + u, 3);
-                            double Iy = CommonMath.getPixel(SobelY, y + v, x + u, 3);
+                            double Ix = CommonMath.getPixel(SobelX, y + u, x + v, 3);
+                            double Iy = CommonMath.getPixel(SobelY, y + u, x + v, 3);
                         
-                            double gaussPoint = CommonMath.getPixel(gauss, u + (windowSize - 1), 0, 3) * CommonMath.getPixel(gauss, u + (windowSize - 1), v + (windowSize - 1), 3);
+                            double gaussPoint = CommonMath.getPixel(gauss, u + windowRadius, v + windowRadius, 3);
                         
                             currentMatrix[0, 0] += Math.Pow(Ix, 2) * gaussPoint;
                             currentMatrix[0, 1] += Ix * Iy * gaussPoint;

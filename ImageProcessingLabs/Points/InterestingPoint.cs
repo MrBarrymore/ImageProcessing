@@ -8,17 +8,15 @@ namespace ImageProcessingLabs
 {
     public class InterestingPoint
     {
-        public int x;
-
         public int y;
+        public int x;
 
         public double probability;
 
-
-        public InterestingPoint(int x, int y, double probability)
+        public InterestingPoint(int y, int x, double probability)
         {
-            this.x = x;
             this.y = y;
+            this.x = x;
             this.probability = probability;
         }
 

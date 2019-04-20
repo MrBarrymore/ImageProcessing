@@ -15,10 +15,6 @@ namespace ImageProcessingLabs.Points
         public static double[,] SubelSepY1 = new double[1, 3] { { 1, 0, -1 } };
         public static double[,] SubelSepY2 = new double[3, 1] { { 1 }, { 2 }, { 1 } };
 
-
-        private static int[] dx = { -1, 0, 1, -1, 1, -1, 0, -1 };
-        private static int[] dy = { -1, -1, -1, 0, 0, 1, 1, 1 };
-
         public static double[,] DoSobelSeparable(double[,] pixels)
         {
             // Считаем частную производную по X (сепарабельно)
@@ -103,28 +99,35 @@ namespace ImageProcessingLabs.Points
             return res;
         }
 
-        public static List<InterestingPoint> getCandidates(double[,] harrisMatrix, int width, int height)
+
+        public static List<InterestingPoint> getCandidates(double[,] harrisMatrix, int height, int width, int radius)
         {
             List<InterestingPoint> candidates = new List<InterestingPoint>();
-            for (int i = 0; i < width; i++)
+            for (int y = 0; y < height; y++)
             {
-                for (int j = 0; j < height; j++)
+                for (int x = 0; x < width; x++)
                 {
                     bool ok = true;
-                    double currentValue = harrisMatrix[i, j];
-                    for (int k = 0; k < dx.GetLength(0) && ok; k++)
+                    double currentValue = harrisMatrix[y, x];
+
+                    for (int k = -radius; k <= radius && ok; k++)
                     {
-                        if (i + dx[k] < 0 ||
-                            i + dx[k] >= width ||
-                            j + dy[k] < 0 ||
-                            j + dy[k] >= height) continue;
-                        if (currentValue < CommonMath.getPixel(harrisMatrix, i + dx[k], j + dy[k], 3))
-                            ok = false;
+                        for (int n = -radius; n <= radius && ok; n++)
+                        {
+                            if (y + k < 0 ||
+                                y + k >= width ||
+                                x + n < 0 ||
+                                x + n >= height ||
+                                (k == 0 && n == 0)) continue;
+                            if (currentValue < CommonMath.getPixel(harrisMatrix, y + k, x + n, 3))
+                                ok = false;
+                        }
                     }
                     if (ok)
                     {
-                        candidates.Add(new InterestingPoint(i, j, currentValue));
+                        candidates.Add(new InterestingPoint(y, x, currentValue));
                     }
+
                 }
             }
             return candidates;
