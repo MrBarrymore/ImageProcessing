@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using ImageProcessingLabs.Points;
+using ImageProcessingLabs.Wrapped;
 
 
 namespace ImageProcessingLabs
 {
-    public enum BorderHandling { Black, White, Coppy, Wrap, Mirror };
+    public enum BorderHandling
+    {
+        Black, White, Copy, Wrap, Mirror
+    }
 
 
     class ConvolutionMatrixFactory
@@ -27,7 +31,7 @@ namespace ImageProcessingLabs
 
         }
 
-        public static double[,] processNonSeparable(double[,] pixels, double[,] matryx, int borderHandling)
+        public static double[,] processNonSeparable(double[,] pixels, double[,] matryx, BorderHandling borderHandling)
         {
             double[,] newpixels = new double[pixels.GetLength(0), pixels.GetLength(1)];
             _pixels = pixels;
@@ -41,8 +45,21 @@ namespace ImageProcessingLabs
             return newpixels;
         }
 
+        public static WrappedImage processNonSeparable(WrappedImage image, double[,] matryx, BorderHandling borderHandling)
+        {
+            WrappedImage newImage = new WrappedImage(image);
+            //применение ядра свертки                      
+            for (int y = 0; y < image.height; y++)
+                for (int x = 0; x < image.width; x++)
+                {
+                    image.setPixel(x, y, GetNewPixel(y, x, image.buffer, matryx, borderHandling));
+                }
 
-        public static double GetNewPixel(int cy, int cx, double[,] pixels, double[,] svMatrix, int borderHandling)
+            return newImage;
+        }
+
+
+        public static double GetNewPixel(int cy, int cx, double[,] pixels, double[,] svMatrix, BorderHandling borderHandling)
         {
             double newpixel = 0;
            
@@ -58,8 +75,8 @@ namespace ImageProcessingLabs
 
                     double bufpixel = 0;
                     // Обработка краевых эффектов
-                    if (y < 0 || y >= pixels.GetLength(0)) bufpixel = getOutPixel(y, x, borderHandling);
-                    else if (x < 0 || x >= pixels.GetLength(1)) bufpixel = getOutPixel(y, x, borderHandling);
+                    if (y < 0 || y >= pixels.GetLength(0)) bufpixel = CommonMath.getPixel(pixels, y, x, 4);
+                    else if (x < 0 || x >= pixels.GetLength(1)) bufpixel = CommonMath.getPixel(pixels, y, x, 4);
                     else bufpixel = pixels[y1, x1];
 
                     newpixel += bufpixel * svMatrix[i1, j1];

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using ImageProcessingLabs.Wrapped;
+using ImageProcessingLabs.enums;
 
 namespace ImageProcessingLabs.Points
 {
@@ -18,11 +20,11 @@ namespace ImageProcessingLabs.Points
         public static double[,] DoSobelSeparable(double[,] pixels)
         {
             // Считаем частную производную по X (сепарабельно)
-            double[,] pixelX = ConvolutionMatrixFactory.processNonSeparable(pixels, SubelSepX1, 3);
-            pixelX = ConvolutionMatrixFactory.processNonSeparable(pixelX, SubelSepX2, 3);
+            double[,] pixelX = ConvolutionMatrixFactory.processNonSeparable(pixels, SubelSepX1, BorderHandling.Mirror);
+            pixelX = ConvolutionMatrixFactory.processNonSeparable(pixelX, SubelSepX2, BorderHandling.Mirror);
             // Считаем частную производную по Y (сепарабельно)
-            double[,] pixelY = ConvolutionMatrixFactory.processNonSeparable(pixels, SubelSepY1, 3);
-            pixelY = ConvolutionMatrixFactory.processNonSeparable(pixelY, SubelSepY2, 3);
+            double[,] pixelY = ConvolutionMatrixFactory.processNonSeparable(pixels, SubelSepY1, BorderHandling.Mirror);
+            pixelY = ConvolutionMatrixFactory.processNonSeparable(pixelY, SubelSepY2, BorderHandling.Mirror);
 
             // Вычисляем величину градиента
             for (int y = 0; y < pixels.GetLength(0); y++)
@@ -38,22 +40,38 @@ namespace ImageProcessingLabs.Points
         public static double[,] GetSobelX(double[,] pixels)
         {
             // Считаем частную производную по X (сепарабельно)
-            double[,] pixelX = ConvolutionMatrixFactory.processNonSeparable(pixels, SubelSepX1, 3);
-            pixelX = ConvolutionMatrixFactory.processNonSeparable(pixelX, SubelSepX2, 3);
+            double[,] pixelX = ConvolutionMatrixFactory.processNonSeparable(pixels, SubelSepX1, BorderHandling.Mirror);
+            pixelX = ConvolutionMatrixFactory.processNonSeparable(pixelX, SubelSepX2, BorderHandling.Mirror);
             return pixelX;
         }
+
+        public static WrappedImage GetSobelX(WrappedImage pixels, BorderHandling borderHandling)
+        {
+            // Считаем частную производную по X (сепарабельно)
+            WrappedImage pixelX = ConvolutionMatrixFactory.processNonSeparable(pixels, SubelSepX1, borderHandling);
+            pixelX = ConvolutionMatrixFactory.processNonSeparable(pixelX, SubelSepX2, borderHandling);
+            return pixelX;
+        }
+
 
         public static double[,] GetSobelY(double[,] pixels)
         {
             // Считаем частную производную по Y (сепарабельно)
-            double[,] pixelY = ConvolutionMatrixFactory.processNonSeparable(pixels, SubelSepY1, 3);
-            pixelY = ConvolutionMatrixFactory.processNonSeparable(pixelY, SubelSepY2, 3);
+            double[,] pixelY = ConvolutionMatrixFactory.processNonSeparable(pixels, SubelSepY1, BorderHandling.Mirror);
+            pixelY = ConvolutionMatrixFactory.processNonSeparable(pixelY, SubelSepY2, BorderHandling.Mirror);
+            return pixelY;
+        }
+
+        public static WrappedImage GetSobelY(WrappedImage image, BorderHandling borderHandling)
+        {
+            // Считаем частную производную по X (сепарабельно)
+            WrappedImage pixelY = ConvolutionMatrixFactory.processNonSeparable(image, SubelSepY1, borderHandling);
+            pixelY = ConvolutionMatrixFactory.processNonSeparable(pixelY, SubelSepY2, borderHandling);
             return pixelY;
         }
 
         public static double getPixel(double [,] _pixels, int y, int x, int borderHandling)
         {
-
             switch (borderHandling)
             {
                 case 0:

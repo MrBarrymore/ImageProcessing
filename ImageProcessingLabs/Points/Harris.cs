@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using  ImageProcessingLabs.Wrapped;
 
 namespace ImageProcessingLabs.Points
 {
@@ -21,6 +22,32 @@ namespace ImageProcessingLabs.Points
                 _pixels.GetLength(0),
                 _pixels.GetLength(1)
                 );
+
+            // Нормализуем значения отклика Харриса
+            var harris = Normalization(harrisMat, 0, 1);
+
+            // Находим точки локального максимума отклика оператора Харриса
+            var candidates = CommonMath.getCandidates(harris,
+                harris.GetLength(0),
+                harris.GetLength(1),
+                radius);
+
+            return candidates.Where(x => x.probability > minValue).ToList();
+        }
+
+        public static List<InterestingPoint> DoHarris(double minValue, int windowSize, WrappedImage image)
+        {
+
+            int radius = (int)(windowSize / 2);
+            // Считаем градиент в каждой точке
+            _pixels = CommonMath.DoSobelSeparable(image.buffer);
+
+            // Полчаем матрицу откликов оператоа Харриса
+            var harrisMat = GetHarrisMatrix(windowSize,
+                radius,
+                _pixels.GetLength(0),
+                _pixels.GetLength(1)
+            );
 
             // Нормализуем значения отклика Харриса
             var harris = Normalization(harrisMat, 0, 1);
@@ -63,7 +90,8 @@ namespace ImageProcessingLabs.Points
             _pixels = (double[,])pixels.Clone();
             _pixels = CommonMath.DoSobelSeparable(_pixels); // Считаем градиент в каждой точке 
             int radius = (int)(windowSize / 2);
-            double[,] harrisMat = GetHarrisMatrix(windowSize, (int)(windowSize / 2), (int)_pixels.GetLength(0), (int)_pixels.GetLength(1)); // Полчаем матрицу откликов оператоа Харриса
+            double[,] harrisMat = GetHarrisMatrix(windowSize, (int)(windowSize / 2), 
+                (int)_pixels.GetLength(0), (int)_pixels.GetLength(1)); // Полчаем матрицу откликов оператоа Харриса
   
             List<InterestingPoint> candidates = new List<InterestingPoint>();
 

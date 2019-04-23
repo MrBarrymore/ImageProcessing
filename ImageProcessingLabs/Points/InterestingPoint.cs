@@ -25,5 +25,14 @@ namespace ImageProcessingLabs
             return Math.Sqrt(Math.Pow(a.x - b.y, 2) + Math.Pow(a.x - b.y, 2));
         }
 
+        public int getX()
+        {
+            return x;
+        }
+
+        public int getY()
+        {
+            return y;
+        }
     }
 }

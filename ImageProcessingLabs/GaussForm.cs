@@ -38,12 +38,12 @@ namespace ImageProcessingLabs
     
         private void button2_Click(object sender, EventArgs e)
         {
-            int Edgemode = 0;
-            if (RB_Zero.Checked == true) Edgemode = 0;
-            if (RB_White.Checked == true) Edgemode = 1;
-            if (RB_EdgeCoppy.Checked == true) Edgemode = 2;
-            if (RB_EdgeReflection.Checked == true) Edgemode = 3;
-            if (RB_WrapImage.Checked == true) Edgemode = 4;
+            BorderHandling Edgemode = BorderHandling.Black;
+            if (RB_Zero.Checked == true) Edgemode = BorderHandling.Black;
+            if (RB_White.Checked == true) Edgemode = BorderHandling.White;
+            if (RB_EdgeCoppy.Checked == true) Edgemode = BorderHandling.Copy;
+            if (RB_EdgeReflection.Checked == true) Edgemode = BorderHandling.Wrap;
+            if (RB_WrapImage.Checked == true) Edgemode = BorderHandling.Mirror;
 
             int numOctaves = BuildingPyramid.CountOctava(_pixels);
             double sigmaStart = Convert.ToDouble(textBox2.Text);
@@ -72,7 +72,7 @@ namespace ImageProcessingLabs
             lbl_LevelsInOctava.Text = "Уровней в октаве: " + Convert.ToString(levels);
         }
 
-        public void buildPiramid( double sigmaA, double sigmaStart, int numOctaves, int levels, int Edgemode)
+        public void buildPiramid( double sigmaA, double sigmaStart, int numOctaves, int levels, BorderHandling Edgemode)
         {
             double sigma0 = sigmaStart;
             double[,] GaussMatrix0 = ConvolutionMatrix.CountGaussMatrix(Math.Sqrt(sigmaA*sigmaA + sigma0*sigma0));

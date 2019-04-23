@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Drawing.Imaging;
+using ImageProcessingLabs.Wrapped;
 
 namespace ImageProcessingLabs
 {
@@ -17,6 +18,7 @@ namespace ImageProcessingLabs
         public static Bitmap image;
         public static string full_name_of_image = "\0";
         public static double[,] _pixels;
+        private static WrappedImage wrappedImage;
 
         public MainForm()
         {
@@ -29,9 +31,14 @@ namespace ImageProcessingLabs
             // image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\111.png");
             // image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\3d.png");
             //  image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Star.jpg");
-            
+
             //  image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Simple.png");
             //  image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Figures.jpg");
+
+            pictureBox1.Image = image;
+
+            wrappedImage = WrappedImage.of(image);
+
 
             _pixels = new double[image.Height, image.Width];
             for (int y = 0; y < image.Height; y++)
@@ -41,13 +48,14 @@ namespace ImageProcessingLabs
                     _pixels[y, x] = p.R * 0.299 + p.G * .587 + p.B * 0.114;
                 }
 
-            pictureBox1.Image = image;
 
-            //////////////////////
-            //GaussForm _gaussForm = new GaussForm(_pixels);
-            //_gaussForm.ShowDialog();
-            InterestingPointForm _interestingPointForm = new InterestingPointForm(_pixels);
-            _interestingPointForm.ShowDialog();
+
+       //     InterestingPointForm _interestingPointForm = new InterestingPointForm(_pixels);
+        //    _interestingPointForm.ShowDialog();
+
+
+            DescriptorForm descriptorForm = new DescriptorForm(wrappedImage, wrappedImage);
+            descriptorForm.ShowDialog();
 
         }
 

@@ -38,11 +38,11 @@ namespace ImageProcessingLabs
             double[,] pixels2;
             double[,] pixels3 = new double[_pixels.GetLength(0), _pixels.GetLength(1)];
 
-            int Edgemode = 0;
-            if (RB_Zero.Checked == true) Edgemode = 0;
-            if (RB_EdgeCoppy.Checked == true) Edgemode = 1;
-            if (RB_EdgeReflection.Checked == true) Edgemode = 2;
-            if (RB_WrapImage.Checked == true) Edgemode = 3;
+            BorderHandling Edgemode = BorderHandling.Mirror;
+            if (RB_Zero.Checked == true) Edgemode = BorderHandling.Black;
+            if (RB_EdgeCoppy.Checked == true) Edgemode = BorderHandling.Copy;
+            if (RB_EdgeReflection.Checked == true) Edgemode = BorderHandling.Wrap;
+            if (RB_WrapImage.Checked == true) Edgemode = BorderHandling.Mirror;
 
             // Считаем частную производную по X (сепарабельно)
             pixels1 = ConvolutionMatrixFactory.processNonSeparable(_pixels, MatrixX1, Edgemode);

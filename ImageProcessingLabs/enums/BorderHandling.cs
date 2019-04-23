@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ImageProcessingLaba1.enums
+namespace ImageProcessingLabs.enums
 {
     public enum BorderHandling
     {
