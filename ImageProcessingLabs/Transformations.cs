@@ -26,21 +26,21 @@ namespace ImageProcessingLabs
             int Height = pixel.GetLength(0);
             int Width = pixel.GetLength(1);
 
-            double min = double.MaxValue, max = double.MinValue; 
+            double min = double.MaxValue, max = double.MinValue;
             for (int y = 0; y < Height; y++)
-                for (int x = 0; x < Width; x++)
-                {
-                    min = Math.Min(min, pixel[y, x]);
-                    max = Math.Max(max, pixel[y, x]);
-                }
+            for (int x = 0; x < Width; x++)
+            {
+                min = Math.Min(min, pixel[y, x]);
+                max = Math.Max(max, pixel[y, x]);
+            }
 
             Bitmap bmp = new Bitmap(Width, Height);
             for (int y = 0; y < Height; y++)
-                for (int x = 0; x < Width; x++)
-                {
-                    double color = ((pixel[y, x] - min) * 255) / (max - min);
-                    bmp.SetPixel(x, y, Color.FromArgb((int)color, (int)color, (int)color));
-                }
+            for (int x = 0; x < Width; x++)
+            {
+                double color = ((pixel[y, x] - min) * 255) / (max - min);
+                bmp.SetPixel(x, y, Color.FromArgb((int)color, (int)color, (int)color));
+            }
 
             return bmp;
         }

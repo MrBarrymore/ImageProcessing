@@ -19,7 +19,7 @@ namespace ImageProcessingLabs.Wrapped
 
         public int height;
         public int width;
-        public double [,] buffer;
+        public double[,] buffer;
 
         public WrappedImage()
         {
@@ -30,7 +30,7 @@ namespace ImageProcessingLabs.Wrapped
         {
             width = wrappedImage.width;
             height = wrappedImage.height;
-            buffer = new double[width, height];
+            buffer = new double[height, width];
             System.Array.Copy(wrappedImage.buffer, 0, buffer, 0, buffer.Length);
         }
 
@@ -40,7 +40,7 @@ namespace ImageProcessingLabs.Wrapped
                 throw new Exception("Размер не может быть отрицательным");
             this.width = width;
             this.height = height;
-            this.buffer = new double[width, height];
+            this.buffer = new double[height, width];
         }
 
         public static WrappedImage of(Bitmap image)
@@ -74,7 +74,7 @@ namespace ImageProcessingLabs.Wrapped
             {
                 for (int j = 0; j < wrappedImage.width; j++)
                 {
-                    wrappedImage.setPixel(i, j, buffer[i,j]);
+                    wrappedImage.setPixel(i, j, buffer[i, j]);
                 }
             }
             return wrappedImage;
@@ -98,19 +98,19 @@ namespace ImageProcessingLabs.Wrapped
 
             double min = double.MaxValue, max = double.MinValue;
             for (int y = 0; y < Height; y++)
-            for (int x = 0; x < Width; x++)
-            {
-                min = Math.Min(min, pixel[y, x]);
-                max = Math.Max(max, pixel[y, x]);
-            }
+                for (int x = 0; x < Width; x++)
+                {
+                    min = Math.Min(min, pixel[y, x]);
+                    max = Math.Max(max, pixel[y, x]);
+                }
 
             Bitmap bmp = new Bitmap(Width, Height);
             for (int y = 0; y < Height; y++)
-            for (int x = 0; x < Width; x++)
-            {
-                double color = ((pixel[y, x] - min)) / (max - min);
-                bmp.SetPixel(x, y, Color.FromArgb((int)color, (int)color, (int)color));
-            }
+                for (int x = 0; x < Width; x++)
+                {
+                    double color = ((pixel[y, x] - min)) / (max - min);
+                    bmp.SetPixel(x, y, Color.FromArgb((int)color, (int)color, (int)color));
+                }
 
             return bmp;
         }
@@ -123,7 +123,7 @@ namespace ImageProcessingLabs.Wrapped
 
         public void setPixel(int y, int x, double value)
         {
-            buffer[y, x] = value;
+            buffer[x, y] = value;
         }
 
         public static double getPixel(WrappedImage image, int y, int x, BorderHandling borderHandling)
@@ -133,7 +133,7 @@ namespace ImageProcessingLabs.Wrapped
                 case BorderHandling.Black:
                     if (x < 0 || x >= image.width || y < 0 || y >= image.height)
                         return 0;
-                    return image.buffer[y, x];
+                    return image.buffer[x, y];
                 case BorderHandling.White:
                     if (x < 0 || x >= image.width || y < 0 || y >= image.height)
                         return 1;
@@ -151,7 +151,7 @@ namespace ImageProcessingLabs.Wrapped
                     y = Math.Abs(y);
                     if (x >= image.width) x = image.width - (x - image.width + 1);
                     if (y >= image.height) y = image.height - (y - image.height + 1);
-                    return image.buffer[y, x];
+                    return image.buffer[x, y];
                 default:
                     return 1;
             }
@@ -209,7 +209,6 @@ namespace ImageProcessingLabs.Wrapped
             return result;
         }
 
-
         public static WrappedImage getGradient(WrappedImage xImage, WrappedImage yImage)
         {
             if (xImage.height != yImage.height || xImage.width != yImage.width)
@@ -220,7 +219,7 @@ namespace ImageProcessingLabs.Wrapped
             {
                 for (int x = 0; x < gradient.buffer.GetLength(1); x++)
                 {
-                    gradient.buffer[y,x] = Math.Sqrt(sqr(xImage.buffer[y,x]) + sqr(yImage.buffer[y,x]));
+                    gradient.buffer[y, x] = Math.Sqrt(sqr(xImage.buffer[y, x]) + sqr(yImage.buffer[y, x]));
                 }
             }
 
@@ -237,7 +236,7 @@ namespace ImageProcessingLabs.Wrapped
             {
                 for (int x = 0; x < gradientAngle.buffer.GetLength(1); x++)
                 {
-                    gradientAngle.buffer[y,x] = Math.Atan2(yImage.buffer[y,x], xImage.buffer[y,x]);
+                    gradientAngle.buffer[y, x] = Math.Atan2(yImage.buffer[y, x], xImage.buffer[y, x]);
                 }
             }
 

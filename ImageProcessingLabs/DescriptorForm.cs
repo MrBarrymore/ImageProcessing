@@ -18,7 +18,7 @@ namespace ImageProcessingLabs
     public partial class DescriptorForm : Form
     {
         private WrappedImage imageA, imageB;
-        private static int POINTS = 30;
+        private static int POINTS = 100;
         private static double MinValueHarris = 0.05;
         private static int WindowSize = 5;
 
@@ -37,18 +37,23 @@ namespace ImageProcessingLabs
         public DescriptorForm(WrappedImage imageA, WrappedImage imageB)
         {
             InitializeComponent();
+            pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             this.imageA = imageA;
             this.imageB = imageB;
+
 
         }
 
         private void FindPointButton_Click(object sender, EventArgs e)
         {
+            MinValueHarris = Convert.ToDouble(txb_minValue.Text);
+            WindowSize = Convert.ToInt32(txb_WindowSize.Text);
 
             int windowSize = Convert.ToInt32(txb_WindowSize.Text);
             double minValue = Convert.ToDouble(txb_minValue.Text);
 
-            processWithSift(imageA, imageB, 16, 4, 8,  MinValueHarris, WindowSize);
+            processWithSift(imageA, imageB, 16, 4, 8, MinValueHarris, WindowSize);
 
         }
 
@@ -73,13 +78,18 @@ namespace ImageProcessingLabs
             WrappedImage gradientB = WrappedImage.getGradient(xB, yB);
             WrappedImage gradientAngleB = WrappedImage.getGradientAngle(xB, yB);
 
-            List<InterestingPoint> pointsA = Harris.DoHarris(MinValueHarris, WindowSize, gradientA);
-            List<InterestingPoint> pointsB = PointFilter.filterPoints(Harris.DoHarris(MinValueHarris, WindowSize, gradientB), POINTS);
+            List<InterestingPoint> pointsA = Harris.DoHarris(MinValueHarris, WindowSize, imageA);
+            List<InterestingPoint> pointsB = Harris.DoHarris(MinValueHarris, WindowSize, imageB);
 
 
-            DrawPoints(pointsA, imageA);
+            lbl_findPoints1.Text = "Найдено интересных точек(1): " + pointsA.Count;
+            lbl_findPoints2.Text = "Найдено интересных точек(1): " + pointsB.Count;
 
-            /*
+
+            DrawPoints(pointsA, imageA, 1);
+            DrawPoints(pointsB, imageB, 2);
+
+
             List<SIFTDescriptor> descriptorsA = getDescriptors(gradientA,
                 gradientAngleA,
                 pointsA,
@@ -87,17 +97,19 @@ namespace ImageProcessingLabs
                 cellSize,
                 binsCount);
 
-               List<SIFTDescriptor> descriptorsB = getDescriptors(gradientB,
-                gradientAngleB,
-                pointsB,
-                gridSize,
-                cellSize,
-                binsCount);
-            */
+            List<SIFTDescriptor> descriptorsB = getDescriptors(gradientB,
+             gradientAngleB,
+             pointsB,
+             gridSize,
+             cellSize,
+             binsCount);
+
             var pointsPair = new List<PointsPair>();
             // return DescriptorUtil.match(descriptorsA, descriptorsB);
             //   return PointsPair.from(descriptorsA, descriptorsB);
-            
+
+
+
 
             return pointsPair;
         }
@@ -120,30 +132,39 @@ namespace ImageProcessingLabs
 
             AbstractDescriptor abs;
 
-          //  siftDescriptors.ForEach(AbstractDescriptor::normalize()); // Переделать нормализацию !!!!!
+            //  siftDescriptors.ForEach(AbstractDescriptor::normalize()); // Переделать нормализацию !!!!!
 
-         //   listNames.GroupBy(v => v).Where(g => g.Count() > 1).Select(g => g.Key)
+            //   listNames.GroupBy(v => v).Where(g => g.Count() > 1).Select(g => g.Key)
             return siftDescriptors;
         }
 
 
-
-        public void DrawPoints(List<InterestingPoint> point, WrappedImage inputImage)
+        public void BuildPicture(List<InterestingPoint> point, WrappedImage inputImage, int picture)
         {
-                Bitmap image;
-                image = Transformations.FromUInt32ToBitmap(inputImage.buffer);
-                Graphics graph = Graphics.FromImage(image);
-                Color pen = Color.Blue;
-                // ByteWriteFile(DrawMatrix);
-                foreach (var interestingPoint in point)
-                {
-                    graph.FillEllipse(new SolidBrush(pen), interestingPoint.x, interestingPoint.y, 2, 2);
-                }
 
-                pictureBox2.Image = image;
 
-                image.Save("..\\..\\..\\..\\Output\\OutputPicture.png");
+
         }
+
+
+        public void DrawPoints(List<InterestingPoint> point, WrappedImage inputImage, int picture)
+        {
+            Bitmap image;
+            image = Transformations.FromUInt32ToBitmap(inputImage.buffer);
+            Graphics graph = Graphics.FromImage(image);
+            Color pen = Color.Blue;
+
+            foreach (var interestingPoint in point)
+            {
+                graph.FillEllipse(new SolidBrush(pen), interestingPoint.x, interestingPoint.y, 3, 3);
+            }
+
+            if (picture == 1) pictureBox1.Image = image;
+            if (picture == 2) pictureBox2.Image = image;
+
+            image.Save("..\\..\\..\\..\\Output\\OutputPicture.png");
+        }
+
 
     }
 }

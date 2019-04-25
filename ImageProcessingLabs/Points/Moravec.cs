@@ -8,29 +8,27 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
-using  ImageProcessingLabs.Wrapped;
+using ImageProcessingLabs.Wrapped;
 
 namespace ImageProcessingLabs.Points
 {
-  
+
     public class Moravec
     {
         private static WrappedImage _image;
 
         public static List<InterestingPoint> DoMoravec(double minValue, int windowSize, int shiftSize, int locMaxRadius, WrappedImage image)
         {
-            _image = (WrappedImage)image.Clone();
+            _image = image.Clone();
 
-            _image = CommonMath.DoSobelSeparable(image); // Считаем градиент в каждой точке 
+            _image = CommonMath.DoSobelSeparable(_image); // Считаем градиент в каждой точке 
 
-            WrappedImage mistakeImage= GetMinimums(_image, windowSize, shiftSize);
+            WrappedImage mistakeImage = GetMinimums(_image, windowSize, shiftSize);
 
-         //   mistakeImage = Normalization(mistakeImage, 0, 1);
 
             List<InterestingPoint> candidates =
                CommonMath.getCandidates(mistakeImage, mistakeImage.height, mistakeImage.width, locMaxRadius, minValue);
-          
-            //  candidates = candidates.Where(x => x.probability > minValue).ToList();
+
 
             return candidates;
         }
@@ -50,10 +48,10 @@ namespace ImageProcessingLabs.Points
             }
 
             for (var i = 0; i < source.height; i++)
-            for (var j = 0; j < source.width; j++)
-            {
-                result.buffer[i, j] = (source.buffer[i, j] - min) * (newMax - newMin) / (max - min) + newMin;
-            }
+                for (var j = 0; j < source.width; j++)
+                {
+                    result.buffer[i, j] = (source.buffer[i, j] - min) * (newMax - newMin) / (max - min) + newMin;
+                }
 
             return result;
         }
@@ -83,7 +81,7 @@ namespace ImageProcessingLabs.Points
         }
 
 
-            public static double[,] GetMainWindow(int windowSize, int y, int x)
+        public static double[,] GetMainWindow(int windowSize, int y, int x)
         {
             double[,] mainWindow = new double[windowSize, windowSize];
             for (int wy = 0; wy < windowSize; wy++)

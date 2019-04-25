@@ -17,7 +17,7 @@ namespace ImageProcessingLabs
     class ConvolutionMatrixFactory
     {
         public static double[,] _pixels;
-    
+
         public List<double[,]> picturePiramid = new List<double[,]>();
 
 
@@ -28,7 +28,7 @@ namespace ImageProcessingLabs
             for (int y = 0; y < image.height; y++)
                 for (int x = 0; x < image.width; x++)
                 {
-                    image.setPixel(x, y, GetNewPixel(y, x, image, matryx, borderHandling));
+                    newImage.setPixel(y, x, GetNewPixel(y, x, image, matryx, borderHandling));
                 }
 
             return newImage;
@@ -37,12 +37,12 @@ namespace ImageProcessingLabs
         public static double GetNewPixel(int cy, int cx, WrappedImage source, double[,] svMatrix, BorderHandling borderHandling)
         {
             double newpixel = 0;
-           
+
             int ky = (int)(svMatrix.GetLength(0) / 2); // y 
             int kx = (int)(svMatrix.GetLength(1) / 2); // x
 
             for (int y = cy - ky, i1 = 0; y <= cy + ky; y++, i1++)
-            { 
+            {
                 int y1 = y;
                 for (int x = cx - kx, j1 = 0; x <= cx + kx; x++, j1++)
                 {
@@ -69,7 +69,7 @@ namespace ImageProcessingLabs
                         return 0;
                     return _pixels[y, x];
                 case 1:
-                    if (x < 0 || x >= _pixels.GetLength(1) || y < 0 || y >= _pixels.GetLength(0)) 
+                    if (x < 0 || x >= _pixels.GetLength(1) || y < 0 || y >= _pixels.GetLength(0))
                         return 255;
                     return _pixels[y, x];
                 case 2:
@@ -99,7 +99,8 @@ namespace ImageProcessingLabs
             else if (x < 0) res = 0;
             else if (y > Length) res = Length;
             else if (y < 0) res = 0;
-            else { 
+            else
+            {
                 if (x != 0) res = x;
                 if (y != 0) res = y;
             }

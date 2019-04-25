@@ -27,7 +27,7 @@ namespace ImageProcessingLabs.Descriptor
 
             int gridHalfSize = gridSize / 2;
 
-            double [,] gauss = ConvolutionMatrix.CountGaussMatrix(gridHalfSize * cellSize);
+            double[,] gauss = ConvolutionMatrix.CountGaussMatrix(gridHalfSize * cellSize);
 
             int ptr = 0;
             int centerShift = gridHalfSize * cellSize;

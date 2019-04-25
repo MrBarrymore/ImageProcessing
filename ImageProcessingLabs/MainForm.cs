@@ -15,7 +15,7 @@ namespace ImageProcessingLabs
 {
     public partial class MainForm : Form
     {
-        public static Bitmap picture;
+        public static Bitmap picture, pictureA, pictureB;
         public static string full_name_of_image = "\0";
         public static WrappedImage image;
         private static WrappedImage wrappedImage;
@@ -40,17 +40,23 @@ namespace ImageProcessingLabs
             wrappedImage = WrappedImage.of(picture);
 
 
-         //  InterestingPointForm _interestingPointForm = new InterestingPointForm(wrappedImage);
-        //   _interestingPointForm.ShowDialog();
+            pictureA = new Bitmap("..\\..\\..\\..\\..\\Pictures\\LennaA.png");
+            pictureB = new Bitmap("..\\..\\..\\..\\..\\Pictures\\LennaB.png");
+
+            WrappedImage wrappedImageA = WrappedImage.of(pictureA);
+            WrappedImage wrappedImageB = WrappedImage.of(pictureB);
+
+            //   InterestingPointForm _interestingPointForm = new InterestingPointForm(wrappedImage);
+            //    _interestingPointForm.ShowDialog();
 
 
-         //   DescriptorForm descriptorForm = new DescriptorForm(wrappedImage, wrappedImage);
-         //   descriptorForm.ShowDialog();
+            DescriptorForm descriptorForm = new DescriptorForm(wrappedImageA, wrappedImageB);
+            descriptorForm.ShowDialog();
 
         }
 
         private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
-        {         
+        {
             OpenFileDialog open_dialog = new OpenFileDialog();
             open_dialog.Filter = "Image Files(*.BMP;*.JPG;*.GIF;*.PNG)|*.BMP;*.JPG;*.GIF;*.PNG|All files (*.*)|*.*";
             if (open_dialog.ShowDialog() == DialogResult.OK)
@@ -79,11 +85,11 @@ namespace ImageProcessingLabs
                     "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            
+
         }
 
         private void сохранитьКакToolStripMenuItem_Click(object sender, EventArgs e)
-        {      
+        {
             if (pictureBox1.Image != null)
             {
                 SaveFileDialog savedialog = new SaveFileDialog();

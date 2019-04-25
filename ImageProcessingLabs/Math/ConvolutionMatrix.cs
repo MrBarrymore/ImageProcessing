@@ -28,5 +28,10 @@ namespace ImageProcessingLabs
             return CountGaussMatrix((int)Math.Ceiling(sigma) * 3, sigma);
         }
 
+        public static double[,] CountGaussMatrix(int radius)
+        {
+            return CountGaussMatrix(radius, radius / 3);
+        }
+
     }
 }

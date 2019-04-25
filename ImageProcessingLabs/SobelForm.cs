@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ImageProcessingLabs.Points;
-using  ImageProcessingLabs.Wrapped;
+using ImageProcessingLabs.Wrapped;
 
 namespace ImageProcessingLabs
 {
@@ -63,7 +63,7 @@ namespace ImageProcessingLabs
             if (RB_EdgeReflection.Checked == true) Edgemode = BorderHandling.Wrap;
             if (RB_WrapImage.Checked == true) Edgemode = BorderHandling.Mirror;
 
-            if (RB_Sobel.Checked == true)  СountGradient(SubelSepX1, SubelSepX2, SubelSepY1, SubelSepY2, Edgemode);
+            if (RB_Sobel.Checked == true) СountGradient(SubelSepX1, SubelSepX2, SubelSepY1, SubelSepY2, Edgemode);
             if (RB_Pruitt.Checked == true) СountGradient(PruittSepX1, PruittSepX2, PruittSepY1, PruittSepY2, Edgemode);
             if (RB_Shchar.Checked == true) СountGradient(ShcharSepX1, ShcharSepX2, ShcharSepY1, ShcharSepY2, Edgemode);
             MainForm.picture = this.picture;
@@ -93,7 +93,7 @@ namespace ImageProcessingLabs
 
         private void SobelForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-          //  MainForm.Enabled = false;
+            //  MainForm.Enabled = false;
         }
     }
 }

@@ -54,7 +54,7 @@ namespace ImageProcessingLabs.Points
         }
 
 
-        public static double getPixel(double [,] _pixels, int y, int x, int borderHandling)
+        public static double getPixel(double[,] _pixels, int y, int x, int borderHandling)
         {
             switch (borderHandling)
             {

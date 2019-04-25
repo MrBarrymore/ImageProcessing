@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 
-using  ImageProcessingLabs.Wrapped;
+using ImageProcessingLabs.Wrapped;
 
 namespace ImageProcessingLabs
 {
@@ -27,7 +27,7 @@ namespace ImageProcessingLabs
 
         static WrappedImage _image;
         double[,] sigmas;
-     
+
         BorderHandling borderHandling;
 
         public GaussForm(WrappedImage image)
@@ -37,7 +37,7 @@ namespace ImageProcessingLabs
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             _image = new WrappedImage(image);
         }
-    
+
         private void button2_Click(object sender, EventArgs e)
         {
             BorderHandling Edgemode = BorderHandling.Black;
@@ -75,10 +75,10 @@ namespace ImageProcessingLabs
             lbl_LevelsInOctava.Text = "Уровней в октаве: " + Convert.ToString(levels);
         }
 
-        public void buildPiramid( double sigmaA, double sigmaStart, int numOctaves, int levels, BorderHandling Edgemode)
+        public void buildPiramid(double sigmaA, double sigmaStart, int numOctaves, int levels, BorderHandling Edgemode)
         {
             double sigma0 = sigmaStart;
-            double[,] GaussMatrix0 = ConvolutionMatrix.CountGaussMatrix(Math.Sqrt(sigmaA*sigmaA + sigma0*sigma0));
+            double[,] GaussMatrix0 = ConvolutionMatrix.CountGaussMatrix(Math.Sqrt(sigmaA * sigmaA + sigma0 * sigma0));
             _image = ConvolutionMatrixFactory.processNonSeparable(_image, GaussMatrix0, Edgemode);
             picture = Transformations.FromUInt32ToBitmap(_image.buffer);
             pictureBox2.Image = picture;
@@ -114,7 +114,7 @@ namespace ImageProcessingLabs
 
                         double[,] GaussMatrix;
                         GaussMatrix = ConvolutionMatrix.CountGaussMatrix(sigma);
-                    //    Pyramidpixels = ConvolutionMatrixFactory.processNonSeparable(Pyramidpixels, GaussMatrix, Edgemode);
+                        //    Pyramidpixels = ConvolutionMatrixFactory.processNonSeparable(Pyramidpixels, GaussMatrix, Edgemode);
 
                         // Cохранение картинки
                         bufImage = Transformations.FromUInt32ToBitmap(Pyramidpixels);

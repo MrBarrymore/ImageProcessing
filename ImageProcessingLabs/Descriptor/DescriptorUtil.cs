@@ -10,7 +10,7 @@ namespace ImageProcessingLabs.Descriptor
     public class DescriptorUtil
     {
         public static List<PointsPair> match(List<AbstractDescriptor> descriptorsA,
-        List<AbstractDescriptor> descriptorsB)
+            List<AbstractDescriptor> descriptorsB)
         {
             List<PointsPair> pointsMatchings = new List<PointsPair>();
 

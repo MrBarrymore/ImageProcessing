@@ -39,7 +39,7 @@ namespace ImageProcessingLabs.Descriptor
             bin[neighbourIdx] += (1 - weight) * value;
         }
 
-        public double [] GetBin()
+        public double[] GetBin()
         {
             return bin;
         }
