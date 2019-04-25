@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ImageProcessingLabs.Points;
+using  ImageProcessingLabs.Wrapped;
 
 namespace ImageProcessingLabs
 {
@@ -17,63 +19,54 @@ namespace ImageProcessingLabs
             InitializeComponent();
         }
 
-        Bitmap image;
-        double[,] _pixels;
-        MainForm _mainForm = new MainForm();
+        Bitmap picture;
+        WrappedImage _image;
 
-        public SobelForm(double[,] pixels)
+        public SobelForm(WrappedImage image)
         {
             InitializeComponent();
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
-            _pixels = pixels;
 
-            this.Load += new EventHandler(button1_Click);
+            _image = (WrappedImage)image.Clone();
         }
 
-        void СountGradient(double[,] MatrixX1, double[,] MatrixX2, double[,] MatrixY1, double[,] MatrixY2)
+        void СountGradient(double[,] MatrixX1, double[,] MatrixX2, double[,] MatrixY1, double[,] MatrixY2, BorderHandling Edgemode)
         {
-            double[,] pixels1;
-            double[,] pixels2;
-            double[,] pixels3 = new double[_pixels.GetLength(0), _pixels.GetLength(1)];
+            WrappedImage imageX;
+            WrappedImage imageY;
+            WrappedImage imageGradient = new WrappedImage(_image.height, _image.width);
 
+            // Считаем частную производную по X (сепарабельно)
+            imageX = CommonMath.GetSobelX(_image, Edgemode);
+            picture = Transformations.FromUInt32ToBitmap(imageX.buffer);
+            pictureBox1.Image = picture;
+
+            // Считаем частную производную по Y (сепарабельно)
+            imageY = CommonMath.GetSobelY(_image, Edgemode);
+            picture = Transformations.FromUInt32ToBitmap(imageY.buffer);
+            pictureBox2.Image = picture;
+
+
+            // Вычисляем величину градиента
+            imageGradient = WrappedImage.getGradient(imageX, imageY);
+            picture = Transformations.FromUInt32ToBitmap(imageGradient.buffer);
+            pictureBox3.Image = picture;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
             BorderHandling Edgemode = BorderHandling.Mirror;
             if (RB_Zero.Checked == true) Edgemode = BorderHandling.Black;
             if (RB_EdgeCoppy.Checked == true) Edgemode = BorderHandling.Copy;
             if (RB_EdgeReflection.Checked == true) Edgemode = BorderHandling.Wrap;
             if (RB_WrapImage.Checked == true) Edgemode = BorderHandling.Mirror;
 
-            // Считаем частную производную по X (сепарабельно)
-            pixels1 = ConvolutionMatrixFactory.processNonSeparable(_pixels, MatrixX1, Edgemode);
-            pixels1 = ConvolutionMatrixFactory.processNonSeparable(pixels1, MatrixX2, Edgemode);
-            image = Transformations.FromUInt32ToBitmap(pixels1);
-            pictureBox1.Image = image;
-
-            // Считаем частную производную по Y (сепарабельно)
-            pixels2 = ConvolutionMatrixFactory.processNonSeparable(_pixels, MatrixY1, Edgemode);
-            pixels2 = ConvolutionMatrixFactory.processNonSeparable(pixels2, MatrixY2, Edgemode);
-            image = Transformations.FromUInt32ToBitmap(pixels2);
-            pictureBox2.Image = image;
-
-            // Вычисляем величину градиента
-            for (int y = 0; y < _pixels.GetLength(0); y++)
-            {
-                for (int x = 0; x < _pixels.GetLength(1); x++)
-                {
-                    pixels3[y, x] = Math.Sqrt(Math.Pow(pixels1[y, x], 2) + Math.Pow(pixels2[y, x], 2));
-                }
-            }
-            image = Transformations.FromUInt32ToBitmap(pixels3);
-            pictureBox3.Image = image;
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (RB_Sobel.Checked == true) СountGradient(SubelSepX1, SubelSepX2, SubelSepY1, SubelSepY2);
-            if (RB_Pruitt.Checked == true) СountGradient(PruittSepX1, PruittSepX2, PruittSepY1, PruittSepY2);
-            if (RB_Shchar.Checked == true) СountGradient(ShcharSepX1, ShcharSepX2, ShcharSepY1, ShcharSepY2);
-            MainForm.image = this.image;
+            if (RB_Sobel.Checked == true)  СountGradient(SubelSepX1, SubelSepX2, SubelSepY1, SubelSepY2, Edgemode);
+            if (RB_Pruitt.Checked == true) СountGradient(PruittSepX1, PruittSepX2, PruittSepY1, PruittSepY2, Edgemode);
+            if (RB_Shchar.Checked == true) СountGradient(ShcharSepX1, ShcharSepX2, ShcharSepY1, ShcharSepY2, Edgemode);
+            MainForm.picture = this.picture;
         }
 
         //Оператор собеля

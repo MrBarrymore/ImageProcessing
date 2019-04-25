@@ -14,36 +14,12 @@ namespace ImageProcessingLabs
         Black, White, Copy, Wrap, Mirror
     }
 
-
     class ConvolutionMatrixFactory
     {
         public static double[,] _pixels;
     
         public List<double[,]> picturePiramid = new List<double[,]>();
 
-        public ConvolutionMatrixFactory()
-        {
-
-        }
-
-        public ConvolutionMatrixFactory(double[] pixel)
-        {
-
-        }
-
-        public static double[,] processNonSeparable(double[,] pixels, double[,] matryx, BorderHandling borderHandling)
-        {
-            double[,] newpixels = new double[pixels.GetLength(0), pixels.GetLength(1)];
-            _pixels = pixels;
-            //применение ядра свертки                      
-            for (int y = 0; y < pixels.GetLength(0); y++)
-                for (int x = 0; x < pixels.GetLength(1); x++)
-                {
-                    newpixels[y, x] = GetNewPixel(y, x, pixels, matryx, borderHandling);
-                }
-
-            return newpixels;
-        }
 
         public static WrappedImage processNonSeparable(WrappedImage image, double[,] matryx, BorderHandling borderHandling)
         {
@@ -52,14 +28,13 @@ namespace ImageProcessingLabs
             for (int y = 0; y < image.height; y++)
                 for (int x = 0; x < image.width; x++)
                 {
-                    image.setPixel(x, y, GetNewPixel(y, x, image.buffer, matryx, borderHandling));
+                    image.setPixel(x, y, GetNewPixel(y, x, image, matryx, borderHandling));
                 }
 
             return newImage;
         }
 
-
-        public static double GetNewPixel(int cy, int cx, double[,] pixels, double[,] svMatrix, BorderHandling borderHandling)
+        public static double GetNewPixel(int cy, int cx, WrappedImage source, double[,] svMatrix, BorderHandling borderHandling)
         {
             double newpixel = 0;
            
@@ -75,9 +50,9 @@ namespace ImageProcessingLabs
 
                     double bufpixel = 0;
                     // Обработка краевых эффектов
-                    if (y < 0 || y >= pixels.GetLength(0)) bufpixel = CommonMath.getPixel(pixels, y, x, 4);
-                    else if (x < 0 || x >= pixels.GetLength(1)) bufpixel = CommonMath.getPixel(pixels, y, x, 4);
-                    else bufpixel = pixels[y1, x1];
+                    if (y < 0 || y >= source.height) bufpixel = WrappedImage.getPixel(source, y, x, borderHandling);
+                    else if (x < 0 || x >= source.width) bufpixel = WrappedImage.getPixel(source, y, x, borderHandling);
+                    else bufpixel = source.buffer[y1, x1];
 
                     newpixel += bufpixel * svMatrix[i1, j1];
                 }

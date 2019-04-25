@@ -8,39 +8,39 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using  ImageProcessingLabs.Wrapped;
 
 namespace ImageProcessingLabs.Points
 {
   
     public class Moravec
     {
-        private static double[,] _pixels;
+        private static WrappedImage _image;
 
-        public static List<InterestingPoint> DoMoravec(double minValue, int windowSize, int shiftSize, int locMaxRadius, double[,] pixels)
+        public static List<InterestingPoint> DoMoravec(double minValue, int windowSize, int shiftSize, int locMaxRadius, WrappedImage image)
         {
-            _pixels = (double[,])pixels.Clone();
+            _image = (WrappedImage)image.Clone();
 
-            double[,] mistakeMatrix = new double[_pixels.GetLength(0), _pixels.GetLength(1)];
+            _image = CommonMath.DoSobelSeparable(image); // Считаем градиент в каждой точке 
 
-            _pixels = CommonMath.DoSobelSeparable(_pixels); // Считаем градиент в каждой точке 
+            WrappedImage mistakeImage= GetMinimums(_image, windowSize, shiftSize);
 
-            mistakeMatrix = GetMinimums(mistakeMatrix, windowSize, shiftSize);
-
-            mistakeMatrix = Normalization(mistakeMatrix, 0, 1);
+         //   mistakeImage = Normalization(mistakeImage, 0, 1);
 
             List<InterestingPoint> candidates =
-               CommonMath.getCandidates(mistakeMatrix, mistakeMatrix.GetLength(0), mistakeMatrix.GetLength(1), locMaxRadius);
-            candidates = candidates.Where(x => x.probability > minValue).ToList();
+               CommonMath.getCandidates(mistakeImage, mistakeImage.height, mistakeImage.width, locMaxRadius, minValue);
+          
+            //  candidates = candidates.Where(x => x.probability > minValue).ToList();
 
             return candidates;
         }
 
-        private static double[,] Normalization(double[,] source, double newMin, double newMax)
+        private static WrappedImage Normalization(WrappedImage source, double newMin, double newMax)
         {
-            var result = new double[source.GetLength(0), source.GetLength(1)];
+            var result = (WrappedImage)source.Clone();
 
-            double min = source[0, 0], max = source[0, 0];
-            foreach (var value in source)
+            double min = source.buffer[0, 0], max = source.buffer[0, 0];
+            foreach (var value in source.buffer)
             {
                 if (double.IsNaN(value))
                     continue;
@@ -49,20 +49,22 @@ namespace ImageProcessingLabs.Points
                 max = Math.Max(max, value);
             }
 
-            for (var i = 0; i < source.GetLength(0); i++)
-            for (var j = 0; j < source.GetLength(1); j++)
+            for (var i = 0; i < source.height; i++)
+            for (var j = 0; j < source.width; j++)
             {
-                result[i, j] = (source[i, j] - min) * (newMax - newMin) / (max - min) + newMin;
+                result.buffer[i, j] = (source.buffer[i, j] - min) * (newMax - newMin) / (max - min) + newMin;
             }
 
             return result;
         }
 
-        public static double[,] GetMinimums(double[,] mistakeMatrix, int windowSize, int shiftSize)
+        public static WrappedImage GetMinimums(WrappedImage inputImage, int windowSize, int shiftSize)
         {
-            for (int y = 0; y < _pixels.GetLength(0); y++)
+            WrappedImage mistakeImage = (WrappedImage)inputImage.Clone();
+
+            for (int y = 0; y < mistakeImage.height; y++)
             {
-                for (int x = 0; x < _pixels.GetLength(1); x++)
+                for (int x = 0; x < mistakeImage.width; x++)
                 {
                     double[] mistake = new double[8];
                     double[,] mainWindow = GetMainWindow(windowSize, y, x); // Формируем исходное окно
@@ -73,11 +75,11 @@ namespace ImageProcessingLabs.Points
                         mistake[shiftMode] = GetMistake(mainWindow, shiftWindow);
                     }
 
-                    mistakeMatrix[y, x] = mistake.Min(); // Получаем значение оператора Моравика в каждой точке изображения  
+                    mistakeImage.buffer[y, x] = mistake.Min(); // Получаем значение оператора Моравика в каждой точке изображения  
                 }
             }
 
-            return mistakeMatrix;
+            return mistakeImage;
         }
 
 
@@ -86,7 +88,7 @@ namespace ImageProcessingLabs.Points
             double[,] mainWindow = new double[windowSize, windowSize];
             for (int wy = 0; wy < windowSize; wy++)
                 for (int wx = 0; wx < windowSize; wx++)
-                    mainWindow[wy, wx] = CommonMath.getPixel(_pixels, y + wy, x + wx, 3);
+                    mainWindow[wy, wx] = WrappedImage.getPixel(_image, y + wy, x + wx, BorderHandling.Mirror);
 
             return mainWindow;
         }
@@ -101,28 +103,28 @@ namespace ImageProcessingLabs.Points
                     switch (shiftMode)
                     {
                         case 0: // Сдвиг Вверх
-                            shiftWindow[wy, wx] = CommonMath.getPixel(_pixels, y + wy - shiftSize, x + wx, 3);
+                            shiftWindow[wy, wx] = WrappedImage.getPixel(_image, y + wy - shiftSize, x + wx, BorderHandling.Mirror);
                             continue;
                         case 1: // Сдвиг Вправо-Вверх
-                            shiftWindow[wy, wx] = CommonMath.getPixel(_pixels, y + wy - shiftSize, x + wx + shiftSize, 3);
+                            shiftWindow[wy, wx] = WrappedImage.getPixel(_image, y + wy - shiftSize, x + wx + shiftSize, BorderHandling.Mirror);
                             continue;
                         case 2: // Сдвиг Вправо
-                            shiftWindow[wy, wx] = CommonMath.getPixel(_pixels, y + wy, x + wx + shiftSize, 3);
+                            shiftWindow[wy, wx] = WrappedImage.getPixel(_image, y + wy, x + wx + shiftSize, BorderHandling.Mirror);
                             continue;
                         case 3: // Сдвиг Вправо-Вниз
-                            shiftWindow[wy, wx] = CommonMath.getPixel(_pixels, y + wy + shiftSize, x + wx + shiftSize, 3);
+                            shiftWindow[wy, wx] = WrappedImage.getPixel(_image, y + wy + shiftSize, x + wx + shiftSize, BorderHandling.Mirror);
                             continue;
                         case 4: // Сдвиг Вниз
-                            shiftWindow[wy, wx] = CommonMath.getPixel(_pixels, y + wy + shiftSize, x + wx, 3);
+                            shiftWindow[wy, wx] = WrappedImage.getPixel(_image, y + wy + shiftSize, x + wx, BorderHandling.Mirror);
                             continue;
                         case 5: // Сдвиг Влево-Вниз
-                            shiftWindow[wy, wx] = CommonMath.getPixel(_pixels, y + wy + shiftSize, x + wx - shiftSize, 3);
+                            shiftWindow[wy, wx] = WrappedImage.getPixel(_image, y + wy + shiftSize, x + wx - shiftSize, BorderHandling.Mirror);
                             continue;
                         case 6: // Сдвиг Влево
-                            shiftWindow[wy, wx] = CommonMath.getPixel(_pixels, y + wy, x + wy - shiftSize, 3);
+                            shiftWindow[wy, wx] = WrappedImage.getPixel(_image, y + wy, x + wy - shiftSize, BorderHandling.Mirror);
                             continue;
                         case 7: // Сдвиг Влево-Вверх
-                            shiftWindow[wy, wx] = CommonMath.getPixel(_pixels, y + wy - shiftSize, x + wy - shiftSize, 3);
+                            shiftWindow[wy, wx] = WrappedImage.getPixel(_image, y + wy - shiftSize, x + wy - shiftSize, BorderHandling.Mirror);
                             continue;
                     }
                 }
@@ -142,31 +144,5 @@ namespace ImageProcessingLabs.Points
             return mistake;
         }
 
-        public static double[,] GetLocalMax(double[,] pixel, int locMaxRadius) // Написать метод вычисления локальных максимумов 
-        {
-            double[,] localMaxPixel = new double[pixel.GetLength(0), pixel.GetLength(1)];
-
-            for (int y = locMaxRadius; y < pixel.GetLength(0) - locMaxRadius; y = y + locMaxRadius)
-            {
-
-                for (int x = locMaxRadius; x < pixel.GetLength(1) - locMaxRadius; x = x + locMaxRadius)
-                {
-                    int ymax = 0, xmax = 0, buf = 0;
-
-                    for (int ly = y; ly < y + locMaxRadius; ly++)
-                        for (int lx = x; lx < x + locMaxRadius; lx++)
-                        {
-                            if (_pixels[ly, lx] > buf)
-                            {
-                                ymax = ly;
-                                xmax = lx;
-                            }
-                        }
-                    localMaxPixel[ymax, xmax] = _pixels[ymax, xmax];
-                }
-            }
-
-            return localMaxPixel;
-        }
     }
 }

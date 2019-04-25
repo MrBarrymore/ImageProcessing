@@ -15,19 +15,18 @@ namespace ImageProcessingLabs
 {
     public partial class MainForm : Form
     {
-        public static Bitmap image;
+        public static Bitmap picture;
         public static string full_name_of_image = "\0";
-        public static double[,] _pixels;
+        public static WrappedImage image;
         private static WrappedImage wrappedImage;
 
         public MainForm()
         {
             InitializeComponent();
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-            //....... для тестов
 
             //  image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Cat1.jpg");
-             image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Lenna.png");
+            picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Lenna.png");
             // image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\111.png");
             // image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\3d.png");
             //  image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Star.jpg");
@@ -35,27 +34,18 @@ namespace ImageProcessingLabs
             //  image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Simple.png");
             //  image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Figures.jpg");
 
-            pictureBox1.Image = image;
+            pictureBox1.Image = picture;
 
-            wrappedImage = WrappedImage.of(image);
-
-
-            _pixels = new double[image.Height, image.Width];
-            for (int y = 0; y < image.Height; y++)
-                for (int x = 0; x < image.Width; x++)
-                {
-                    Color p = image.GetPixel(x, y);
-                    _pixels[y, x] = p.R * 0.299 + p.G * .587 + p.B * 0.114;
-                }
+            image = WrappedImage.of(picture);
+            wrappedImage = WrappedImage.of(picture);
 
 
+         //  InterestingPointForm _interestingPointForm = new InterestingPointForm(wrappedImage);
+        //   _interestingPointForm.ShowDialog();
 
-       //     InterestingPointForm _interestingPointForm = new InterestingPointForm(_pixels);
-        //    _interestingPointForm.ShowDialog();
 
-
-            DescriptorForm descriptorForm = new DescriptorForm(wrappedImage, wrappedImage);
-            descriptorForm.ShowDialog();
+         //   DescriptorForm descriptorForm = new DescriptorForm(wrappedImage, wrappedImage);
+         //   descriptorForm.ShowDialog();
 
         }
 
@@ -69,17 +59,17 @@ namespace ImageProcessingLabs
                 {
                     full_name_of_image = open_dialog.FileName;
 
-                    image = new Bitmap(open_dialog.FileName);
+                    picture = new Bitmap(open_dialog.FileName);
 
-                    pictureBox1.Image = image;
+                    pictureBox1.Image = picture;
 
                     //получение матрицы с пикселями
-                    _pixels = new double[image.Height, image.Width];
-                    for (int y = 0; y < image.Height; y++)
-                        for (int x = 0; x < image.Width; x++)
+                    image.buffer = new double[image.height, image.width];
+                    for (int y = 0; y < image.height; y++)
+                        for (int x = 0; x < image.width; x++)
                         {
-                            Color color = image.GetPixel(x, y);
-                            _pixels[y, x] = color.R * 0.299 + color.G * 0.587 + color.B * 0.114;
+                            Color color = picture.GetPixel(x, y);
+                            image.buffer[y, x] = color.R * 0.299 + color.G * 0.587 + color.B * 0.114;
                         }
                 }
                 catch
@@ -106,7 +96,7 @@ namespace ImageProcessingLabs
                 {
                     try
                     {
-                        image.Save(savedialog.FileName, System.Drawing.Imaging.ImageFormat.Jpeg);
+                        picture.Save(savedialog.FileName, System.Drawing.Imaging.ImageFormat.Jpeg);
                     }
                     catch
                     {
@@ -119,21 +109,26 @@ namespace ImageProcessingLabs
 
         private void операторСобеляToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SobelForm _sobelForm = new SobelForm(_pixels);
+            SobelForm _sobelForm = new SobelForm(image);
             _sobelForm.ShowDialog();
-            this.Enabled = false;
         }
 
         private void фильтрГауссаToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            GaussForm _gaussForm = new GaussForm(_pixels);
+            GaussForm _gaussForm = new GaussForm(image);
             _gaussForm.ShowDialog();
         }
 
         private void интересныеТочкиToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            InterestingPointForm _interestingPointForm = new InterestingPointForm(_pixels);
+            InterestingPointForm _interestingPointForm = new InterestingPointForm(wrappedImage);
             _interestingPointForm.ShowDialog();
+        }
+
+        private void дескрипторыТочекToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DescriptorForm descriptorForm = new DescriptorForm(wrappedImage, wrappedImage);
+            descriptorForm.ShowDialog();
         }
     }
 }

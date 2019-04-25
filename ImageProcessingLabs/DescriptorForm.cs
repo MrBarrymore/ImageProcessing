@@ -19,7 +19,7 @@ namespace ImageProcessingLabs
     {
         private WrappedImage imageA, imageB;
         private static int POINTS = 30;
-        private static double MinValueHarris = 0.1;
+        private static double MinValueHarris = 0.05;
         private static int WindowSize = 5;
 
         public DescriptorForm()
@@ -52,7 +52,7 @@ namespace ImageProcessingLabs
 
         }
 
-        public static List<PointsPair> processWithSift(WrappedImage imageA,
+        public List<PointsPair> processWithSift(WrappedImage imageA,
             WrappedImage imageB,
             int gridSize,
             int cellSize,
@@ -73,10 +73,13 @@ namespace ImageProcessingLabs
             WrappedImage gradientB = WrappedImage.getGradient(xB, yB);
             WrappedImage gradientAngleB = WrappedImage.getGradientAngle(xB, yB);
 
-            List<InterestingPoint> pointsA = PointFilter.filterPoints(Harris.DoHarris(MinValueHarris, WindowSize, imageA), POINTS);
-            List<InterestingPoint> pointsB = PointFilter.filterPoints(Harris.DoHarris(MinValueHarris, WindowSize, imageB), POINTS);
+            List<InterestingPoint> pointsA = Harris.DoHarris(MinValueHarris, WindowSize, gradientA);
+            List<InterestingPoint> pointsB = PointFilter.filterPoints(Harris.DoHarris(MinValueHarris, WindowSize, gradientB), POINTS);
 
 
+            DrawPoints(pointsA, imageA);
+
+            /*
             List<SIFTDescriptor> descriptorsA = getDescriptors(gradientA,
                 gradientAngleA,
                 pointsA,
@@ -84,16 +87,18 @@ namespace ImageProcessingLabs
                 cellSize,
                 binsCount);
 
-            List<SIFTDescriptor> descriptorsB = getDescriptors(gradientB,
+               List<SIFTDescriptor> descriptorsB = getDescriptors(gradientB,
                 gradientAngleB,
                 pointsB,
                 gridSize,
                 cellSize,
                 binsCount);
-            
+            */
             var pointsPair = new List<PointsPair>();
             // return DescriptorUtil.match(descriptorsA, descriptorsB);
             //   return PointsPair.from(descriptorsA, descriptorsB);
+            
+
             return pointsPair;
         }
 
@@ -119,6 +124,25 @@ namespace ImageProcessingLabs
 
          //   listNames.GroupBy(v => v).Where(g => g.Count() > 1).Select(g => g.Key)
             return siftDescriptors;
+        }
+
+
+
+        public void DrawPoints(List<InterestingPoint> point, WrappedImage inputImage)
+        {
+                Bitmap image;
+                image = Transformations.FromUInt32ToBitmap(inputImage.buffer);
+                Graphics graph = Graphics.FromImage(image);
+                Color pen = Color.Blue;
+                // ByteWriteFile(DrawMatrix);
+                foreach (var interestingPoint in point)
+                {
+                    graph.FillEllipse(new SolidBrush(pen), interestingPoint.x, interestingPoint.y, 2, 2);
+                }
+
+                pictureBox2.Image = image;
+
+                image.Save("..\\..\\..\\..\\Output\\OutputPicture.png");
         }
 
     }

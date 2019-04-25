@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 
+using  ImageProcessingLabs.Wrapped;
+
 namespace ImageProcessingLabs
 {
     public partial class GaussForm : Form
@@ -19,21 +21,21 @@ namespace ImageProcessingLabs
         }
 
         // Глобальные переменные 
-        Bitmap image, bufImage;
+        Bitmap picture, bufImage;
 
         static List<double[,]> picturePiramid = new List<double[,]>();
 
-        static double[,] _pixels;
+        static WrappedImage _image;
         double[,] sigmas;
      
         BorderHandling borderHandling;
 
-        public GaussForm(double[,] pixels)
+        public GaussForm(WrappedImage image)
         {
             InitializeComponent();
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
-            _pixels = pixels;
+            _image = new WrappedImage(image);
         }
     
         private void button2_Click(object sender, EventArgs e)
@@ -45,19 +47,20 @@ namespace ImageProcessingLabs
             if (RB_EdgeReflection.Checked == true) Edgemode = BorderHandling.Wrap;
             if (RB_WrapImage.Checked == true) Edgemode = BorderHandling.Mirror;
 
-            int numOctaves = BuildingPyramid.CountOctava(_pixels);
+            int numOctaves = BuildingPyramid.CountOctava(_image.buffer);
             double sigmaStart = Convert.ToDouble(textBox2.Text);
             double sigma0 = Convert.ToDouble(textBox3.Text);
             int levels = Convert.ToInt32(comboBox2.Text);
             sigmas = new double[numOctaves, levels + 1]; // Массив значений сигм на каждом этапе преобразований
 
-            image = Transformations.FromUInt32ToBitmap(_pixels);
-            pictureBox1.Image = image;
+            picture = Transformations.FromUInt32ToBitmap(_image.buffer);
+            pictureBox1.Image = picture;
+
             DeletePictures();
-            image.Save("..\\..\\..\\Output\\" + "Исходное изображение.png");
+            picture.Save("..\\..\\..\\..\\Output\\" + "Исходное изображение.png");
 
 
-            buildPiramid(Convert.ToDouble(textBox2.Text), Convert.ToDouble(textBox3.Text), BuildingPyramid.CountOctava(_pixels), Convert.ToInt32(comboBox2.Text), Edgemode);
+            buildPiramid(Convert.ToDouble(textBox2.Text), Convert.ToDouble(textBox3.Text), BuildingPyramid.CountOctava(_image.buffer), Convert.ToInt32(comboBox2.Text), Edgemode);
 
             // Задаем новые значения для элементов управления выводом изображений
             comboBox3.Items.Clear();
@@ -76,10 +79,10 @@ namespace ImageProcessingLabs
         {
             double sigma0 = sigmaStart;
             double[,] GaussMatrix0 = ConvolutionMatrix.CountGaussMatrix(Math.Sqrt(sigmaA*sigmaA + sigma0*sigma0));
-            _pixels = ConvolutionMatrixFactory.processNonSeparable(_pixels, GaussMatrix0, Edgemode);
-            image = Transformations.FromUInt32ToBitmap(_pixels);
-            pictureBox2.Image = image;
-            picturePiramid.Add(_pixels); // Добавляем 0 уровень пирамиды 
+            _image = ConvolutionMatrixFactory.processNonSeparable(_image, GaussMatrix0, Edgemode);
+            picture = Transformations.FromUInt32ToBitmap(_image.buffer);
+            pictureBox2.Image = picture;
+            picturePiramid.Add(_image.buffer); // Добавляем 0 уровень пирамиды 
 
             // Строим пирамиду изображения
             for (int i = 0; i < numOctaves; i++)
@@ -99,7 +102,7 @@ namespace ImageProcessingLabs
                     {
                         sigma0 = sigmaStart;
                         bufImage = Transformations.FromUInt32ToBitmap(Pyramidpixels);
-                        bufImage.Save("..\\..\\..\\Output\\" + "Октава " + i + " Уровень " + j + " Знач.сигма " + sigma0 + ".png");
+                        bufImage.Save("..\\..\\..\\..\\Output\\" + "Октава " + i + " Уровень " + j + " Знач.сигма " + sigma0 + ".png");
                         sigmas[i, j] = sigma0;
                     }
                     else
@@ -111,11 +114,11 @@ namespace ImageProcessingLabs
 
                         double[,] GaussMatrix;
                         GaussMatrix = ConvolutionMatrix.CountGaussMatrix(sigma);
-                        Pyramidpixels = ConvolutionMatrixFactory.processNonSeparable(Pyramidpixels, GaussMatrix, Edgemode);
+                    //    Pyramidpixels = ConvolutionMatrixFactory.processNonSeparable(Pyramidpixels, GaussMatrix, Edgemode);
 
                         // Cохранение картинки
                         bufImage = Transformations.FromUInt32ToBitmap(Pyramidpixels);
-                        bufImage.Save("..\\..\\..\\Output\\" + "Октава " + i + " Уровень " + j + " Знач.сигма " + sigma0 + ".png");
+                        bufImage.Save("..\\..\\..\\..\\Output\\" + "Октава " + i + " Уровень " + j + " Знач.сигма " + sigma0 + ".png");
                         sigmas[i, j] = sigma0; // Записываем значения сигм на каждом этапе преобразований
 
                     }
@@ -138,7 +141,7 @@ namespace ImageProcessingLabs
 
         void DeletePictures()
         {
-            DirectoryInfo dirInfo = new DirectoryInfo("..\\..\\..\\Output\\");
+            DirectoryInfo dirInfo = new DirectoryInfo("..\\..\\..\\..\\Output\\");
             foreach (FileInfo file in dirInfo.GetFiles())
             {
                 file.Delete();
@@ -155,8 +158,8 @@ namespace ImageProcessingLabs
                 int i = Convert.ToInt32(comboBox3.Text);
                 int j = Convert.ToInt32(comboBox4.Text);
 
-                image = new Bitmap("..\\..\\..\\Output\\" + "Октава " + (i) + " Уровень " + (j) + " Знач.сигма " + sigmas[i, j] + ".png");
-                pictureBox2.Image = image;
+                picture = new Bitmap("..\\..\\..\\..\\Output\\" + "Октава " + (i) + " Уровень " + (j) + " Знач.сигма " + sigmas[i, j] + ".png");
+                pictureBox2.Image = picture;
                 lbl_SigmaValue.Text = "Значение сигмы: " + Convert.ToString(sigmas[i, j]);
                 lbl_EffectiveSigmaValue.Text = "Эффективное значение сигмы: " + sigmas[i, j] * Math.Pow(2, i);
             }

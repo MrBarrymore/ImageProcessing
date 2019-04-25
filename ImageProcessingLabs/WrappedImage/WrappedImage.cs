@@ -7,13 +7,18 @@ using System.Threading.Tasks;
 
 namespace ImageProcessingLabs.Wrapped
 {
-    public class WrappedImage
+    public interface ICloneable<T>
+    {
+        T Clone();
+    }
+
+    public class WrappedImage : ICloneable<WrappedImage>
     {
         private static double BLACK = 0;
         private static double WHITE = 1;
 
-        public int width;
         public int height;
+        public int width;
         public double [,] buffer;
 
         public WrappedImage()
@@ -29,7 +34,7 @@ namespace ImageProcessingLabs.Wrapped
             System.Array.Copy(wrappedImage.buffer, 0, buffer, 0, buffer.Length);
         }
 
-        public WrappedImage(int width, int height)
+        public WrappedImage(int height, int width)
         {
             if (width < 0 || height < 0)
                 throw new Exception("Размер не может быть отрицательным");
@@ -45,13 +50,13 @@ namespace ImageProcessingLabs.Wrapped
             wrappedImage.height = image.Height;
             wrappedImage.buffer = new double[wrappedImage.width, wrappedImage.height];
 
-            for (int x = 0; x < image.Width; x++)
+            for (int y = 0; y < image.Height; y++)
             {
-                for (int y = 0; y < image.Height; y++)
+                for (int x = 0; x < image.Width; x++)
                 {
                     Color color = image.GetPixel(x, y);
                     double gray = 0.2126 * color.R + 0.7152 * color.G + 0.0722 * color.B;
-                    wrappedImage.setPixel(x, y, gray / 255);
+                    wrappedImage.setPixel(y, x, gray / 255);
                 }
             }
             return wrappedImage;
@@ -60,24 +65,29 @@ namespace ImageProcessingLabs.Wrapped
         public static WrappedImage of(double[,] buffer)
         {
             WrappedImage wrappedImage = new WrappedImage();
-            wrappedImage.width = buffer.Length;
-            if (buffer.Length > 0)
+            wrappedImage.height = buffer.GetLength(0);
+            wrappedImage.width = buffer.GetLength(1);
+
+            wrappedImage.buffer = new double[wrappedImage.height, wrappedImage.width];
+
+            for (int i = 0; i < wrappedImage.height; i++)
             {
-                wrappedImage.height = buffer.GetLength(0);
-            }
-            else
-            {
-                wrappedImage.height = 0;
-            }
-            wrappedImage.buffer = new double[wrappedImage.width, wrappedImage.height];
-            for (int i = 0; i < wrappedImage.width; i++)
-            {
-                for (int j = 0; j < wrappedImage.height; j++)
+                for (int j = 0; j < wrappedImage.width; j++)
                 {
                     wrappedImage.setPixel(i, j, buffer[i,j]);
                 }
             }
             return wrappedImage;
+        }
+
+        public WrappedImage Clone()
+        {
+            return new WrappedImage
+            {
+                width = this.width,
+                height = this.height,
+                buffer = (double[,])this.buffer.Clone()
+            };
         }
 
         //преобразование из UINT32 to Bitmap
@@ -98,7 +108,7 @@ namespace ImageProcessingLabs.Wrapped
             for (int y = 0; y < Height; y++)
             for (int x = 0; x < Width; x++)
             {
-                double color = ((pixel[y, x] - min) * 255) / (max - min);
+                double color = ((pixel[y, x] - min)) / (max - min);
                 bmp.SetPixel(x, y, Color.FromArgb((int)color, (int)color, (int)color));
             }
 
@@ -106,44 +116,44 @@ namespace ImageProcessingLabs.Wrapped
         }
 
 
-        public void setPixel(int x, int y, double value)
-        {
-            buffer[x, y] = value;
-        }
-
         public double getPixel(int x, int y)
         {
             return buffer[x, y];
         }
 
-        public double getPixel(double [,] _pixels, int y, int x, BorderHandling borderHandling)
+        public void setPixel(int y, int x, double value)
+        {
+            buffer[y, x] = value;
+        }
+
+        public static double getPixel(WrappedImage image, int y, int x, BorderHandling borderHandling)
         {
             switch (borderHandling)
             {
                 case BorderHandling.Black:
-                    if (x < 0 || x >= _pixels.GetLength(1) || y < 0 || y >= _pixels.GetLength(0))
+                    if (x < 0 || x >= image.width || y < 0 || y >= image.height)
                         return 0;
-                    return _pixels[y, x];
+                    return image.buffer[y, x];
                 case BorderHandling.White:
-                    if (x < 0 || x >= _pixels.GetLength(1) || y < 0 || y >= _pixels.GetLength(0))
-                        return 255;
-                    return _pixels[y, x];
+                    if (x < 0 || x >= image.width || y < 0 || y >= image.height)
+                        return 1;
+                    return image.buffer[y, x];
                 case BorderHandling.Copy:
-                    x = border(0, x, _pixels.GetLength(1) - 1);
-                    y = border(y, 0, _pixels.GetLength(0) - 1);
-                    return _pixels[y, x];
+                    x = border(0, x, image.width - 1);
+                    y = border(y, 0, image.height - 1);
+                    return image.buffer[y, x];
                 case BorderHandling.Wrap:
-                    x = (x + _pixels.GetLength(1)) % _pixels.GetLength(1);
-                    y = (y + _pixels.GetLength(0)) % _pixels.GetLength(0);
-                    return _pixels[y, x];
+                    x = (x + image.width) % image.width;
+                    y = (y + image.height) % image.height;
+                    return image.buffer[y, x];
                 case BorderHandling.Mirror:
                     x = Math.Abs(x);
                     y = Math.Abs(y);
-                    if (x >= _pixels.GetLength(1)) x = _pixels.GetLength(1) - (x - _pixels.GetLength(1) + 1);
-                    if (y >= _pixels.GetLength(0)) y = _pixels.GetLength(0) - (y - _pixels.GetLength(0) + 1);
-                    return _pixels[y, x];
+                    if (x >= image.width) x = image.width - (x - image.width + 1);
+                    if (y >= image.height) y = image.height - (y - image.height + 1);
+                    return image.buffer[y, x];
                 default:
-                    return 255;
+                    return 1;
             }
         }
 

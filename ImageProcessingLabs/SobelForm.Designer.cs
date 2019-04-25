@@ -118,6 +118,7 @@
             // RB_Sobel
             // 
             this.RB_Sobel.AutoSize = true;
+            this.RB_Sobel.Checked = true;
             this.RB_Sobel.Location = new System.Drawing.Point(6, 22);
             this.RB_Sobel.Name = "RB_Sobel";
             this.RB_Sobel.Size = new System.Drawing.Size(62, 17);
@@ -133,7 +134,6 @@
             this.RB_Pruitt.Name = "RB_Pruitt";
             this.RB_Pruitt.Size = new System.Drawing.Size(63, 17);
             this.RB_Pruitt.TabIndex = 8;
-            this.RB_Pruitt.TabStop = true;
             this.RB_Pruitt.Text = "Прюитт";
             this.RB_Pruitt.UseVisualStyleBackColor = true;
             // 
@@ -156,7 +156,6 @@
             this.RB_Shchar.Name = "RB_Shchar";
             this.RB_Shchar.Size = new System.Drawing.Size(53, 17);
             this.RB_Shchar.TabIndex = 8;
-            this.RB_Shchar.TabStop = true;
             this.RB_Shchar.Text = "Щарр";
             this.RB_Shchar.UseVisualStyleBackColor = true;
             // 

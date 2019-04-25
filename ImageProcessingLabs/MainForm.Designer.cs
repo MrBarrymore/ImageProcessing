@@ -37,6 +37,7 @@
             this.операторСобеляToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.фильтрГауссаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.интересныеТочкиToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.дескрипторыТочекToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -89,7 +90,8 @@
             this.toolStripMenuItem2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.операторСобеляToolStripMenuItem,
             this.фильтрГауссаToolStripMenuItem,
-            this.интересныеТочкиToolStripMenuItem});
+            this.интересныеТочкиToolStripMenuItem,
+            this.дескрипторыТочекToolStripMenuItem});
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
             this.toolStripMenuItem2.Size = new System.Drawing.Size(69, 20);
             this.toolStripMenuItem2.Text = "Фильтры";
@@ -97,23 +99,30 @@
             // операторСобеляToolStripMenuItem
             // 
             this.операторСобеляToolStripMenuItem.Name = "операторСобеляToolStripMenuItem";
-            this.операторСобеляToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.операторСобеляToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.операторСобеляToolStripMenuItem.Text = "Оператор Собеля";
             this.операторСобеляToolStripMenuItem.Click += new System.EventHandler(this.операторСобеляToolStripMenuItem_Click);
             // 
             // фильтрГауссаToolStripMenuItem
             // 
             this.фильтрГауссаToolStripMenuItem.Name = "фильтрГауссаToolStripMenuItem";
-            this.фильтрГауссаToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.фильтрГауссаToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.фильтрГауссаToolStripMenuItem.Text = "Фильтр Гаусса";
             this.фильтрГауссаToolStripMenuItem.Click += new System.EventHandler(this.фильтрГауссаToolStripMenuItem_Click);
             // 
             // интересныеТочкиToolStripMenuItem
             // 
             this.интересныеТочкиToolStripMenuItem.Name = "интересныеТочкиToolStripMenuItem";
-            this.интересныеТочкиToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+            this.интересныеТочкиToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.интересныеТочкиToolStripMenuItem.Text = "Интересные точки";
             this.интересныеТочкиToolStripMenuItem.Click += new System.EventHandler(this.интересныеТочкиToolStripMenuItem_Click);
+            // 
+            // дескрипторыТочекToolStripMenuItem
+            // 
+            this.дескрипторыТочекToolStripMenuItem.Name = "дескрипторыТочекToolStripMenuItem";
+            this.дескрипторыТочекToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+            this.дескрипторыТочекToolStripMenuItem.Text = "Дескрипторы точек";
+            this.дескрипторыТочекToolStripMenuItem.Click += new System.EventHandler(this.дескрипторыТочекToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -143,6 +152,7 @@
         private System.Windows.Forms.ToolStripMenuItem операторСобеляToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem фильтрГауссаToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem интересныеТочкиToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem дескрипторыТочекToolStripMenuItem;
     }
 }
 

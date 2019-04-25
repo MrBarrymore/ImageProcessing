@@ -46,8 +46,8 @@ namespace ImageProcessingLabs.Descriptor
                             int realX = point.getX() + cellX * cellSize + pixelX;
                             int realY = point.getY() + cellY * cellSize + pixelY;
 
-                            double phi = gradientAngle.getPixel(gradient.buffer, realX, realY, BorderHandling.Mirror);
-                            double gradientValue = gradient.getPixel(gradient.buffer, realX, realY, BorderHandling.Mirror);
+                            double phi = WrappedImage.getPixel(gradient, realX, realY, BorderHandling.Mirror);
+                            double gradientValue = WrappedImage.getPixel(gradientAngle, realX, realY, BorderHandling.Mirror);
                             double gaussValue = CommonMath.getPixel(gauss, centerShift + cellX * cellSize + pixelX,
                                                           centerShift + cellY * cellSize + pixelY, 4);
 
