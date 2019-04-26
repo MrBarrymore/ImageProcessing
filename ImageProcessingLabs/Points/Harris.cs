@@ -39,7 +39,7 @@ namespace ImageProcessingLabs.Points
 
         private static WrappedImage Normalization(WrappedImage source, double newMin, double newMax)
         {
-            var result = new WrappedImage(source.width, source.height);
+            var result = new WrappedImage(source.height, source.width);
 
             double min = source.buffer[0, 0], max = source.buffer[0, 0];
             foreach (var value in source.buffer)
@@ -62,7 +62,7 @@ namespace ImageProcessingLabs.Points
 
         public static WrappedImage GetHarrisMatrix(int windowSize, int windowRadius, int width, int height)
         {
-            WrappedImage harrisMat = new WrappedImage(width, height);
+            WrappedImage harrisMat = new WrappedImage(height, width);
 
             WrappedImage SobelX = CommonMath.GetSobelX(_image, BorderHandling.Mirror);
             WrappedImage SobelY = CommonMath.GetSobelY(_image, BorderHandling.Mirror);

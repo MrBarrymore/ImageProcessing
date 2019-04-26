@@ -48,7 +48,7 @@ namespace ImageProcessingLabs.Wrapped
             WrappedImage wrappedImage = new WrappedImage();
             wrappedImage.width = image.Width;
             wrappedImage.height = image.Height;
-            wrappedImage.buffer = new double[wrappedImage.width, wrappedImage.height];
+            wrappedImage.buffer = new double[wrappedImage.height, wrappedImage.width];
 
             for (int y = 0; y < image.Height; y++)
             {
@@ -123,7 +123,7 @@ namespace ImageProcessingLabs.Wrapped
 
         public void setPixel(int y, int x, double value)
         {
-            buffer[x, y] = value;
+            buffer[y, x] = value;
         }
 
         public static double getPixel(WrappedImage image, int y, int x, BorderHandling borderHandling)
@@ -151,7 +151,7 @@ namespace ImageProcessingLabs.Wrapped
                     y = Math.Abs(y);
                     if (x >= image.width) x = image.width - (x - image.width + 1);
                     if (y >= image.height) y = image.height - (y - image.height + 1);
-                    return image.buffer[x, y];
+                    return image.buffer[y, x];
                 default:
                     return 1;
             }
@@ -213,11 +213,12 @@ namespace ImageProcessingLabs.Wrapped
         {
             if (xImage.height != yImage.height || xImage.width != yImage.width)
                 throw new Exception("Изображения разного размера");
-            WrappedImage gradient = new WrappedImage(xImage.width, xImage.height);
 
-            for (int y = 0; y < gradient.buffer.GetLength(0); y++)
+            WrappedImage gradient = new WrappedImage(xImage.height, xImage.width);
+
+            for (int y = 0; y < gradient.height; y++)
             {
-                for (int x = 0; x < gradient.buffer.GetLength(1); x++)
+                for (int x = 0; x < gradient.width; x++)
                 {
                     gradient.buffer[y, x] = Math.Sqrt(sqr(xImage.buffer[y, x]) + sqr(yImage.buffer[y, x]));
                 }
@@ -230,11 +231,11 @@ namespace ImageProcessingLabs.Wrapped
         {
             if (xImage.height != yImage.height || xImage.width != yImage.width)
                 throw new Exception("Изображения разного размера");
-            WrappedImage gradientAngle = new WrappedImage(xImage.width, xImage.height);
+            WrappedImage gradientAngle = new WrappedImage(xImage.height, xImage.width);
 
-            for (int y = 0; y < gradientAngle.buffer.GetLength(0); y++)
+            for (int y = 0; y < gradientAngle.height; y++)
             {
-                for (int x = 0; x < gradientAngle.buffer.GetLength(1); x++)
+                for (int x = 0; x < gradientAngle.width; x++)
                 {
                     gradientAngle.buffer[y, x] = Math.Atan2(yImage.buffer[y, x], xImage.buffer[y, x]);
                 }

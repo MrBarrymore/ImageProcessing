@@ -25,14 +25,14 @@ namespace ImageProcessingLabs
             InitializeComponent();
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
 
-            //  image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Cat1.jpg");
-            picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Lenna.png");
-            // image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\111.png");
-            // image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\3d.png");
-            //  image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Star.jpg");
+          //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Cat1.jpg");
+          //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\LennaA.png");
+             picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\cube.jpg");
+            // picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\3d.png");
+            //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Star.jpg");
 
-            //  image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Simple.png");
-            //  image = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Figures.jpg");
+            //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Simple.png");
+            //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Figures.jpg");
 
             pictureBox1.Image = picture;
 
@@ -51,7 +51,7 @@ namespace ImageProcessingLabs
 
 
             DescriptorForm descriptorForm = new DescriptorForm(wrappedImageA, wrappedImageB);
-            descriptorForm.ShowDialog();
+            descriptorForm.Show();
 
         }
 
@@ -116,25 +116,25 @@ namespace ImageProcessingLabs
         private void операторСобеляToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SobelForm _sobelForm = new SobelForm(image);
-            _sobelForm.ShowDialog();
+            _sobelForm.Show();
         }
 
         private void фильтрГауссаToolStripMenuItem_Click(object sender, EventArgs e)
         {
             GaussForm _gaussForm = new GaussForm(image);
-            _gaussForm.ShowDialog();
+            _gaussForm.Show();
         }
 
         private void интересныеТочкиToolStripMenuItem_Click(object sender, EventArgs e)
         {
             InterestingPointForm _interestingPointForm = new InterestingPointForm(wrappedImage);
-            _interestingPointForm.ShowDialog();
+            _interestingPointForm.Show();
         }
 
         private void дескрипторыТочекToolStripMenuItem_Click(object sender, EventArgs e)
         {
             DescriptorForm descriptorForm = new DescriptorForm(wrappedImage, wrappedImage);
-            descriptorForm.ShowDialog();
+            descriptorForm.Show();
         }
     }
 }

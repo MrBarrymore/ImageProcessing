@@ -8,7 +8,7 @@ using ImageProcessingLabs.Wrapped;
 
 namespace ImageProcessingLabs.Descriptor
 {
-    public abstract class AbstractDescriptor
+    public abstract class AbstractDescriptor : SIFTDescriptor
     {
         public void normalize()
         {

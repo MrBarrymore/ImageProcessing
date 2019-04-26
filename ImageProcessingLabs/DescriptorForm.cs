@@ -34,13 +34,13 @@ namespace ImageProcessingLabs
 
         }
 
-        public DescriptorForm(WrappedImage imageA, WrappedImage imageB)
+        public DescriptorForm(WrappedImage _imageA, WrappedImage _imageB)
         {
             InitializeComponent();
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
-            this.imageA = imageA;
-            this.imageB = imageB;
+            this.imageA = _imageA.Clone();
+            this.imageB = _imageB.Clone();
 
 
         }
@@ -72,18 +72,17 @@ namespace ImageProcessingLabs
             WrappedImage xB = CommonMath.GetSobelX(imageB, BorderHandling.Mirror);
             WrappedImage yB = CommonMath.GetSobelY(imageB, BorderHandling.Mirror);
 
-
             WrappedImage gradientA = WrappedImage.getGradient(xA, yA);
             WrappedImage gradientAngleA = WrappedImage.getGradientAngle(xA, yA);
             WrappedImage gradientB = WrappedImage.getGradient(xB, yB);
             WrappedImage gradientAngleB = WrappedImage.getGradientAngle(xB, yB);
 
-            List<InterestingPoint> pointsA = Harris.DoHarris(MinValueHarris, WindowSize, imageA);
+            List<InterestingPoint> pointsA = Harris.DoHarris(0.05, 3, imageA);
             List<InterestingPoint> pointsB = Harris.DoHarris(MinValueHarris, WindowSize, imageB);
 
 
             lbl_findPoints1.Text = "Найдено интересных точек(1): " + pointsA.Count;
-            lbl_findPoints2.Text = "Найдено интересных точек(1): " + pointsB.Count;
+            lbl_findPoints2.Text = "Найдено интересных точек(2): " + pointsB.Count;
 
 
             DrawPoints(pointsA, imageA, 1);
@@ -104,14 +103,7 @@ namespace ImageProcessingLabs
              cellSize,
              binsCount);
 
-            var pointsPair = new List<PointsPair>();
-            // return DescriptorUtil.match(descriptorsA, descriptorsB);
-            //   return PointsPair.from(descriptorsA, descriptorsB);
-
-
-
-
-            return pointsPair;
+            return DescriptorUtil.match(descriptorsA, descriptorsB);
         }
 
         private static List<SIFTDescriptor> getDescriptors(WrappedImage gradient,
@@ -130,11 +122,10 @@ namespace ImageProcessingLabs
                         cellSize,
                         binsCount)).ToList();
 
-            AbstractDescriptor abs;
 
             //  siftDescriptors.ForEach(AbstractDescriptor::normalize()); // Переделать нормализацию !!!!!
 
-            //   listNames.GroupBy(v => v).Where(g => g.Count() > 1).Select(g => g.Key)
+             //  listNames.GroupBy(v => v).Where(g => g.Count() > 1).Select(g => g.Key)
             return siftDescriptors;
         }
 

@@ -9,7 +9,7 @@ namespace ImageProcessingLabs.Descriptor
 {
     public class DescriptorUtil
     {
-        public static List<PointsPair> match(List<AbstractDescriptor> descriptorsA,
+        public static List<PointsPair> match(List <AbstractDescriptor> descriptorsA,
             List<AbstractDescriptor> descriptorsB)
         {
             List<PointsPair> pointsMatchings = new List<PointsPair>();
@@ -24,12 +24,6 @@ namespace ImageProcessingLabs.Descriptor
 
             return pointsMatchings;
         }
-
-        internal static List<PointsPair> match(List<SIFTDescriptor> descriptorsA, List<SIFTDescriptor> descriptorsB)
-        {
-            throw new NotImplementedException();
-        }
-
 
         private static AbstractDescriptor getClosest(AbstractDescriptor descriptor,
             List<AbstractDescriptor> descriptors)
@@ -47,7 +41,6 @@ namespace ImageProcessingLabs.Descriptor
             }
             return selected;
         }
-
 
     }
 }
