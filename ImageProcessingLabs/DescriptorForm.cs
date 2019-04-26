@@ -38,7 +38,6 @@ namespace ImageProcessingLabs
         {
             InitializeComponent();
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-            pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             this.imageA = _imageA.Clone();
             this.imageB = _imageB.Clone();
 
@@ -53,17 +52,25 @@ namespace ImageProcessingLabs
             int windowSize = Convert.ToInt32(txb_WindowSize.Text);
             double minValue = Convert.ToDouble(txb_minValue.Text);
 
-            processWithSift(imageA, imageB, 16, 4, 8, MinValueHarris, WindowSize);
+            int maxPoints;
 
+            if (filter_checkBox.Checked == true) maxPoints = Convert.ToInt32(txb_Filter.Text);
+            else maxPoints = 5000;
+
+
+            List<PointsPair> pointPairs = processWithSift(imageA, imageB, 16, 4, 8, MinValueHarris, WindowSize, maxPoints);
+
+            BuildPicture(pointPairs, imageA, imageB);
         }
 
-        public List<PointsPair> processWithSift(WrappedImage imageA,
+        public List<PointsPair> processWithSift(WrappedImage imageA,       
             WrappedImage imageB,
             int gridSize,
             int cellSize,
             int binsCount,
             double MinValueHarris,
-            int WindowSize
+            int WindowSize,
+            int maxPoints
             )
         {
 
@@ -77,8 +84,10 @@ namespace ImageProcessingLabs
             WrappedImage gradientB = WrappedImage.getGradient(xB, yB);
             WrappedImage gradientAngleB = WrappedImage.getGradientAngle(xB, yB);
 
-            List<InterestingPoint> pointsA = Harris.DoHarris(0.05, 3, imageA);
-            List<InterestingPoint> pointsB = Harris.DoHarris(MinValueHarris, WindowSize, imageB);
+            List<InterestingPoint> pointsA = 
+                PointFilter.filterPoints(Harris.DoHarris(MinValueHarris, WindowSize, imageA), maxPoints);
+            List<InterestingPoint> pointsB = 
+                PointFilter.filterPoints(Harris.DoHarris(MinValueHarris, WindowSize, imageB), maxPoints);
 
 
             lbl_findPoints1.Text = "Найдено интересных точек(1): " + pointsA.Count;
@@ -89,33 +98,33 @@ namespace ImageProcessingLabs
             DrawPoints(pointsB, imageB, 2);
 
 
-            List<SIFTDescriptor> descriptorsA = getDescriptors(gradientA,
+            List<AbstractDescriptor> descriptorsA = getDescriptors(gradientA,
                 gradientAngleA,
                 pointsA,
                 gridSize,
                 cellSize,
                 binsCount);
 
-            List<SIFTDescriptor> descriptorsB = getDescriptors(gradientB,
+            List<AbstractDescriptor> descriptorsB = getDescriptors(gradientB,
              gradientAngleB,
              pointsB,
              gridSize,
              cellSize,
              binsCount);
 
-            return DescriptorUtil.match(descriptorsA, descriptorsB);
+           return DescriptorUtil.match(descriptorsA, descriptorsB);
         }
 
-        private static List<SIFTDescriptor> getDescriptors(WrappedImage gradient,
+        private static List<AbstractDescriptor> getDescriptors(WrappedImage gradient,
             WrappedImage gradientAngle,
             List<InterestingPoint> interestingPoints,
             int gridSize,
             int cellSize,
             int binsCount)
         {
-            List<SIFTDescriptor> siftDescriptors =
+            List<AbstractDescriptor> siftDescriptors =
                 interestingPoints
-                    .Select(interestingPoint => SIFTDescriptor.at(gradient,
+                    .Select(interestingPoint => (AbstractDescriptor)SIFTDescriptor.at(gradient,
                         gradientAngle,
                         interestingPoint,
                         gridSize,
@@ -123,17 +132,33 @@ namespace ImageProcessingLabs
                         binsCount)).ToList();
 
 
-            //  siftDescriptors.ForEach(AbstractDescriptor::normalize()); // Переделать нормализацию !!!!!
+           //  siftDescriptors.ForEach(AbstractDescriptor::normalize()); // Переделать нормализацию !!!!!
 
              //  listNames.GroupBy(v => v).Where(g => g.Count() > 1).Select(g => g.Key)
             return siftDescriptors;
         }
 
 
-        public void BuildPicture(List<InterestingPoint> point, WrappedImage inputImage, int picture)
+        public void BuildPicture(List<PointsPair> pointPairs, WrappedImage inputImageA, WrappedImage inputImageB)
         {
+            Bitmap picture;
 
+            picture = WrappedImage.CombineImages(inputImageA, inputImageB);
 
+            Graphics graph = Graphics.FromImage(picture);
+            Color pen = Color.Blue;
+            Pen penLine = new Pen(Color.Blue);
+
+            foreach (var pointPair in pointPairs)
+            {
+                graph.FillEllipse(new SolidBrush(pen), pointPair.pointA.x, pointPair.pointA.y, 3, 3);
+                graph.FillEllipse(new SolidBrush(pen), pointPair.pointB.x + (imageB.width + 20), pointPair.pointB.y, 3, 3);
+                graph.DrawLine(penLine, pointPair.pointA.x, pointPair.pointA.y, pointPair.pointB.x + (imageB.width + 20), pointPair.pointB.y);
+            }
+
+            pictureBox1.Image = picture;
+
+            picture.Save("..\\..\\..\\..\\Output\\OutputPicture.png");
 
         }
 
@@ -151,7 +176,6 @@ namespace ImageProcessingLabs
             }
 
             if (picture == 1) pictureBox1.Image = image;
-            if (picture == 2) pictureBox2.Image = image;
 
             image.Save("..\\..\\..\\..\\Output\\OutputPicture.png");
         }

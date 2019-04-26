@@ -14,10 +14,9 @@ namespace ImageProcessingLabs.Points
             int radius = (int)(windowSize / 2);
 
             _image = image.Clone();
-            WrappedImage bufImage = image.Clone();
 
             // Считаем градиент в каждой точке
-            bufImage = CommonMath.DoSobelSeparable(_image);
+            //CommonMath.DoSobelSeparable(_image);
 
             // Полчаем матрицу откликов оператоа Харриса
             var harrisMat = GetHarrisMatrix(windowSize,

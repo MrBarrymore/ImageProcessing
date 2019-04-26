@@ -40,8 +40,8 @@ namespace ImageProcessingLabs
             wrappedImage = WrappedImage.of(picture);
 
 
-            pictureA = new Bitmap("..\\..\\..\\..\\..\\Pictures\\LennaA.png");
-            pictureB = new Bitmap("..\\..\\..\\..\\..\\Pictures\\LennaB.png");
+            pictureA = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Lenna.png");
+            pictureB = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Lenna.png");
 
             WrappedImage wrappedImageA = WrappedImage.of(pictureA);
             WrappedImage wrappedImageB = WrappedImage.of(pictureB);

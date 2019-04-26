@@ -9,7 +9,7 @@ using ImageProcessingLabs.Wrapped;
 
 namespace ImageProcessingLabs.Descriptor
 {
-   public class SIFTDescriptor
+   public class SIFTDescriptor : AbstractDescriptor
     {
         private double[] descriptor;
         private InterestingPoint point;
@@ -63,17 +63,17 @@ namespace ImageProcessingLabs.Descriptor
             return siftDescriptor;
         }
 
-        void setDescriptor(double[] descriptor)
+        public override void setDescriptor(double[] descriptor)
         {
             this.descriptor = descriptor;
         }
 
-        double[] getDescriptor()
+        public override double[] getDescriptor()
         {
             return descriptor;
         }
 
-        InterestingPoint getPoint()
+        public override InterestingPoint getPoint()
         {
             return point;
         }

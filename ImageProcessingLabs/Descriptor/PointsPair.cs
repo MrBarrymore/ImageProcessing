@@ -8,8 +8,8 @@ namespace ImageProcessingLabs.Descriptor
 {
     public class PointsPair
     {
-        private InterestingPoint pointA;
-        private InterestingPoint pointB;
+        public InterestingPoint pointA;
+        public InterestingPoint pointB;
 
 
         public static PointsPair from(InterestingPoint point1, InterestingPoint point2)
@@ -21,5 +21,6 @@ namespace ImageProcessingLabs.Descriptor
 
             return point;
         }
+
     }
 }

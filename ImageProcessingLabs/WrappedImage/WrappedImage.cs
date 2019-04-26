@@ -244,5 +244,41 @@ namespace ImageProcessingLabs.Wrapped
             return gradientAngle;
         }
 
+        public static Bitmap CombineImages(WrappedImage ImageA, WrappedImage ImageB)
+        {
+            int newHeight = Math.Max(ImageA.height, ImageB.height);
+            int newWidth = ImageA.width + ImageB.width + 20;
+
+            WrappedImage combinePicture = new WrappedImage(newHeight, newWidth);
+
+            for (int y = 0; y < ImageA.height; y++)
+            {
+                for (int x = 0; x < ImageA.width; x++)
+                {
+                    combinePicture.buffer[y, x] = ImageA.buffer[y,x];
+                }
+            }
+
+            for (int y = 0; y < ImageA.height; y++)
+            {
+                for (int x = ImageA.width; x < ImageA.width + 20; x++)
+                {
+                    combinePicture.buffer[y, x] = 1;
+                }
+            }
+
+            for (int y = 0; y < ImageB.height; y++)
+            {
+                for (int x = 0; x < ImageB.width; x++)
+                {
+                    combinePicture.buffer[y, x + ImageA.width + 20] = ImageB.buffer[y, x];
+                }
+            }
+
+            Bitmap picture = Transformations.FromUInt32ToBitmap(combinePicture.buffer);
+
+            return picture;
+        }
+
     }
 }
