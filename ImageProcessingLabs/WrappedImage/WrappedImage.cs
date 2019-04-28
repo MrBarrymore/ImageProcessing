@@ -157,6 +157,38 @@ namespace ImageProcessingLabs.Wrapped
             }
         }
 
+        public static double getPixel(Mat image, int x, int y, BorderHandling borderHandling)
+        {
+            switch (borderHandling)
+            {
+                case BorderHandling.Black:
+                    if (x < 0 || x >= image.Width || y < 0 || y >= image.Height)
+                        return 0;
+                    return image.GetAt(x, y);
+                case BorderHandling.White:
+                    if (x < 0 || x >= image.Width || y < 0 || y >= image.Height)
+                        return 1;
+                    return image.GetAt(x, y);
+                case BorderHandling.Copy:
+                    x = border(0, x, image.Width - 1);
+                    y = border(y, 0, image.Height - 1);
+                    return image.GetAt(x, y);
+                case BorderHandling.Wrap:
+                    x = (x + image.Width) % image.Width;
+                    y = (y + image.Height) % image.Height;
+                    return image.GetAt(x, y);
+                case BorderHandling.Mirror:
+                    x = Math.Abs(x);
+                    y = Math.Abs(y);
+                    if (x >= image.Width) x = image.Width - (x - image.Width + 1);
+                    if (y >= image.Height) y = image.Height - (y - image.Height + 1);
+                    return image.GetAt(x,y);
+                default:
+                    return 1;
+            }
+        }
+
+
         private static int border(int value, int min, int max)
         {
             return Math.Max(min, Math.Min(max, value));

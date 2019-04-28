@@ -11,8 +11,8 @@ namespace ImageProcessingLabs.Descriptor
 {
    public class SIFTDescriptor : AbstractDescriptor
     {
-        private double[] descriptor;
-        private InterestingPoint point;
+        public double[] descriptor;
+        public InterestingPoint point;
 
         public static SIFTDescriptor at(WrappedImage gradient,
                                    WrappedImage gradientAngle,

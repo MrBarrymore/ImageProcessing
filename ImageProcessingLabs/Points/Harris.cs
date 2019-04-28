@@ -15,26 +15,44 @@ namespace ImageProcessingLabs.Points
 
             _image = image.Clone();
 
-            // Считаем градиент в каждой точке
-            //CommonMath.DoSobelSeparable(_image);
-
             // Полчаем матрицу откликов оператоа Харриса
+            /*
             var harrisMat = GetHarrisMatrix(windowSize,
                 radius,
                 image.width,
                 image.height
             );
+            */
+
+            Mat testMat = ConvertImageToMat(image);
+
+            var harrisMat = Harris2.Find(testMat, windowSize, minValue);
+
 
             // Находим точки локального максимума отклика оператора Харриса
             var candidates = CommonMath.getCandidates(harrisMat,
-                harrisMat.height,
-                harrisMat.width,
+                harrisMat.Height,
+                harrisMat.Width,
                 radius,
                 minValue
             );
 
             return candidates;
         }
+
+
+        public static Mat ConvertImageToMat(WrappedImage image)
+        {
+           Mat mat = new Mat(image.width, image.height);
+
+
+           for (var x = 0; x < image.height; x++)
+           for (var y = 0; y < image.width; y++)
+                    mat.Set(y, x,image.buffer[x,y]); 
+
+           return mat;
+        }
+
 
         private static WrappedImage Normalization(WrappedImage source, double newMin, double newMax)
         {
@@ -70,9 +88,6 @@ namespace ImageProcessingLabs.Points
             {
                 for (int x = 0; x < width; x++)
                 {
-                    double[,] mainWindow = GetMainWindow(windowSize, y, x); // Формируем исходное окно                  
-
-
                     double[,] gauss = ConvolutionMatrix.CountGaussMatrix(windowSize);
 
                     // Считаем матрицу H
@@ -121,16 +136,6 @@ namespace ImageProcessingLabs.Points
 
             return eigenvalues;
         }
-
-        public static double[,] GetMainWindow(int windowSize, int y, int x)
-        {
-            double[,] mainWindow = new double[windowSize, windowSize];
-            for (int wy = 0; wy < windowSize; wy++)
-                for (int wx = 0; wx < windowSize; wx++)
-                    mainWindow[wy, wx] = WrappedImage.getPixel(_image, y + wy, x + wx, BorderHandling.Mirror);
-
-            return mainWindow;
-        }
-
     }
+
 }

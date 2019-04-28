@@ -84,10 +84,14 @@ namespace ImageProcessingLabs
             WrappedImage gradientB = WrappedImage.getGradient(xB, yB);
             WrappedImage gradientAngleB = WrappedImage.getGradientAngle(xB, yB);
 
-            List<InterestingPoint> pointsA = 
-                PointFilter.filterPoints(Harris.DoHarris(MinValueHarris, WindowSize, imageA), maxPoints);
-            List<InterestingPoint> pointsB = 
-                PointFilter.filterPoints(Harris.DoHarris(MinValueHarris, WindowSize, imageB), maxPoints);
+            double maxRadiusA = Math.Sqrt(WrappedImage.sqr(imageA.width) + WrappedImage.sqr(imageA.height));
+            double maxRadiusB = Math.Sqrt(WrappedImage.sqr(imageB.width) + WrappedImage.sqr(imageB.height));
+
+            List<InterestingPoint> pointsA =
+                  // PointFilter.filterPoints(Harris.DoHarris(MinValueHarris, WindowSize, imageA), maxPoints);
+                  NonMaximumSuppression.FilterB(Harris.DoHarris(MinValueHarris, WindowSize, imageA), maxPoints);
+            List<InterestingPoint> pointsB =
+                NonMaximumSuppression.FilterB(Harris.DoHarris(MinValueHarris, WindowSize, imageA), maxPoints);
 
 
             lbl_findPoints1.Text = "Найдено интересных точек(1): " + pointsA.Count;
@@ -132,9 +136,15 @@ namespace ImageProcessingLabs
                         binsCount)).ToList();
 
 
-           //  siftDescriptors.ForEach(AbstractDescriptor::normalize()); // Переделать нормализацию !!!!!
+            
+            foreach (var siftDescriptor in siftDescriptors)
+            {
+                double[] descriptor = siftDescriptor.getDescriptor();
+                double sum = descriptor.Sum();
+                if (Math.Abs(sum) >= 1e-2)
+                siftDescriptor.setDescriptor(descriptor.Select(operand => operand / sum).ToArray());
+            }
 
-             //  listNames.GroupBy(v => v).Where(g => g.Count() > 1).Select(g => g.Key)
             return siftDescriptors;
         }
 

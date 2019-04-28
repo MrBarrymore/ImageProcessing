@@ -89,7 +89,10 @@ namespace ImageProcessingLabs
                 else if (filter_checkBox.Checked == true)
                 {
                     int maxCountPoints = Convert.ToInt32(textBox7.Text);
-                    List<InterestingPoint> subList = PointFilter.filterPoints(HarrisMatrix, maxCountPoints); // Фильтр точек
+                    List<InterestingPoint> subList = NonMaximumSuppression.FilterB(
+                        HarrisMatrix, 
+                        maxCountPoints
+                        ); // Фильтр точек
                     DrawPoints(subList);
                     label9.Text = "Найдено интересных точек: " + HarrisMatrix.Count;
                     label10.Text = "Отображенно интересных точек: " + subList.Count;

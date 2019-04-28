@@ -18,7 +18,7 @@ namespace ImageProcessingLabs
         public static Bitmap picture, pictureA, pictureB;
         public static string full_name_of_image = "\0";
         public static WrappedImage image;
-        private static WrappedImage wrappedImage;
+        private static WrappedImage wrappedImage, wrappedImageA, wrappedImageB;
 
         public MainForm()
         {
@@ -26,8 +26,8 @@ namespace ImageProcessingLabs
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
 
           //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Cat1.jpg");
-          //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\LennaA.png");
-             picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\cube.jpg");
+            picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Lenna.png");
+          //   picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\cube.jpg");
             // picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\3d.png");
             //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Star.jpg");
 
@@ -40,11 +40,11 @@ namespace ImageProcessingLabs
             wrappedImage = WrappedImage.of(picture);
 
 
-            pictureA = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Lenna.png");
-            pictureB = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Lenna.png");
+            pictureA = new Bitmap("..\\..\\..\\..\\..\\Pictures\\LennaA.png");
+            pictureB = new Bitmap("..\\..\\..\\..\\..\\Pictures\\LennaB.png");
 
-            WrappedImage wrappedImageA = WrappedImage.of(pictureA);
-            WrappedImage wrappedImageB = WrappedImage.of(pictureB);
+            wrappedImageA = WrappedImage.of(pictureA);
+            wrappedImageB = WrappedImage.of(pictureB);
 
             //   InterestingPointForm _interestingPointForm = new InterestingPointForm(wrappedImage);
             //    _interestingPointForm.ShowDialog();
@@ -133,7 +133,7 @@ namespace ImageProcessingLabs
 
         private void дескрипторыТочекToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DescriptorForm descriptorForm = new DescriptorForm(wrappedImage, wrappedImage);
+            DescriptorForm descriptorForm = new DescriptorForm(wrappedImageA, wrappedImageB);
             descriptorForm.Show();
         }
     }
