@@ -16,23 +16,18 @@ namespace ImageProcessingLabs.Points
             _image = image.Clone();
 
             // Полчаем матрицу откликов оператоа Харриса
-            /*
+
             var harrisMat = GetHarrisMatrix(windowSize,
                 radius,
                 image.width,
                 image.height
             );
-            */
-
-            Mat testMat = ConvertImageToMat(image);
-
-            var harrisMat = Harris2.Find(testMat, windowSize, minValue);
-
+            
 
             // Находим точки локального максимума отклика оператора Харриса
             var candidates = CommonMath.getCandidates(harrisMat,
-                harrisMat.Height,
-                harrisMat.Width,
+                harrisMat.height,
+                harrisMat.width,
                 radius,
                 minValue
             );

@@ -49,6 +49,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Converter\ColorsConverter.cs" />
+    <Compile Include="Convolution\ConvolutionHelper.cs" />
+    <Compile Include="Convolution\Gauss.cs" />
+    <Compile Include="Convolution\Kernel.cs" />
+    <Compile Include="Convolution\SobelHelper.cs" />
     <Compile Include="DescriptorForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -60,10 +65,12 @@
     <Compile Include="Descriptor\AngleBin.cs" />
     <Compile Include="Descriptor\PointsPair.cs" />
     <Compile Include="Descriptor\SIFTDescriptor.cs" />
-    <Compile Include="enums\BorderHandling.cs" />
+    <Compile Include="enums\BorderWrapType.cs" />
     <Compile Include="Helper\CornerDetectionHelper.cs" />
-    <Compile Include="Helper\SobelHelper.cs" />
-    <Compile Include="Math\TestHarris.cs" />
+    <Compile Include="Helper\IOHelper.cs" />
+    <Compile Include="Helper\MathHelper.cs" />
+    <Compile Include="Helper\NormalizationHelper.cs" />
+    <Compile Include="Image\Mat.cs" />
     <Compile Include="Points\Harris.cs" />
     <Compile Include="Points\InterestingPoint.cs" />
     <Compile Include="InterestingPointForm.cs">
@@ -99,6 +106,8 @@
       <DependentUpon>SobelForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Transformations.cs" />
+    <Compile Include="Transformation\Ransac.cs" />
+    <Compile Include="Transformation\Transformer.cs" />
     <Compile Include="WrappedImage\WrappedImage.cs" />
     <EmbeddedResource Include="DescriptorForm.resx">
       <DependentUpon>DescriptorForm.cs</DependentUpon>
@@ -139,6 +148,8 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Scale\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

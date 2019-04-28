@@ -57,7 +57,6 @@
             this.label6 = new System.Windows.Forms.Label();
             this.comboBox3 = new System.Windows.Forms.ComboBox();
             this.comboBox4 = new System.Windows.Forms.ComboBox();
-            this.RB_White = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -91,7 +90,6 @@
             this.groupBox2.Controls.Add(this.RB_WrapImage);
             this.groupBox2.Controls.Add(this.RB_EdgeReflection);
             this.groupBox2.Controls.Add(this.RB_EdgeCoppy);
-            this.groupBox2.Controls.Add(this.RB_White);
             this.groupBox2.Controls.Add(this.RB_Zero);
             this.groupBox2.Location = new System.Drawing.Point(278, 19);
             this.groupBox2.Name = "groupBox2";
@@ -103,7 +101,7 @@
             // RB_WrapImage
             // 
             this.RB_WrapImage.AutoSize = true;
-            this.RB_WrapImage.Location = new System.Drawing.Point(6, 105);
+            this.RB_WrapImage.Location = new System.Drawing.Point(6, 85);
             this.RB_WrapImage.Name = "RB_WrapImage";
             this.RB_WrapImage.Size = new System.Drawing.Size(177, 17);
             this.RB_WrapImage.TabIndex = 8;
@@ -115,7 +113,7 @@
             // 
             this.RB_EdgeReflection.AutoSize = true;
             this.RB_EdgeReflection.Checked = true;
-            this.RB_EdgeReflection.Location = new System.Drawing.Point(6, 85);
+            this.RB_EdgeReflection.Location = new System.Drawing.Point(6, 65);
             this.RB_EdgeReflection.Name = "RB_EdgeReflection";
             this.RB_EdgeReflection.Size = new System.Drawing.Size(181, 17);
             this.RB_EdgeReflection.TabIndex = 8;
@@ -126,7 +124,7 @@
             // RB_EdgeCoppy
             // 
             this.RB_EdgeCoppy.AutoSize = true;
-            this.RB_EdgeCoppy.Location = new System.Drawing.Point(6, 62);
+            this.RB_EdgeCoppy.Location = new System.Drawing.Point(6, 42);
             this.RB_EdgeCoppy.Name = "RB_EdgeCoppy";
             this.RB_EdgeCoppy.Size = new System.Drawing.Size(180, 17);
             this.RB_EdgeCoppy.TabIndex = 8;
@@ -377,17 +375,6 @@
             this.comboBox4.TabIndex = 12;
             this.comboBox4.SelectedIndexChanged += new System.EventHandler(this.ShowNewImage);
             // 
-            // RB_White
-            // 
-            this.RB_White.AutoSize = true;
-            this.RB_White.Location = new System.Drawing.Point(6, 43);
-            this.RB_White.Name = "RB_White";
-            this.RB_White.Size = new System.Drawing.Size(102, 17);
-            this.RB_White.TabIndex = 8;
-            this.RB_White.TabStop = true;
-            this.RB_White.Text = "Снаружи белое";
-            this.RB_White.UseVisualStyleBackColor = true;
-            // 
             // GaussForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -448,6 +435,5 @@
         private System.Windows.Forms.Label lbl_EffectiveSigmaValue;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.RadioButton RB_White;
     }
 }

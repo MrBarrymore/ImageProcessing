@@ -4,13 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using ImageProcessingLabs.Helper;
-
-namespace ImageProcessingLabs.Helper
+namespace ImageProcessingLabs.enums
 {
-    class SobelHelper
+    public enum BorderWrapType
     {
-
-
+        Wrap, Black, White, Mirror, Copy
     }
+
 }
+

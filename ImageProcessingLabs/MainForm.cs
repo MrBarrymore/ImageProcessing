@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Drawing.Imaging;
+using ImageProcessingLabs.Helper;
 using ImageProcessingLabs.Wrapped;
 
 namespace ImageProcessingLabs
@@ -17,16 +18,16 @@ namespace ImageProcessingLabs
     {
         public static Bitmap picture, pictureA, pictureB;
         public static string full_name_of_image = "\0";
-        public static WrappedImage image;
-        private static WrappedImage wrappedImage, wrappedImageA, wrappedImageB;
+        public static Mat imageMat;
+        private static WrappedImage image, wrappedImage, wrappedImageA, wrappedImageB;
 
         public MainForm()
         {
             InitializeComponent();
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
 
-          //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Cat1.jpg");
-            picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Lenna.png");
+            picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Cat.jpg");
+          //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Lenna.png");
           //   picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\cube.jpg");
             // picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\3d.png");
             //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Star.jpg");
@@ -36,8 +37,14 @@ namespace ImageProcessingLabs
 
             pictureBox1.Image = picture;
 
-            image = WrappedImage.of(picture);
+            imageMat = new Mat(picture.Width, picture.Height);
+
+            imageMat = IOHelper.ImageToMat(picture);
+
             wrappedImage = WrappedImage.of(picture);
+
+            SobelForm _sobelForm = new SobelForm(imageMat);
+            _sobelForm.Show();
 
 
             pictureA = new Bitmap("..\\..\\..\\..\\..\\Pictures\\LennaA.png");
@@ -50,8 +57,8 @@ namespace ImageProcessingLabs
             //    _interestingPointForm.ShowDialog();
 
 
-            DescriptorForm descriptorForm = new DescriptorForm(wrappedImageA, wrappedImageB);
-            descriptorForm.Show();
+          //  DescriptorForm descriptorForm = new DescriptorForm(wrappedImageA, wrappedImageB);
+          //  descriptorForm.Show();
 
         }
 
@@ -115,7 +122,7 @@ namespace ImageProcessingLabs
 
         private void операторСобеляToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SobelForm _sobelForm = new SobelForm(image);
+            SobelForm _sobelForm = new SobelForm(imageMat);
             _sobelForm.Show();
         }
 

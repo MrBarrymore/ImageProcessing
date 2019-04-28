@@ -8,59 +8,63 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
-
+using ImageProcessingLabs.enums;
+using ImageProcessingLabs.Scale;
+using ImageProcessingLabs.Transformation;
 using ImageProcessingLabs.Wrapped;
 
 namespace ImageProcessingLabs
 {
     public partial class GaussForm : Form
     {
-        public GaussForm()
-        {
-            InitializeComponent();
-        }
-
         // Глобальные переменные 
         Bitmap picture, bufImage;
 
         static List<double[,]> picturePiramid = new List<double[,]>();
 
-        static WrappedImage _image;
+        static Mat _image;
         double[,] sigmas;
 
         BorderHandling borderHandling;
 
-        public GaussForm(WrappedImage image)
+        public GaussForm()
+        {
+            InitializeComponent();
+        }
+
+        public GaussForm(Mat image)
         {
             InitializeComponent();
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
-            _image = new WrappedImage(image);
+
+
+            _image = image.Clone();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            BorderHandling Edgemode = BorderHandling.Black;
-            if (RB_Zero.Checked == true) Edgemode = BorderHandling.Black;
-            if (RB_White.Checked == true) Edgemode = BorderHandling.White;
-            if (RB_EdgeCoppy.Checked == true) Edgemode = BorderHandling.Copy;
-            if (RB_EdgeReflection.Checked == true) Edgemode = BorderHandling.Wrap;
-            if (RB_WrapImage.Checked == true) Edgemode = BorderHandling.Mirror;
+            BorderWrapType Edgemode = BorderWrapType.Mirror;
+            if (RB_Zero.Checked == true) Edgemode = BorderWrapType.Black;
+            if (RB_EdgeCoppy.Checked == true) Edgemode = BorderWrapType.Copy;
+            if (RB_EdgeReflection.Checked == true) Edgemode = BorderWrapType.Wrap;
+            if (RB_WrapImage.Checked == true) Edgemode = BorderWrapType.Mirror;
 
-            int numOctaves = BuildingPyramid.CountOctava(_image.buffer);
+            int numOctaves = Pyramid.CountOctava(_image);
             double sigmaStart = Convert.ToDouble(textBox2.Text);
             double sigma0 = Convert.ToDouble(textBox3.Text);
             int levels = Convert.ToInt32(comboBox2.Text);
             sigmas = new double[numOctaves, levels + 1]; // Массив значений сигм на каждом этапе преобразований
 
-            picture = Transformations.FromUInt32ToBitmap(_image.buffer);
+            picture = Transformer.FromUInt32ToBitmap(_image);
             pictureBox1.Image = picture;
 
             DeletePictures();
+
             picture.Save("..\\..\\..\\..\\Output\\" + "Исходное изображение.png");
 
 
-            buildPiramid(Convert.ToDouble(textBox2.Text), Convert.ToDouble(textBox3.Text), BuildingPyramid.CountOctava(_image.buffer), Convert.ToInt32(comboBox2.Text), Edgemode);
+           Pyramid.buildPiramid(Convert.ToDouble(textBox2.Text), Convert.ToDouble(textBox3.Text), Pyramid.CountOctava(_image), Convert.ToInt32(comboBox2.Text), Edgemode);
 
             // Задаем новые значения для элементов управления выводом изображений
             comboBox3.Items.Clear();
@@ -75,11 +79,13 @@ namespace ImageProcessingLabs
             lbl_LevelsInOctava.Text = "Уровней в октаве: " + Convert.ToString(levels);
         }
 
-        public void buildPiramid(double sigmaA, double sigmaStart, int numOctaves, int levels, BorderHandling Edgemode)
+        public void buildPiramid(double sigmaA, double sigmaStart, int numOctaves, int levels, BorderWrapType Edgemode)
         {
             double sigma0 = sigmaStart;
             double[,] GaussMatrix0 = ConvolutionMatrix.CountGaussMatrix(Math.Sqrt(sigmaA * sigmaA + sigma0 * sigma0));
+
             _image = ConvolutionMatrixFactory.processNonSeparable(_image, GaussMatrix0, Edgemode);
+
             picture = Transformations.FromUInt32ToBitmap(_image.buffer);
             pictureBox2.Image = picture;
             picturePiramid.Add(_image.buffer); // Добавляем 0 уровень пирамиды 
@@ -127,7 +133,6 @@ namespace ImageProcessingLabs
             }
 
         }
-
 
         private void btn_showImage_Click(object sender, EventArgs e)
         {

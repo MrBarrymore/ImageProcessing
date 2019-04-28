@@ -11,7 +11,6 @@ namespace ImageProcessingLabs
 {
     class BuildingPyramid
     {
-
         public static int CountOctava(double[,] _pixels)
         {
             int octava = 0;

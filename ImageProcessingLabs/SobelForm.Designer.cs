@@ -232,7 +232,6 @@
             this.Controls.Add(this.pictureBox1);
             this.Name = "SobelForm";
             this.Text = "Преобразование изображения через оператор Собеля";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.SobelForm_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
