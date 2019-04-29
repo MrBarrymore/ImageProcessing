@@ -139,6 +139,8 @@
             // filter_checkBox
             // 
             this.filter_checkBox.AutoSize = true;
+            this.filter_checkBox.Checked = true;
+            this.filter_checkBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.filter_checkBox.Location = new System.Drawing.Point(11, 45);
             this.filter_checkBox.Name = "filter_checkBox";
             this.filter_checkBox.Size = new System.Drawing.Size(128, 17);
@@ -152,7 +154,7 @@
             this.txb_Filter.Name = "txb_Filter";
             this.txb_Filter.Size = new System.Drawing.Size(100, 20);
             this.txb_Filter.TabIndex = 13;
-            this.txb_Filter.Text = "250";
+            this.txb_Filter.Text = "50";
             // 
             // label4
             // 

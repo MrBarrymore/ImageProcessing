@@ -9,10 +9,12 @@ namespace ImageProcessingLabs
 {
     public class InterestingPoint
     {
-        public int y;
-        public int x;
-
+        private int y;
+        private int x;
         public double probability;
+        public readonly int Octave;
+        public readonly int Radius;
+        public List<double> Angles = new List<double>();
 
         public InterestingPoint(int y, int x, double probability)
         {

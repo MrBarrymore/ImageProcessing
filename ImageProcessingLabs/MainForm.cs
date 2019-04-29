@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Drawing.Imaging;
 using ImageProcessingLabs.Helper;
+using ImageProcessingLabs.Transformation;
 using ImageProcessingLabs.Wrapped;
 
 namespace ImageProcessingLabs
@@ -18,16 +19,15 @@ namespace ImageProcessingLabs
     {
         public static Bitmap picture, pictureA, pictureB;
         public static string full_name_of_image = "\0";
-        public static Mat imageMat;
-        private static WrappedImage image, wrappedImage, wrappedImageA, wrappedImageB;
-
+        public static Mat image;
+        private static Mat imageA, imageB;
         public MainForm()
         {
             InitializeComponent();
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
 
-            picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Cat.jpg");
-          //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Lenna.png");
+          //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Cat.jpg");
+            picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Lenna.png");
           //   picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\cube.jpg");
             // picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\3d.png");
             //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Star.jpg");
@@ -37,28 +37,27 @@ namespace ImageProcessingLabs
 
             pictureBox1.Image = picture;
 
-            imageMat = new Mat(picture.Width, picture.Height);
+            image = IOHelper.ImageToMat(picture);
 
-            imageMat = IOHelper.ImageToMat(picture);
 
-            wrappedImage = WrappedImage.of(picture);
+            // SobelForm _sobelForm = new SobelForm(imageMat);
+            // _sobelForm.Show();
 
-            SobelForm _sobelForm = new SobelForm(imageMat);
-            _sobelForm.Show();
+            // GaussForm _gaussForm = new GaussForm(imageMat);
+            // _gaussForm.Show();
+
+            //  InterestingPointForm _interestingPointForm = new InterestingPointForm(imageMat);
+             // _interestingPointForm.ShowDialog();
 
 
             pictureA = new Bitmap("..\\..\\..\\..\\..\\Pictures\\LennaA.png");
             pictureB = new Bitmap("..\\..\\..\\..\\..\\Pictures\\LennaB.png");
 
-            wrappedImageA = WrappedImage.of(pictureA);
-            wrappedImageB = WrappedImage.of(pictureB);
+            imageA = IOHelper.ImageToMat(pictureA);
+            imageB = IOHelper.ImageToMat(pictureB);
 
-            //   InterestingPointForm _interestingPointForm = new InterestingPointForm(wrappedImage);
-            //    _interestingPointForm.ShowDialog();
-
-
-          //  DescriptorForm descriptorForm = new DescriptorForm(wrappedImageA, wrappedImageB);
-          //  descriptorForm.Show();
+            DescriptorForm descriptorForm = new DescriptorForm(imageA, imageB);
+            descriptorForm.Show();
 
         }
 
@@ -77,13 +76,7 @@ namespace ImageProcessingLabs
                     pictureBox1.Image = picture;
 
                     //получение матрицы с пикселями
-                    image.buffer = new double[image.height, image.width];
-                    for (int y = 0; y < image.height; y++)
-                        for (int x = 0; x < image.width; x++)
-                        {
-                            Color color = picture.GetPixel(x, y);
-                            image.buffer[y, x] = color.R * 0.299 + color.G * 0.587 + color.B * 0.114;
-                        }
+                    image = IOHelper.ImageToMat(picture);
                 }
                 catch
                 {
@@ -122,7 +115,7 @@ namespace ImageProcessingLabs
 
         private void операторСобеляToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SobelForm _sobelForm = new SobelForm(imageMat);
+            SobelForm _sobelForm = new SobelForm(image);
             _sobelForm.Show();
         }
 
@@ -134,13 +127,13 @@ namespace ImageProcessingLabs
 
         private void интересныеТочкиToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            InterestingPointForm _interestingPointForm = new InterestingPointForm(wrappedImage);
+            InterestingPointForm _interestingPointForm = new InterestingPointForm(image);
             _interestingPointForm.Show();
         }
 
         private void дескрипторыТочекToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DescriptorForm descriptorForm = new DescriptorForm(wrappedImageA, wrappedImageB);
+            DescriptorForm descriptorForm = new DescriptorForm(imageA, imageB);
             descriptorForm.Show();
         }
     }

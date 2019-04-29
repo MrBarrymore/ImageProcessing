@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ImageProcessingLabs
 {
-    class ConvolutionMatrix
+    public class ConvolutionMatrix
     {
         private static double[,] CountGaussMatrix(int radius, double sigma)
         {

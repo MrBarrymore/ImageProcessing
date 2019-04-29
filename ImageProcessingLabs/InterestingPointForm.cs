@@ -9,35 +9,38 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using ImageProcessingLabs.Points;
+using ImageProcessingLabs.Transformation;
 using ImageProcessingLabs.Wrapped;
 
 namespace ImageProcessingLabs
 {
     public partial class InterestingPointForm : Form
     {
-        private static WrappedImage inputImage, _image;
         private Bitmap picture;
+        private static Mat _image, _inputImage;
+
 
         public InterestingPointForm()
         {
             InitializeComponent();
         }
 
-        public InterestingPointForm(WrappedImage image)
+        public InterestingPointForm(Mat image)
         {
             InitializeComponent();
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
 
-            _image = (WrappedImage)image.Clone();
-            inputImage = (WrappedImage)image.Clone();
-
-            picture = Transformations.FromUInt32ToBitmap(_image.buffer);
+            _image = image.Clone();
+            _inputImage = image.Clone();
+            picture = Transformer.FromUInt32ToBitmap(_image);
             pictureBox1.Image = picture;
         }
 
+
         private void FindPointButton_Click(object sender, EventArgs e)
         {
+            /*
             if (RB_DoMoravec.Checked == true)
             {
                 double minValue = Convert.ToDouble(textBox1.Text);
@@ -62,7 +65,7 @@ namespace ImageProcessingLabs
                     DrawPoints(MoravecMatrix);
                 }
 
-            }
+            }*/
 
             if (RB_DoHarris.Checked == true)
             {
@@ -76,13 +79,13 @@ namespace ImageProcessingLabs
                 {
                     List<InterestingPoint> SubHarrisMatrix = Harris.DoHarris(minValue, windowSize, _image);
                     label9.Text = "Найдено откликов: " + SubHarrisMatrix.Count;
-                    DrawMap(SubHarrisMatrix);
+                    DrawMap(SubHarrisMatrix, _image );
                 }
                 else
                 if (checkBox1.Checked == true)
                 {
                     List<InterestingPoint> SubHarrisMatrix = Harris.DoHarris(minValue, windowSize, _image);
-                    DrawMap(SubHarrisMatrix);
+                    DrawMap(SubHarrisMatrix, _image);
                     label9.Text = "Найдено локальных максимумов: " + SubHarrisMatrix.Count;
                 }
 
@@ -111,14 +114,14 @@ namespace ImageProcessingLabs
 
         public void DrawPoints(List<InterestingPoint> point)
         {
-            picture = Transformations.FromUInt32ToBitmap(inputImage.buffer);
+            picture = Transformer.FromUInt32ToBitmap(_image);
 
             Graphics graph = Graphics.FromImage(picture);
             Color pen = Color.Blue;
 
             foreach (var interestingPoint in point)
             {
-                graph.FillEllipse(new SolidBrush(pen), interestingPoint.x, interestingPoint.y, 3, 3);
+                graph.FillEllipse(new SolidBrush(pen), interestingPoint.getX(), interestingPoint.getY(), 3, 3);
             }
 
             pictureBox2.Image = picture;
@@ -128,23 +131,23 @@ namespace ImageProcessingLabs
 
 
         // Вспомагательные методы 
-        public void DrawMap(List<InterestingPoint> point)
+        public void DrawMap(List<InterestingPoint> point, Mat image)
         {
 
             Graphics graph = Graphics.FromImage(picture);
             Color pen = Color.White;
 
-            double[,] blackMatrix = new double[_image.width, _image.height];
+            double[,] blackMatrix = new double[image.Width, image.Height];
 
-            for (int y = 0; y < _image.height; y++)
-                for (int x = 0; x < _image.width; x++)
+                for (int x = 0; x < _image.Width; x++)
+                for (int y = 0; y < _image.Height; y++)
                 {
-                    blackMatrix[y, x] = 0;
+                    blackMatrix[x, y] = 0;
                 }
 
             foreach (var interestingPoint in point)
             {
-                blackMatrix[interestingPoint.y, interestingPoint.x] = interestingPoint.probability * 255;
+                blackMatrix[interestingPoint.getX(), interestingPoint.getY()] = interestingPoint.probability * 255;
             }
 
             picture = Transformations.FromUInt32ToBitmap(blackMatrix);
@@ -152,24 +155,6 @@ namespace ImageProcessingLabs
             picture.Save("..\\..\\..\\..\\Output\\OutputPicture.png");
         }
 
-
-        public static void ByteWriteFile(double[,] pixel)
-        {
-            StreamWriter sw = new StreamWriter("..\\..\\..\\..\\pass.txt");
-            string s1 = " ";
-            for (int y = 0; y < pixel.GetLength(0); y++)
-            {
-                s1 = "";
-                for (int x = 0; x < pixel.GetLength(1); x++)
-                {
-                    s1 += pixel[y, x] + " ";
-                }
-                s1 += "\n";
-                sw.Write(s1);
-            }
-            s1 += "\n";
-            sw.Close();
-        }
 
     }
 }

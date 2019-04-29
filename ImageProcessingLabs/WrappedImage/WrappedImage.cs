@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ImageProcessingLabs.Transformation;
 
 namespace ImageProcessingLabs.Wrapped
 {
@@ -276,38 +277,33 @@ namespace ImageProcessingLabs.Wrapped
             return gradientAngle;
         }
 
-        public static Bitmap CombineImages(WrappedImage ImageA, WrappedImage ImageB)
+        public static Bitmap CombineImages(Mat ImageA, Mat ImageB)
         {
-            int newHeight = Math.Max(ImageA.height, ImageB.height);
-            int newWidth = ImageA.width + ImageB.width + 20;
+            int newHeight = Math.Max(ImageA.Height, ImageB.Height);
+            int newWidth = ImageA.Width + ImageB.Width + 20;
 
-            WrappedImage combinePicture = new WrappedImage(newHeight, newWidth);
-
-            for (int y = 0; y < ImageA.height; y++)
-            {
-                for (int x = 0; x < ImageA.width; x++)
+            Mat combinePicture = new Mat(newWidth, newHeight);
+ 
+                for (int x = 0; x < ImageA.Width; x++)
+                for (int y = 0; y < ImageA.Height; y++)
                 {
-                    combinePicture.buffer[y, x] = ImageA.buffer[y,x];
+                    combinePicture.Set(x, y, ImageA.GetAt(x,y));
                 }
-            }
-
-            for (int y = 0; y < ImageA.height; y++)
-            {
-                for (int x = ImageA.width; x < ImageA.width + 20; x++)
+            
+                for (int x = ImageA.Width; x < ImageA.Width + 20; x++)
+                for (int y = 0; y < ImageA.Height; y++)
                 {
-                    combinePicture.buffer[y, x] = 1;
+                    combinePicture.Set(x, y, 1);
                 }
-            }
-
-            for (int y = 0; y < ImageB.height; y++)
-            {
-                for (int x = 0; x < ImageB.width; x++)
+                     
+                for (int x = 0; x < ImageB.Width; x++)
+                for (int y = 0; y < ImageB.Height; y++)
                 {
-                    combinePicture.buffer[y, x + ImageA.width + 20] = ImageB.buffer[y, x];
+                    combinePicture.Set(x + ImageA.Width + 20, y, ImageB.GetAt(x,y));
                 }
-            }
+            
 
-            Bitmap picture = Transformations.FromUInt32ToBitmap(combinePicture.buffer);
+            Bitmap picture = Transformer.FromUInt32ToBitmap(combinePicture);
 
             return picture;
         }

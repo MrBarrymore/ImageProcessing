@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using ImageProcessingLabs.Descriptor;
 
 namespace ImageProcessingLabs.Transformation
 {
@@ -50,7 +51,8 @@ namespace ImageProcessingLabs.Transformation
 
             return bitmap;
         }
-    
+
+
         //преобразование из Mat to Bitmap
         public static Bitmap FromUInt32ToBitmap(Mat data)
         {

@@ -18,13 +18,12 @@ namespace ImageProcessingLabs
 {
     public partial class SobelForm : Form
     {
+        private Mat _image;
+
         public SobelForm()
         {
             InitializeComponent();
         }
-
-        Bitmap picture;
-        Mat _image;
 
         public SobelForm(Mat image)
         {
@@ -32,7 +31,6 @@ namespace ImageProcessingLabs
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBox3.SizeMode = PictureBoxSizeMode.Zoom;
-
             _image = image.Clone();
         }
 
@@ -48,15 +46,13 @@ namespace ImageProcessingLabs
             Mat sobelMatX = new Mat(_image.Width, _image.Height);
             Mat sobelMatY = new Mat(_image.Width, _image.Height);
 
-
-
-
             if (RB_Sobel.Checked == true)
             {
 
                 sobelMat = SobelHelper.Sobel(_image, sobelMatX, sobelMatY, Edgemode);
             }
 
+            Bitmap picture;
             picture = Transformer.FromUInt32ToBitmap(sobelMatX);
             pictureBox1.Image = picture;
 

@@ -14,8 +14,8 @@ namespace ImageProcessingLabs.Descriptor
         public double[] descriptor;
         public InterestingPoint point;
 
-        public static SIFTDescriptor at(WrappedImage gradient,
-                                   WrappedImage gradientAngle,
+        public static SIFTDescriptor at(Mat gradient,
+                                     Mat gradientAngle,
                                    InterestingPoint point,
                                    int gridSize,
                                    int cellSize,

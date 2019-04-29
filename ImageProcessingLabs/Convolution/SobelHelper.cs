@@ -45,16 +45,51 @@ namespace ImageProcessingLabs.Convolution
             return target;
         }
 
-        public static Mat GetSobelX(Mat source, Mat dx, Mat dy)
+        public static Mat GetSobelX(Mat source, BorderWrapType borderWrapType)
         {
-            ConvolutionHelper.NonSeparable(source, dx, SobelKernelX, BorderWrapType.Copy);
+            Mat dx = source.Clone();
+            ConvolutionHelper.NonSeparable(source, dx, SobelKernelX, borderWrapType);
             return dx;
         }
 
-        public static Mat GetSobelY(Mat source, Mat dx, Mat dy)
+        public static Mat GetSobelY(Mat source, BorderWrapType borderWrapType)
         {
-            ConvolutionHelper.NonSeparable(source, dy, SobelKernelY, BorderWrapType.Copy);
+            Mat dy = source.Clone();
+            ConvolutionHelper.NonSeparable(source, dy, SobelKernelY, borderWrapType);
             return dy;
+        }
+
+
+        public static Mat getGradient(Mat xImage, Mat yImage)
+        {
+            if (xImage.Height != yImage.Height || xImage.Width != yImage.Width)
+                throw new Exception("Изображения разного размера");
+
+            Mat gradient = new Mat(xImage.Width, xImage.Height);
+
+            for (int x = 0; x < gradient.Width; x++)
+                for (int y = 0; y < gradient.Height; y++)
+                {
+                    gradient.Set(x, y, Math.Sqrt(MathHelper.Sqr(xImage.GetAt(x, y)) + MathHelper.Sqr(yImage.GetAt(x, y))));
+                }
+            
+
+            return gradient;
+        }
+
+        public static Mat getGradientAngle(Mat xImage, Mat yImage)
+        {
+            if (xImage.Height != yImage.Height || xImage.Width != yImage.Width)
+                throw new Exception("Изображения разного размера");
+            Mat gradientAngle = new Mat(xImage.Width, xImage.Height);
+  
+            for (int x = 0; x < gradientAngle.Width; x++)
+                for (int y = 0; y < gradientAngle.Height; y++)
+                {
+                    gradientAngle.Set(x, y, Math.Atan2(yImage.GetAt(x, y), xImage.GetAt(x, y)));
+                }
+            
+            return gradientAngle;
         }
     }
 }
