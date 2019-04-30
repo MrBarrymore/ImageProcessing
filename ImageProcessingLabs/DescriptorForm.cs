@@ -13,11 +13,8 @@ using ImageProcessingLabs.Convolution;
 using ImageProcessingLabs.Descriptor;
 using ImageProcessingLabs.ForDescriptor;
 using ImageProcessingLabs.enums;
-using ImageProcessingLabs.ForDescriptor;
-using ImageProcessingLabs.Wrapped;
 using ImageProcessingLabs.Points;
 using ImageProcessingLabs.Scale;
-using ImageProcessingLabs.Transformation;
 using ImageProcessingLabs.Helper;
 
 
@@ -94,8 +91,8 @@ namespace ImageProcessingLabs
             List<InterestingPoint> pointsB =
                 NonMaximumSuppression.FilterA(imageB, Harris.DoHarris(MinValueHarris, WindowSize, imageB), maxPoints);
 
-            List<ForDescriptor.Descriptor> descriptorsA = FindDescriptor.Calculate(imageA, pointsA);
-            List<ForDescriptor.Descriptor> descriptorsB = FindDescriptor.Calculate(imageB, pointsB);
+            List<ForDescriptor.Descriptor> descriptorsA = RotationInvariant.Calculate(imageA, pointsA);
+            List<ForDescriptor.Descriptor> descriptorsB = RotationInvariant.Calculate(imageB, pointsB);
 
             List<ValueTuple<ForDescriptor.Descriptor, ForDescriptor.Descriptor>> match;
             if (rbt_usual.Checked == true) match = DescriptorMatcher.Match(descriptorsA, descriptorsB);

@@ -50,7 +50,7 @@ namespace ImageProcessingLabs
 
 
             pictureA = new Bitmap("..\\..\\..\\..\\..\\Pictures\\CatA.jpg");
-            pictureB = new Bitmap("..\\..\\..\\..\\..\\Pictures\\CatB.jpg");
+            pictureB = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Cat.jpg");
 
             imageA = IOHelper.ImageToMat(pictureA);
             imageB = IOHelper.ImageToMat(pictureB);

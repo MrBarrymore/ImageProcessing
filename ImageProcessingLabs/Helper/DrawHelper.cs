@@ -91,7 +91,6 @@ namespace ImageProcessingLabs.Helper
                     img2.Height);
             }
 
-
             foreach (var (d1, d2) in match)
             {
                 InterestingPoint

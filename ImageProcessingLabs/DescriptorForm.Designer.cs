@@ -42,17 +42,17 @@
             this.txb_Filter = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.txb_cellSize = new System.Windows.Forms.TextBox();
             this.txb_minValue = new System.Windows.Forms.TextBox();
+            this.txb_binsCount = new System.Windows.Forms.TextBox();
+            this.txb_gridSize = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.txb_WindowSize = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.txb_gridSize = new System.Windows.Forms.TextBox();
-            this.txb_cellSize = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.txb_binsCount = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -217,6 +217,24 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Входные данные (Харрис)";
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(8, 128);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(149, 13);
+            this.label3.TabIndex = 14;
+            this.label3.Text = "Кол-во бинов гистограммы:";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(8, 104);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(76, 13);
+            this.label2.TabIndex = 14;
+            this.label2.Text = "Размер окна:";
+            // 
             // label6
             // 
             this.label6.AutoSize = true;
@@ -226,6 +244,15 @@
             this.label6.TabIndex = 14;
             this.label6.Text = "Размер окна (пиксели):";
             // 
+            // txb_cellSize
+            // 
+            this.txb_cellSize.Location = new System.Drawing.Point(223, 97);
+            this.txb_cellSize.Name = "txb_cellSize";
+            this.txb_cellSize.ReadOnly = true;
+            this.txb_cellSize.Size = new System.Drawing.Size(100, 20);
+            this.txb_cellSize.TabIndex = 13;
+            this.txb_cellSize.Text = "4";
+            // 
             // txb_minValue
             // 
             this.txb_minValue.Location = new System.Drawing.Point(223, 19);
@@ -233,6 +260,33 @@
             this.txb_minValue.Size = new System.Drawing.Size(100, 20);
             this.txb_minValue.TabIndex = 13;
             this.txb_minValue.Text = "0,05";
+            // 
+            // txb_binsCount
+            // 
+            this.txb_binsCount.Location = new System.Drawing.Point(223, 125);
+            this.txb_binsCount.Name = "txb_binsCount";
+            this.txb_binsCount.ReadOnly = true;
+            this.txb_binsCount.Size = new System.Drawing.Size(100, 20);
+            this.txb_binsCount.TabIndex = 13;
+            this.txb_binsCount.Text = "8";
+            // 
+            // txb_gridSize
+            // 
+            this.txb_gridSize.Location = new System.Drawing.Point(223, 71);
+            this.txb_gridSize.Name = "txb_gridSize";
+            this.txb_gridSize.ReadOnly = true;
+            this.txb_gridSize.Size = new System.Drawing.Size(100, 20);
+            this.txb_gridSize.TabIndex = 13;
+            this.txb_gridSize.Text = "4";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(8, 78);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(81, 13);
+            this.label1.TabIndex = 14;
+            this.label1.Text = "Размер сетки:";
             // 
             // txb_WindowSize
             // 
@@ -259,57 +313,6 @@
             this.pictureBox1.Size = new System.Drawing.Size(1143, 385);
             this.pictureBox1.TabIndex = 23;
             this.pictureBox1.TabStop = false;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 78);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(81, 13);
-            this.label1.TabIndex = 14;
-            this.label1.Text = "Размер сетки:";
-            // 
-            // txb_gridSize
-            // 
-            this.txb_gridSize.Location = new System.Drawing.Point(223, 71);
-            this.txb_gridSize.Name = "txb_gridSize";
-            this.txb_gridSize.Size = new System.Drawing.Size(100, 20);
-            this.txb_gridSize.TabIndex = 13;
-            this.txb_gridSize.Text = "4";
-            // 
-            // txb_cellSize
-            // 
-            this.txb_cellSize.Location = new System.Drawing.Point(223, 97);
-            this.txb_cellSize.Name = "txb_cellSize";
-            this.txb_cellSize.Size = new System.Drawing.Size(100, 20);
-            this.txb_cellSize.TabIndex = 13;
-            this.txb_cellSize.Text = "4";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(8, 104);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(76, 13);
-            this.label2.TabIndex = 14;
-            this.label2.Text = "Размер окна:";
-            // 
-            // txb_binsCount
-            // 
-            this.txb_binsCount.Location = new System.Drawing.Point(223, 125);
-            this.txb_binsCount.Name = "txb_binsCount";
-            this.txb_binsCount.Size = new System.Drawing.Size(100, 20);
-            this.txb_binsCount.TabIndex = 13;
-            this.txb_binsCount.Text = "8";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(8, 128);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(149, 13);
-            this.label3.TabIndex = 14;
-            this.label3.Text = "Кол-во бинов гистограммы:";
             // 
             // DescriptorForm
             // 
