@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ImageProcessingLabs.enums;
-using ImageProcessingLabs.Wrapped;
 
 namespace ImageProcessingLabs
 {

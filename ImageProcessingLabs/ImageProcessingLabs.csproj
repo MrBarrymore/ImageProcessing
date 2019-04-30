@@ -86,8 +86,6 @@
     <Compile Include="InterestingPointForm.Designer.cs">
       <DependentUpon>InterestingPointForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Math\ConvolutionMatrix.cs" />
-    <Compile Include="Math\ConvolutionMatrixFactory.cs" />
     <Compile Include="GaussForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -116,7 +114,6 @@
     <Compile Include="Transformations.cs" />
     <Compile Include="Transformation\Ransac.cs" />
     <Compile Include="Transformation\Transformer.cs" />
-    <Compile Include="Wrapped\WrappedImage.cs" />
     <EmbeddedResource Include="DescriptorForm.resx">
       <DependentUpon>DescriptorForm.cs</DependentUpon>
     </EmbeddedResource>

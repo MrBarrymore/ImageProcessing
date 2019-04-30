@@ -11,7 +11,6 @@ using System.IO;
 using System.Drawing.Imaging;
 using ImageProcessingLabs.Helper;
 using ImageProcessingLabs.Transformation;
-using ImageProcessingLabs.Wrapped;
 
 namespace ImageProcessingLabs
 {
@@ -50,7 +49,7 @@ namespace ImageProcessingLabs
 
 
             pictureA = new Bitmap("..\\..\\..\\..\\..\\Pictures\\CatA.jpg");
-            pictureB = new Bitmap("..\\..\\..\\..\\..\\Pictures\\CatB.jpg");
+            pictureB = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Cat.jpg");
 
             imageA = IOHelper.ImageToMat(pictureA);
             imageB = IOHelper.ImageToMat(pictureB);

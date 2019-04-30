@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ImageProcessingLabs.Convolution;
+using ImageProcessingLabs.enums;
 using ImageProcessingLabs.Points;
-using ImageProcessingLabs.Wrapped;
 
 
 namespace ImageProcessingLabs.Descriptor
@@ -27,7 +28,9 @@ namespace ImageProcessingLabs.Descriptor
 
             int gridHalfSize = gridSize / 2;
 
-            double[,] gauss = ConvolutionMatrix.CountGaussMatrix(gridHalfSize * cellSize);
+            Mat gauss = ConvolutionHelper.Convolution(gradient, Gauss.GetKernel(0.6));
+
+            Gauss.GetKernel(gridHalfSize * cellSize / 3);
 
             int ptr = 0;
             int centerShift = gridHalfSize * cellSize;
@@ -46,10 +49,10 @@ namespace ImageProcessingLabs.Descriptor
                             int realX = point.getX() + cellX * cellSize + pixelX;
                             int realY = point.getY() + cellY * cellSize + pixelY;
 
-                            double phi = WrappedImage.getPixel(gradient, realX, realY, BorderHandling.Mirror);
-                            double gradientValue = WrappedImage.getPixel(gradientAngle, realX, realY, BorderHandling.Mirror);
-                            double gaussValue = CommonMath.getPixel(gauss, centerShift + cellX * cellSize + pixelX,
-                                                          centerShift + cellY * cellSize + pixelY, 4);
+                            double phi = gradient.GetPixel(realX, realY, BorderWrapType.Mirror);
+                            double gradientValue = gradientAngle.GetPixel(realX, realY, BorderWrapType.Mirror);
+                            double gaussValue = gauss.GetPixel(centerShift + cellX * cellSize + pixelX,
+                                                          centerShift + cellY * cellSize + pixelY, BorderWrapType.Mirror);
 
                             bin.addAngle(phi, gradientValue * gaussValue);
                         }

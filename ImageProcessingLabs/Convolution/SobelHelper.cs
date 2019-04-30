@@ -32,6 +32,21 @@ namespace ImageProcessingLabs.Convolution
             return target;
         }
 
+        public static Mat Sobel(Mat source, BorderWrapType borderWrapType)
+        {
+            Mat dx = new Mat(), dy = new Mat() ;
+
+            ConvolutionHelper.Separable(source, dx, SobelKernelA, borderWrapType);
+            ConvolutionHelper.Separable(source, dy, SobelKernelB, borderWrapType);
+
+            var target = new Mat(source.Width, source.Height);
+            for (var x = 0; x < source.Width; x++)
+            for (var y = 0; y < source.Height; y++)
+                target.Set(x, y, MathHelper.SqrtOfSqrSum(dx.GetAt(x, y), dy.GetAt(x, y)));
+
+            return target;
+        }
+
         public static Mat SobelNonSeparable(Mat source, Mat dx, Mat dy)
         {
             ConvolutionHelper.NonSeparable(source, dx, SobelKernelX, BorderWrapType.Copy);

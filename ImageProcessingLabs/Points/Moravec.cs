@@ -8,37 +8,38 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
-using ImageProcessingLabs.Wrapped;
+using ImageProcessingLabs.Convolution;
+using ImageProcessingLabs.enums;
 
 namespace ImageProcessingLabs.Points
 {
 
     public class Moravec
     {
-        private static WrappedImage _image;
+        private static Mat _image;
 
-        public static List<InterestingPoint> DoMoravec(double minValue, int windowSize, int shiftSize, int locMaxRadius, WrappedImage image)
+        public static List<InterestingPoint> DoMoravec(double minValue, int windowSize, int shiftSize, int locMaxRadius, Mat image)
         {
             _image = image.Clone();
 
-            _image = CommonMath.DoSobelSeparable(_image); // Считаем градиент в каждой точке 
+            _image = SobelHelper.Sobel(_image, BorderWrapType.Mirror); // Считаем градиент в каждой точке 
 
-            WrappedImage mistakeImage = GetMinimums(_image, windowSize, shiftSize);
+            Mat mistakeImage = GetMinimums(_image, windowSize, shiftSize);
 
 
             List<InterestingPoint> candidates =
-               CommonMath.getCandidates(mistakeImage, mistakeImage.height, mistakeImage.width, locMaxRadius, minValue);
+               CommonMath.getCandidates(mistakeImage, mistakeImage.Height, mistakeImage.Width, locMaxRadius, minValue);
 
 
             return candidates;
         }
 
-        private static WrappedImage Normalization(WrappedImage source, double newMin, double newMax)
+        private static Mat Normalization(Mat source, double newMin, double newMax)
         {
-            var result = (WrappedImage)source.Clone();
+            var result = source.Clone();
 
-            double min = source.buffer[0, 0], max = source.buffer[0, 0];
-            foreach (var value in source.buffer)
+            double min = source.GetAt(0,0), max = source.GetAt(0,0);
+            foreach (var value in source.GetData())
             {
                 if (double.IsNaN(value))
                     continue;
@@ -47,22 +48,21 @@ namespace ImageProcessingLabs.Points
                 max = Math.Max(max, value);
             }
 
-            for (var i = 0; i < source.height; i++)
-                for (var j = 0; j < source.width; j++)
+            for (var j = 0; j < source.Width; j++)
+                for (var i = 0; i < source.Height; i++)
                 {
-                    result.buffer[i, j] = (source.buffer[i, j] - min) * (newMax - newMin) / (max - min) + newMin;
+                    result.Set(j, i, (source.GetAt(j, i) - min) * (newMax - newMin) / (max - min) + newMin);
                 }
 
             return result;
         }
 
-        public static WrappedImage GetMinimums(WrappedImage inputImage, int windowSize, int shiftSize)
+        public static Mat GetMinimums(Mat inputImage, int windowSize, int shiftSize)
         {
-            WrappedImage mistakeImage = (WrappedImage)inputImage.Clone();
-
-            for (int y = 0; y < mistakeImage.height; y++)
-            {
-                for (int x = 0; x < mistakeImage.width; x++)
+            Mat mistakeImage = (Mat)inputImage.Clone();
+           
+            for (int x = 0; x < mistakeImage.Width; x++)
+                for (int y = 0; y < mistakeImage.Height; y++)
                 {
                     double[] mistake = new double[8];
                     double[,] mainWindow = GetMainWindow(windowSize, y, x); // Формируем исходное окно
@@ -73,9 +73,9 @@ namespace ImageProcessingLabs.Points
                         mistake[shiftMode] = GetMistake(mainWindow, shiftWindow);
                     }
 
-                    mistakeImage.buffer[y, x] = mistake.Min(); // Получаем значение оператора Моравика в каждой точке изображения  
+                    mistakeImage.Set(x, y, mistake.Min()); // Получаем значение оператора Моравика в каждой точке изображения  
                 }
-            }
+            
 
             return mistakeImage;
         }
@@ -86,7 +86,7 @@ namespace ImageProcessingLabs.Points
             double[,] mainWindow = new double[windowSize, windowSize];
             for (int wy = 0; wy < windowSize; wy++)
                 for (int wx = 0; wx < windowSize; wx++)
-                    mainWindow[wy, wx] = WrappedImage.getPixel(_image, y + wy, x + wx, BorderHandling.Mirror);
+                    mainWindow[wy, wx] = _image.GetPixel(y + wy, x + wx, BorderWrapType.Mirror);
 
             return mainWindow;
         }
@@ -101,28 +101,28 @@ namespace ImageProcessingLabs.Points
                     switch (shiftMode)
                     {
                         case 0: // Сдвиг Вверх
-                            shiftWindow[wy, wx] = WrappedImage.getPixel(_image, y + wy - shiftSize, x + wx, BorderHandling.Mirror);
+                            shiftWindow[wy, wx] = _image.GetPixel(y + wy - shiftSize, x + wx, BorderWrapType.Mirror);
                             continue;
                         case 1: // Сдвиг Вправо-Вверх
-                            shiftWindow[wy, wx] = WrappedImage.getPixel(_image, y + wy - shiftSize, x + wx + shiftSize, BorderHandling.Mirror);
+                            shiftWindow[wy, wx] = _image.GetPixel(y + wy - shiftSize, x + wx + shiftSize, BorderWrapType.Mirror);
                             continue;
                         case 2: // Сдвиг Вправо
-                            shiftWindow[wy, wx] = WrappedImage.getPixel(_image, y + wy, x + wx + shiftSize, BorderHandling.Mirror);
+                            shiftWindow[wy, wx] = _image.GetPixel( y + wy, x + wx + shiftSize, BorderWrapType.Mirror);
                             continue;
                         case 3: // Сдвиг Вправо-Вниз
-                            shiftWindow[wy, wx] = WrappedImage.getPixel(_image, y + wy + shiftSize, x + wx + shiftSize, BorderHandling.Mirror);
+                            shiftWindow[wy, wx] = _image.GetPixel( y + wy + shiftSize, x + wx + shiftSize, BorderWrapType.Mirror);
                             continue;
                         case 4: // Сдвиг Вниз
-                            shiftWindow[wy, wx] = WrappedImage.getPixel(_image, y + wy + shiftSize, x + wx, BorderHandling.Mirror);
+                            shiftWindow[wy, wx] = _image.GetPixel(y + wy + shiftSize, x + wx, BorderWrapType.Mirror);
                             continue;
                         case 5: // Сдвиг Влево-Вниз
-                            shiftWindow[wy, wx] = WrappedImage.getPixel(_image, y + wy + shiftSize, x + wx - shiftSize, BorderHandling.Mirror);
+                            shiftWindow[wy, wx] = _image.GetPixel( y + wy + shiftSize, x + wx - shiftSize, BorderWrapType.Mirror);
                             continue;
                         case 6: // Сдвиг Влево
-                            shiftWindow[wy, wx] = WrappedImage.getPixel(_image, y + wy, x + wy - shiftSize, BorderHandling.Mirror);
+                            shiftWindow[wy, wx] = _image.GetPixel( y + wy, x + wy - shiftSize, BorderWrapType.Mirror);
                             continue;
                         case 7: // Сдвиг Влево-Вверх
-                            shiftWindow[wy, wx] = WrappedImage.getPixel(_image, y + wy - shiftSize, x + wy - shiftSize, BorderHandling.Mirror);
+                            shiftWindow[wy, wx] = _image.GetPixel( y + wy - shiftSize, x + wy - shiftSize, BorderWrapType.Mirror);
                             continue;
                     }
                 }

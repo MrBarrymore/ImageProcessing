@@ -13,7 +13,6 @@ using ImageProcessingLabs.Helper;
 using ImageProcessingLabs.Properties;
 using ImageProcessingLabs.Scale;
 using ImageProcessingLabs.Transformation;
-using ImageProcessingLabs.Wrapped;
 
 namespace ImageProcessingLabs
 {

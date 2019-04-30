@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using System.IO;
 using ImageProcessingLabs.Points;
 using ImageProcessingLabs.Transformation;
-using ImageProcessingLabs.Wrapped;
 
 namespace ImageProcessingLabs
 {
@@ -40,7 +39,7 @@ namespace ImageProcessingLabs
 
         private void FindPointButton_Click(object sender, EventArgs e)
         {
-            /*
+           
             if (RB_DoMoravec.Checked == true)
             {
                 double minValue = Convert.ToDouble(textBox1.Text);
@@ -53,7 +52,7 @@ namespace ImageProcessingLabs
                 if (filter_checkBox.Checked == true)
                 {
                     int maxCountPoints = Convert.ToInt32(textBox7.Text);
-                    List<InterestingPoint> subList = PointFilter.filterPoints(MoravecMatrix, maxCountPoints); // Фильтр точек
+                    List<InterestingPoint> subList = NonMaximumSuppression.FilterA(_image, MoravecMatrix, maxCountPoints); // Фильтр точек
                     label9.Text = "Найдено интересных точек: " + MoravecMatrix.Count;
                     label10.Text = "Отображенно интересных точек: " + subList.Count;
                     DrawPoints(subList);
@@ -65,7 +64,7 @@ namespace ImageProcessingLabs
                     DrawPoints(MoravecMatrix);
                 }
 
-            }*/
+            }
 
             if (RB_DoHarris.Checked == true)
             {

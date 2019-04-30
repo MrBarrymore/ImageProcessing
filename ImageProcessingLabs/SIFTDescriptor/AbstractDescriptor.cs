@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ImageProcessingLabs.Helper;
 using ImageProcessingLabs.Points;
-using ImageProcessingLabs.Wrapped;
 
 namespace ImageProcessingLabs.Descriptor
 {
@@ -28,7 +28,7 @@ namespace ImageProcessingLabs.Descriptor
             double sum = 0;
             for (int i = 0; i < descA.Length; i++)
             {
-                sum += WrappedImage.sqr(descA[i] - descB[i]);
+                sum += MathHelper.Sqr(descA[i] - descB[i]);
             }
             return Math.Sqrt(sum);
         }

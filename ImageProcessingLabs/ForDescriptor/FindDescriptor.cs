@@ -11,9 +11,10 @@ namespace ImageProcessingLabs.ForDescriptor
 {
     public class FindDescriptor
     {
-        private const int BinsCount = 8;
-        private const int GridSize = 4;
-        private const int BlockSize = 4;
+
+        private static int BINS_COUNT = 8;
+        private static int GRID_SIZE = 4;
+        private static int BLOCK_SIZE = 4;
 
         public static List<Descriptor> Calculate(Mat image, List<InterestingPoint> points)
         {
@@ -22,35 +23,35 @@ namespace ImageProcessingLabs.ForDescriptor
             var gradient = SobelHelper.Sobel(image, dx, dy, BorderWrapType.Mirror);
 
             var descriptors = new List<Descriptor>();
-            var step = 2 * Math.PI / BinsCount;
+            var step = 2 * Math.PI / BINS_COUNT;
 
             foreach (var center in points)
             {
-                var bins = new double[BinsCount];
+                var bins = new double[BINS_COUNT];
 
-                int from = GridSize * BlockSize / 2,
-                    to = GridSize * BlockSize - from;
+                int from = GRID_SIZE * BLOCK_SIZE / 2,
+                    to = GRID_SIZE * BLOCK_SIZE - from;
 
                 for (var u = -from; u < to; u++)
+                {
                     for (var v = -from; v < to; v++)
                     {
                         int x = center.getX() + u,
                             y = center.getY() + v;
 
-                        var theta = (Math.Atan2(dy.GetPixel(x, y, BorderWrapType.Mirror), dx.GetPixel(x, y, BorderWrapType.Mirror)) + 2* Math.PI) % (2*Math.PI);
-
+                        var theta = Math.Atan2(dy.GetPixel(x, y, BorderWrapType.Mirror), dx.GetPixel(x, y, BorderWrapType.Mirror)) + Math.PI;
                         var magnitude = gradient.GetPixel(x, y, BorderWrapType.Mirror);
 
-                        // Обработка левого и правого бинов гистограммы
-                        var leftBin = Math.Min((int)Math.Floor(theta / step), BinsCount - 1);
-                        var rightBin = (leftBin + 1) % BinsCount;
+                        var leftBin = Math.Min((int)Math.Floor(theta / step), BINS_COUNT - 1);
+                        var rightBin = (leftBin + 1) % BINS_COUNT;
 
                         var ratio = theta % step / step;
                         bins[leftBin] += magnitude * (1 - ratio);
                         bins[rightBin] += magnitude * ratio;
                     }
+                }
 
-                var vector = new Vector(BinsCount, bins).Normalize();
+                var vector = new Vector(BINS_COUNT, bins).Normalize();
 
                 descriptors.Add(new Descriptor
                 {
@@ -62,51 +63,37 @@ namespace ImageProcessingLabs.ForDescriptor
             return descriptors;
         }
 
-
-        public static Vector CalculateForPointWithRotation(Mat gradient, Mat dx, Mat dy, double sigma,
-            int gridSize, int binsCount, InterestingPoint center, double alpha)
+        public static Vector CalculateForPointWithRotation(Mat gradient, Mat dx, Mat dy, Mat gauss,
+            int gridSize, int blockSize, int binsCount, InterestingPoint center, double alpha)
         {
-            var expScale = -1 / (2 * sigma * sigma);
-            var radius = (int)Math.Round(3 * sigma);
-
-            return CalculateForPointWithRotation(gradient, dx, dy, expScale, gridSize, radius, binsCount, center,
-                alpha, true);
-        }
-
-        private static Vector CalculateForPointWithRotation(Mat gradient, Mat dx, Mat dy, double expScale,
-            int gridSize, double radius, int binsCount, InterestingPoint center, double alpha, bool affine)
-        {
-            var centerX = center.getX() / (1 << center.Octave);
-            var centerY = center.getY() / (1 << center.Octave);
-
-            var size = (int)(radius * 2 + 1);
-            var blockSize = size / gridSize;
+            var gaussK = gauss.Width / 2;
+            var bins = new Dictionary<ValueTuple<int, int>, List<double>>();
             var step = 2 * Math.PI / binsCount;
+            int from = gridSize * blockSize / 2, to = gridSize * blockSize - from;
 
             double cos = Math.Cos(-alpha),
                 sin = Math.Sin(-alpha);
 
-            var bins = new Dictionary<ValueTuple<int, int>, List<double>>();
-
-            for (var u = -radius; u < radius; u++)
-                for (var v = -radius; v < radius; v++)
+            for (var u = -from; u < to; u++)
+            {
+                for (var v = -from; v < to; v++)
                 {
-                    int x = (int)(centerX + u),
-                        y = (int)(centerY + v);
+                    int x = center.getX() + u,
+                        y = center.getY() + v;
 
                     var magnitude = gradient.GetPixel(x, y, BorderWrapType.Mirror);
                     var theta = Math.Atan2(dy.GetPixel(x, y, BorderWrapType.Mirror), dx.GetPixel(x, y, BorderWrapType.Mirror));
                     if (theta < 0) theta += Math.PI * 2;
 
-                    var rotatedU = u * cos + v * sin;
-                    var rotatedV = v * cos - u * sin;
+                    var rotatedU = (int)Math.Round(u * cos + v * sin);
+                    var rotatedV = (int)Math.Round(v * cos - u * sin);
 
-                    var row = (rotatedV + size / 2D) / blockSize;
-                    var column = (rotatedU + size / 2D) / blockSize;
+                    var row = (rotatedV + from) / blockSize;
+                    var column = (rotatedU + from) / blockSize;
 
                     if (column < 0 || column >= gridSize || row < 0 || row >= gridSize) continue;
 
-                    magnitude *= Math.Exp(expScale * (rotatedU * rotatedU + rotatedV * rotatedV));
+                    magnitude *= gauss.GetAt(rotatedU + gaussK, rotatedV + gaussK);
 
                     var rotatedTheta = theta + alpha;
                     if (rotatedTheta > Math.PI * 2) rotatedTheta -= Math.PI * 2;
@@ -115,53 +102,28 @@ namespace ImageProcessingLabs.ForDescriptor
                     var leftBin = Math.Min((int)Math.Floor(rotatedTheta / step), binsCount - 1);
                     var rightBin = (leftBin + 1) % binsCount;
 
-                    if (!bins.ContainsKey(((int)row, (int)column)))
-                        bins.Add(((int)row, (int)column), Enumerable.Repeat(0D, binsCount).ToList());
+                    if (!bins.ContainsKey((row, column)))
+                        bins.Add((row, column), Enumerable.Repeat(0D, binsCount).ToList());
 
-                    if (!affine)
-                    {
-                        PutToBins(bins, (int)row, (int)column, 1, leftBin, rightBin, ratio, magnitude);
-                    }
-                    else
-                    {
-                        var i = (int)row;
-                        if (row - i <= 0.5) i--;
-
-                        var j = (int)column;
-                        if (column - j <= 0.5) j--;
-
-                        var ki = 1 - Math.Abs(column - (j + 0.5));
-                        var kj = 1 - Math.Abs(row - (i + 0.5));
-
-                        PutToBins(bins, i, j, ki * kj, leftBin, rightBin, ratio, magnitude);
-                        PutToBins(bins, i, j + 1, (1 - ki) * kj, leftBin, rightBin, ratio, magnitude);
-                        PutToBins(bins, i + 1, j, ki * (1 - kj), leftBin, rightBin, ratio, magnitude);
-                        PutToBins(bins, i + 1, j + 1, (1 - ki) * (1 - kj), leftBin, rightBin, ratio, magnitude);
-                    }
+                    bins[(row, column)][leftBin] += magnitude * (1 - ratio);
+                    bins[(row, column)][rightBin] += magnitude * ratio;
                 }
+            }
 
             var result = new Vector(gridSize * gridSize * binsCount);
 
             for (var i = 0; i < gridSize; i++)
+            {
                 for (var j = 0; j < gridSize; j++)
+                {
                     for (var k = 0; k < binsCount; k++)
                     {
-                        double value = 0;
-                        if (bins.ContainsKey((i, j))) value = bins[(i, j)][k];
-
-                        result.Set(i * gridSize * binsCount + j * binsCount + k, value);
+                        result.Set(i * gridSize * binsCount + j * binsCount + k, bins[(i, j)][k]);
                     }
+                }
+            }
 
             return result.Normalize();
-        }
-
-        private static void PutToBins(Dictionary<ValueTuple<int, int>, List<double>> bins, int row, int column,
-            double k, int leftBin, int rightBin, double ratio, double magnitude)
-        {
-            if (!bins.ContainsKey((row, column))) return;
-
-            bins[(row, column)][leftBin] += k * magnitude * (1 - ratio);
-            bins[(row, column)][rightBin] += k * magnitude * ratio;
         }
 
     }

@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ImageProcessingLabs.Convolution;
 using ImageProcessingLabs.Points;
-using ImageProcessingLabs.Wrapped;
 using ImageProcessingLabs.enums;
 using ImageProcessingLabs.Transformation;
 
