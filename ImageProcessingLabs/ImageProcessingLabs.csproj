@@ -63,6 +63,7 @@
     <Compile Include="ForDescriptor\Descriptor.cs" />
     <Compile Include="ForDescriptor\DescriptorMatcher.cs" />
     <Compile Include="ForDescriptor\FindDescriptor.cs" />
+    <Compile Include="ForDescriptor\RotationInvariant.cs" />
     <Compile Include="ForDescriptor\Vector.cs" />
     <Compile Include="Helper\DrawHelper.cs" />
     <Compile Include="SIFTDescriptor\DescriptorUtil.cs" />

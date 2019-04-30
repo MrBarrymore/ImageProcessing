@@ -46,7 +46,6 @@ namespace ImageProcessingLabs
         {
             InitializeComponent();
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-
             this.imageA = _imageA.Clone();
             this.imageB = _imageB.Clone();
 
@@ -56,17 +55,18 @@ namespace ImageProcessingLabs
         {
             MinValueHarris = Convert.ToDouble(txb_minValue.Text);
             WindowSize = Convert.ToInt32(txb_WindowSize.Text);
-
             int maxPoints;
+            int gridSize = Convert.ToInt32(txb_gridSize.Text);
+            int cellSize = Convert.ToInt32(txb_cellSize.Text);
+            int binsCount = Convert.ToInt32(txb_binsCount.Text);
 
             if (filter_checkBox.Checked == true) maxPoints = Convert.ToInt32(txb_Filter.Text);
             else maxPoints = 5000;
 
-            var pointPairs = processWithSift(imageA, imageB, 4, 4, 8, MinValueHarris, WindowSize, maxPoints);
+            var pointPairs = processWithSift(imageA, imageB, gridSize, cellSize, binsCount, MinValueHarris, WindowSize, maxPoints);
 
         }
 
-          // public List<PointsPair> processWithSift(Mat imageA,
             public List<ValueTuple<ForDescriptor.Descriptor, ForDescriptor.Descriptor>> processWithSift(Mat imageA,
             Mat imageB,
             int gridSize,
@@ -94,13 +94,8 @@ namespace ImageProcessingLabs
             List<InterestingPoint> pointsB =
                 NonMaximumSuppression.FilterA(imageB, Harris.DoHarris(MinValueHarris, WindowSize, imageB), maxPoints);
 
-
-
-
-
             List<ForDescriptor.Descriptor> descriptorsA = FindDescriptor.Calculate(imageA, pointsA);
             List<ForDescriptor.Descriptor> descriptorsB = FindDescriptor.Calculate(imageB, pointsB);
-
 
             List<ValueTuple<ForDescriptor.Descriptor, ForDescriptor.Descriptor>> match;
             if (rbt_usual.Checked == true) match = DescriptorMatcher.Match(descriptorsA, descriptorsB);
@@ -121,6 +116,8 @@ namespace ImageProcessingLabs
             return match;
             
         }
+
+
 
 
         private static List<AbstractDescriptor> getDescriptors(Mat gradient,
@@ -151,25 +148,6 @@ namespace ImageProcessingLabs
 
             return siftDescriptors;
         }
-
-
-        public void DrawPoints(List<InterestingPoint> point, Mat inputImage, int picture)
-        {
-            Bitmap image;
-            image = Transformer.FromUInt32ToBitmap(inputImage);
-            Graphics graph = Graphics.FromImage(image);
-            Color pen = Color.Blue;
-
-            foreach (var interestingPoint in point)
-            {
-                graph.FillEllipse(new SolidBrush(pen), interestingPoint.getX(), interestingPoint.getY(), 3, 3);
-            }
-
-            if (picture == 1) pictureBox1.Image = image;
-
-            image.Save("..\\..\\..\\..\\Output\\OutputPicture.png");
-        }
-
 
     }
 }

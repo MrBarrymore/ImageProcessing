@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ImageProcessingLabs.Convolution;
 using ImageProcessingLabs.enums;
+using ImageProcessingLabs.Points;
 
 namespace ImageProcessingLabs.ForDescriptor
 {
@@ -60,15 +61,6 @@ namespace ImageProcessingLabs.ForDescriptor
 
             return descriptors;
         }
-
-
-
-
-
-
-
-
-
 
 
         public static Vector CalculateForPointWithRotation(Mat gradient, Mat dx, Mat dy, double sigma,

@@ -222,6 +222,21 @@ namespace ImageProcessingLabs.Helper
             return picture;
         }
 
+        public static Bitmap DrawPoints(List<InterestingPoint> point, Mat inputImage, int picture)
+        {
+            Bitmap image;
+            image = Transformer.FromUInt32ToBitmap(inputImage);
+            Graphics graph = Graphics.FromImage(image);
+            Color pen = Color.Blue;
+
+            foreach (var interestingPoint in point)
+            {
+                graph.FillEllipse(new SolidBrush(pen), interestingPoint.getX(), interestingPoint.getY(), 3, 3);
+            }
+
+            return image;
+        }
+
     }
 
 }
