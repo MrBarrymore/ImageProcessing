@@ -36,5 +36,28 @@ namespace ImageProcessingLabs.Helper
                 target[i] = (source[i] - min) * (newMax - newMin) / (max - min) + newMin;
         }
 
+        public static Mat Normalization(Mat source, double newMin, double newMax)
+        {
+            var result = new Mat(source.Width, source.Height);
+
+            double min = source.GetAt(0, 0), max = source.GetAt(0, 0);
+            foreach (var value in source.GetData())
+            {
+                if (double.IsNaN(value))
+                    continue;
+
+                min = Math.Min(min, value);
+                max = Math.Max(max, value);
+            }
+
+            for (var j = 0; j < source.Width; j++)
+                for (var i = 0; i < source.Height; i++)
+                {
+                    result.Set(i, j, (source.GetAt(i, j) - min) * (newMax - newMin) / (max - min) + newMin);
+                }
+
+            return result;
+        }
+
     }
 }

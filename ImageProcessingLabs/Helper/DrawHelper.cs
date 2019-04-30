@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ImageProcessingLabs.Descriptor;
+using ImageProcessingLabs.Transformation;
 
 namespace ImageProcessingLabs.Helper
 {
@@ -34,7 +35,7 @@ namespace ImageProcessingLabs.Helper
             DrawPoints(image, points).Save(fileName + ".jpeg");
         }
 
-        public static Bitmap DrawPoints(Mat image, List<Descriptor.Descriptor> descriptors)
+        public static Bitmap DrawPoints(Mat image, List<ForDescriptor.Descriptor> descriptors)
         {
             return DrawPoints(image, descriptors.Select(x => x.Point).ToList());
         }
@@ -67,7 +68,7 @@ namespace ImageProcessingLabs.Helper
             return img;
         }
 
-        public static Bitmap DrawTwoImages(Bitmap img1, Bitmap img2, List<ValueTuple<Descriptor.Descriptor, Descriptor.Descriptor>> match)
+        public static Bitmap DrawTwoImages(Bitmap img1, Bitmap img2, List<ValueTuple<ForDescriptor.Descriptor, ForDescriptor.Descriptor>> match)
         {
             var offset = 20;
             var width = img1.Width + img2.Width + offset;
@@ -90,6 +91,7 @@ namespace ImageProcessingLabs.Helper
                     img2.Height);
             }
 
+
             foreach (var (d1, d2) in match)
             {
                 InterestingPoint
@@ -105,13 +107,13 @@ namespace ImageProcessingLabs.Helper
                     (int)to.Radius
                 );
             }
-
+            
             return result;
         }
 
-        private static void DrawLine(Bitmap img, int x1, int y1, int r1, int x2, int y2, int r2)
+        private static void DrawLine(Bitmap source, int x1, int y1, int r1, int x2, int y2, int r2)
         {
-            using (var g = Graphics.FromImage(img))
+            using (var g = Graphics.FromImage(source))
             {
                 var pen = new Pen(Color.FromArgb(Random.Next(0, 255), Random.Next(0, 255), Random.Next(0, 255)), 2);
 
@@ -163,6 +165,63 @@ namespace ImageProcessingLabs.Helper
                     g.DrawEllipse(pen, points[0].X - 8, points[0].Y - 8, 16, 16);
             }
         }
+
+
+        public static Bitmap BuildPicture(List<InterestingPoint> PointsA, List<InterestingPoint> PointsB, Mat inputImageA, Mat inputImageB)
+        {
+            Bitmap picture;
+
+            picture = DrawHelper.CombineImages(inputImageA, inputImageB);
+
+            Graphics graph = Graphics.FromImage(picture);
+            Color pen = Color.Blue;
+            Pen penLine = new Pen(Color.Blue);
+
+            foreach (var pointPair in PointsA)
+            {
+                graph.FillEllipse(new SolidBrush(pen), pointPair.getX(), pointPair.getY(), 3, 3);
+
+            }
+
+            foreach (var pointB in PointsB)
+            {
+                graph.FillEllipse(new SolidBrush(pen), (inputImageA.Width + 20) + pointB.getX(), pointB.getY(), 3, 3);
+            }
+
+            return picture;
+        }
+
+        public static Bitmap CombineImages(Mat ImageA, Mat ImageB)
+        {
+            int newHeight = Math.Max(ImageA.Height, ImageB.Height);
+            int newWidth = ImageA.Width + ImageB.Width + 20;
+
+            Mat combinePicture = new Mat(newWidth, newHeight);
+
+            for (int x = 0; x < ImageA.Width; x++)
+                for (int y = 0; y < ImageA.Height; y++)
+                {
+                    combinePicture.Set(x, y, ImageA.GetAt(x, y));
+                }
+
+            for (int x = ImageA.Width; x < ImageA.Width + 20; x++)
+            for (int y = 0; y < ImageA.Height; y++)
+            {
+                combinePicture.Set(x, y, 1);
+            }
+
+            for (int x = 0; x < ImageB.Width; x++)
+                for (int y = 0; y < ImageB.Height; y++)
+                {
+                    combinePicture.Set(x + ImageA.Width + 20, y, ImageB.GetAt(x, y));
+                }
+
+
+            Bitmap picture = Transformer.FromUInt32ToBitmap(combinePicture);
+
+            return picture;
+        }
+
     }
 
 }

@@ -4,7 +4,6 @@ using System.Linq;
 using ImageProcessingLabs.Convolution;
 using ImageProcessingLabs.enums;
 using ImageProcessingLabs.Helper;
-using ImageProcessingLabs.Wrapped;
 
 namespace ImageProcessingLabs.Points
 {
@@ -21,6 +20,18 @@ namespace ImageProcessingLabs.Points
             // Полчаем матрицу откликов оператоа Харриса
             var harrisMat = Find(image, radius, minValue, BorderWrapType.Copy);
 
+
+            var points = new List<InterestingPoint>();
+
+            for (var x = 0; x < image.Width; x++)
+            for (var y = 0; y < image.Height; y++)
+            {
+                if (Math.Abs(harrisMat.GetAt(x, y)) < 1e-2)
+                    continue;
+
+                points.Add(new InterestingPoint(x, y, harrisMat.GetAt(x, y)));
+            }
+
             // Находим точки локального максимума отклика оператора Харриса
             var candidates = CommonMath.getCandidates(harrisMat,
                 harrisMat.Height,
@@ -29,31 +40,7 @@ namespace ImageProcessingLabs.Points
                 minValue
             );
 
-            return candidates;
-        }
-
-
-        private static WrappedImage Normalization(WrappedImage source, double newMin, double newMax)
-        {
-            var result = new WrappedImage(source.height, source.width);
-
-            double min = source.buffer[0, 0], max = source.buffer[0, 0];
-            foreach (var value in source.buffer)
-            {
-                if (double.IsNaN(value))
-                    continue;
-
-                min = Math.Min(min, value);
-                max = Math.Max(max, value);
-            }
-
-            for (var i = 0; i < source.height; i++)
-                for (var j = 0; j < source.width; j++)
-                {
-                    result.buffer[i, j] = (source.buffer[i, j] - min) * (newMax - newMin) / (max - min) + newMin;
-                }
-
-            return result;
+            return points;
         }
 
         /*
@@ -188,13 +175,5 @@ namespace ImageProcessingLabs.Points
             return Math.Min(a1, a2);
         }
 
-
-
-
-
     }
-
-
-
-
 }

@@ -12,8 +12,8 @@ namespace ImageProcessingLabs
     public class Mat
     {
         protected readonly double [] Data;
-        public readonly int Height;
         public readonly int Width;
+        public readonly int Height;
 
         public Mat(int width, int height)
         {

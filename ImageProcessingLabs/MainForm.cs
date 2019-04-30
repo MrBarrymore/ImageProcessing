@@ -19,8 +19,8 @@ namespace ImageProcessingLabs
     {
         public static Bitmap picture, pictureA, pictureB;
         public static string full_name_of_image = "\0";
-        public static Mat image;
-        private static Mat imageA, imageB;
+        public static Mat image, imageA, imageB;
+
         public MainForm()
         {
             InitializeComponent();
@@ -38,7 +38,6 @@ namespace ImageProcessingLabs
             pictureBox1.Image = picture;
 
             image = IOHelper.ImageToMat(picture);
-
 
             // SobelForm _sobelForm = new SobelForm(imageMat);
             // _sobelForm.Show();

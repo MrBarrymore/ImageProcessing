@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ImageProcessingLabs.Descriptor
+namespace ImageProcessingLabs.ForDescriptor
 {
     public static class DescriptorMatcher
     {

@@ -60,10 +60,10 @@
     <Compile Include="DescriptorForm.Designer.cs">
       <DependentUpon>DescriptorForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Descriptor\Descriptor.cs" />
-    <Compile Include="Descriptor\DescriptorMatcher.cs" />
-    <Compile Include="Descriptor\HOG.cs" />
-    <Compile Include="Descriptor\Vector.cs" />
+    <Compile Include="ForDescriptor\Descriptor.cs" />
+    <Compile Include="ForDescriptor\DescriptorMatcher.cs" />
+    <Compile Include="ForDescriptor\FindDescriptor.cs" />
+    <Compile Include="ForDescriptor\Vector.cs" />
     <Compile Include="Helper\DrawHelper.cs" />
     <Compile Include="SIFTDescriptor\DescriptorUtil.cs" />
     <Compile Include="SIFTDescriptor\AbstractDescriptor.cs" />
@@ -115,7 +115,7 @@
     <Compile Include="Transformations.cs" />
     <Compile Include="Transformation\Ransac.cs" />
     <Compile Include="Transformation\Transformer.cs" />
-    <Compile Include="WrappedImage\WrappedImage.cs" />
+    <Compile Include="Wrapped\WrappedImage.cs" />
     <EmbeddedResource Include="DescriptorForm.resx">
       <DependentUpon>DescriptorForm.cs</DependentUpon>
     </EmbeddedResource>

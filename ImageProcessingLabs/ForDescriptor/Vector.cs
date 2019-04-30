@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ImageProcessingLabs.Helper;
 
-namespace ImageProcessingLabs.Descriptor
+namespace ImageProcessingLabs.ForDescriptor
 {
     public class Vector : Mat
     {

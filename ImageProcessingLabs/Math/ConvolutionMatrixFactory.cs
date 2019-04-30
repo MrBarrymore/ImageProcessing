@@ -60,52 +60,5 @@ namespace ImageProcessingLabs
             return newpixel;
         }
 
-        private static double getOutPixel(int y, int x, int borderHandling)
-        {
-            switch (borderHandling)
-            {
-                case 0:
-                    if (x < 0 || x >= _pixels.GetLength(1) || y < 0 || y >= _pixels.GetLength(0))
-                        return 0;
-                    return _pixels[y, x];
-                case 1:
-                    if (x < 0 || x >= _pixels.GetLength(1) || y < 0 || y >= _pixels.GetLength(0))
-                        return 255;
-                    return _pixels[y, x];
-                case 2:
-                    x = border(0, x, _pixels.GetLength(1) - 1);
-                    y = border(y, 0, _pixels.GetLength(0) - 1);
-                    return _pixels[y, x];
-                case 3:
-                    x = (x + _pixels.GetLength(1)) % _pixels.GetLength(1);
-                    y = (y + _pixels.GetLength(0)) % _pixels.GetLength(0);
-                    return _pixels[y, x];
-                case 4:
-                    x = Math.Abs(x);
-                    y = Math.Abs(y);
-                    if (x >= _pixels.GetLength(1)) x = _pixels.GetLength(1) - (x - _pixels.GetLength(1) + 1);
-                    if (y >= _pixels.GetLength(0)) y = _pixels.GetLength(0) - (y - _pixels.GetLength(0) + 1);
-                    return _pixels[y, x];
-                default:
-                    return 255;
-            }
-        }
-
-        private static int border(int y, int x, int Length)
-        {
-            int res = 0;
-
-            if (x > Length) res = Length;
-            else if (x < 0) res = 0;
-            else if (y > Length) res = Length;
-            else if (y < 0) res = 0;
-            else
-            {
-                if (x != 0) res = x;
-                if (y != 0) res = y;
-            }
-            return res;
-        }
-
     }
 }

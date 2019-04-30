@@ -183,7 +183,7 @@ namespace ImageProcessingLabs.Wrapped
                     y = Math.Abs(y);
                     if (x >= image.Width) x = image.Width - (x - image.Width + 1);
                     if (y >= image.Height) y = image.Height - (y - image.Height + 1);
-                    return image.GetAt(x,y);
+                    return image.GetAt(x, y);
                 default:
                     return 1;
             }
@@ -275,37 +275,6 @@ namespace ImageProcessingLabs.Wrapped
             }
 
             return gradientAngle;
-        }
-
-        public static Bitmap CombineImages(Mat ImageA, Mat ImageB)
-        {
-            int newHeight = Math.Max(ImageA.Height, ImageB.Height);
-            int newWidth = ImageA.Width + ImageB.Width + 20;
-
-            Mat combinePicture = new Mat(newWidth, newHeight);
- 
-                for (int x = 0; x < ImageA.Width; x++)
-                for (int y = 0; y < ImageA.Height; y++)
-                {
-                    combinePicture.Set(x, y, ImageA.GetAt(x,y));
-                }
-            
-                for (int x = ImageA.Width; x < ImageA.Width + 20; x++)
-                for (int y = 0; y < ImageA.Height; y++)
-                {
-                    combinePicture.Set(x, y, 1);
-                }
-                     
-                for (int x = 0; x < ImageB.Width; x++)
-                for (int y = 0; y < ImageB.Height; y++)
-                {
-                    combinePicture.Set(x + ImageA.Width + 20, y, ImageB.GetAt(x,y));
-                }
-            
-
-            Bitmap picture = Transformer.FromUInt32ToBitmap(combinePicture);
-
-            return picture;
         }
 
     }

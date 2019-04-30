@@ -30,9 +30,7 @@
         {
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.lbl_showPoints2 = new System.Windows.Forms.Label();
             this.lbl_findPoints2 = new System.Windows.Forms.Label();
-            this.lbl_showPoints1 = new System.Windows.Forms.Label();
             this.lbl_findPoints1 = new System.Windows.Forms.Label();
             this.FindPointButton = new System.Windows.Forms.Button();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
@@ -45,15 +43,21 @@
             this.txb_WindowSize = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.rbt_usual = new System.Windows.Forms.RadioButton();
+            this.rbt_NNDR = new System.Windows.Forms.RadioButton();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lbl_PairCount = new System.Windows.Forms.Label();
             this.groupBox3.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.groupBox1);
             this.groupBox3.Controls.Add(this.groupBox6);
             this.groupBox3.Controls.Add(this.FindPointButton);
             this.groupBox3.Controls.Add(this.groupBox5);
@@ -67,9 +71,8 @@
             // 
             // groupBox6
             // 
-            this.groupBox6.Controls.Add(this.lbl_showPoints2);
+            this.groupBox6.Controls.Add(this.lbl_PairCount);
             this.groupBox6.Controls.Add(this.lbl_findPoints2);
-            this.groupBox6.Controls.Add(this.lbl_showPoints1);
             this.groupBox6.Controls.Add(this.lbl_findPoints1);
             this.groupBox6.Location = new System.Drawing.Point(372, 97);
             this.groupBox6.Name = "groupBox6";
@@ -78,32 +81,14 @@
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Выходные данные";
             // 
-            // lbl_showPoints2
-            // 
-            this.lbl_showPoints2.AutoSize = true;
-            this.lbl_showPoints2.Location = new System.Drawing.Point(8, 91);
-            this.lbl_showPoints2.Name = "lbl_showPoints2";
-            this.lbl_showPoints2.Size = new System.Drawing.Size(191, 13);
-            this.lbl_showPoints2.TabIndex = 18;
-            this.lbl_showPoints2.Text = "Отображенно интересных точек (2): ";
-            // 
             // lbl_findPoints2
             // 
             this.lbl_findPoints2.AutoSize = true;
-            this.lbl_findPoints2.Location = new System.Drawing.Point(8, 68);
+            this.lbl_findPoints2.Location = new System.Drawing.Point(8, 42);
             this.lbl_findPoints2.Name = "lbl_findPoints2";
             this.lbl_findPoints2.Size = new System.Drawing.Size(169, 13);
             this.lbl_findPoints2.TabIndex = 18;
             this.lbl_findPoints2.Text = "Найдено интересных точек (2):  ";
-            // 
-            // lbl_showPoints1
-            // 
-            this.lbl_showPoints1.AutoSize = true;
-            this.lbl_showPoints1.Location = new System.Drawing.Point(7, 45);
-            this.lbl_showPoints1.Name = "lbl_showPoints1";
-            this.lbl_showPoints1.Size = new System.Drawing.Size(191, 13);
-            this.lbl_showPoints1.TabIndex = 18;
-            this.lbl_showPoints1.Text = "Отображенно интересных точек (1): ";
             // 
             // lbl_findPoints1
             // 
@@ -154,7 +139,7 @@
             this.txb_Filter.Name = "txb_Filter";
             this.txb_Filter.Size = new System.Drawing.Size(100, 20);
             this.txb_Filter.TabIndex = 13;
-            this.txb_Filter.Text = "50";
+            this.txb_Filter.Text = "150";
             // 
             // label4
             // 
@@ -193,7 +178,7 @@
             this.txb_minValue.Name = "txb_minValue";
             this.txb_minValue.Size = new System.Drawing.Size(100, 20);
             this.txb_minValue.TabIndex = 13;
-            this.txb_minValue.Text = "0,01";
+            this.txb_minValue.Text = "0,05";
             // 
             // txb_WindowSize
             // 
@@ -201,7 +186,7 @@
             this.txb_WindowSize.Name = "txb_WindowSize";
             this.txb_WindowSize.Size = new System.Drawing.Size(100, 20);
             this.txb_WindowSize.TabIndex = 13;
-            this.txb_WindowSize.Text = "3";
+            this.txb_WindowSize.Text = "5";
             // 
             // label8
             // 
@@ -221,6 +206,48 @@
             this.pictureBox1.TabIndex = 23;
             this.pictureBox1.TabStop = false;
             // 
+            // rbt_usual
+            // 
+            this.rbt_usual.AutoSize = true;
+            this.rbt_usual.Checked = true;
+            this.rbt_usual.Location = new System.Drawing.Point(9, 21);
+            this.rbt_usual.Name = "rbt_usual";
+            this.rbt_usual.Size = new System.Drawing.Size(99, 17);
+            this.rbt_usual.TabIndex = 24;
+            this.rbt_usual.TabStop = true;
+            this.rbt_usual.Text = "Usual Matching";
+            this.rbt_usual.UseVisualStyleBackColor = true;
+            // 
+            // rbt_NNDR
+            // 
+            this.rbt_NNDR.AutoSize = true;
+            this.rbt_NNDR.Location = new System.Drawing.Point(9, 47);
+            this.rbt_NNDR.Name = "rbt_NNDR";
+            this.rbt_NNDR.Size = new System.Drawing.Size(151, 17);
+            this.rbt_NNDR.TabIndex = 24;
+            this.rbt_NNDR.Text = "Next nearest distance ratio";
+            this.rbt_NNDR.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.rbt_NNDR);
+            this.groupBox1.Controls.Add(this.rbt_usual);
+            this.groupBox1.Location = new System.Drawing.Point(6, 97);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(345, 78);
+            this.groupBox1.TabIndex = 25;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Тип метчинга";
+            // 
+            // lbl_PairCount
+            // 
+            this.lbl_PairCount.AutoSize = true;
+            this.lbl_PairCount.Location = new System.Drawing.Point(8, 62);
+            this.lbl_PairCount.Name = "lbl_PairCount";
+            this.lbl_PairCount.Size = new System.Drawing.Size(109, 13);
+            this.lbl_PairCount.TabIndex = 18;
+            this.lbl_PairCount.Text = "Найдено пар точек: ";
+            // 
             // DescriptorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -238,6 +265,8 @@
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -246,9 +275,7 @@
 
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.GroupBox groupBox6;
-        private System.Windows.Forms.Label lbl_showPoints2;
         private System.Windows.Forms.Label lbl_findPoints2;
-        private System.Windows.Forms.Label lbl_showPoints1;
         private System.Windows.Forms.Label lbl_findPoints1;
         private System.Windows.Forms.Button FindPointButton;
         private System.Windows.Forms.GroupBox groupBox5;
@@ -261,5 +288,9 @@
         private System.Windows.Forms.TextBox txb_WindowSize;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.RadioButton rbt_NNDR;
+        private System.Windows.Forms.RadioButton rbt_usual;
+        private System.Windows.Forms.Label lbl_PairCount;
     }
 }

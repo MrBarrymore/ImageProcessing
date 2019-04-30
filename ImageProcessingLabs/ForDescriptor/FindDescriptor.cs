@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using ImageProcessingLabs.Convolution;
 using ImageProcessingLabs.enums;
 
-namespace ImageProcessingLabs.Descriptor
+namespace ImageProcessingLabs.ForDescriptor
 {
-    public class HOG
+    public class FindDescriptor
     {
         private const int BinsCount = 8;
         private const int GridSize = 4;
@@ -36,9 +36,11 @@ namespace ImageProcessingLabs.Descriptor
                         int x = center.getX() + u,
                             y = center.getY() + v;
 
-                        var theta = Math.Atan2(dy.GetPixel(x, y, BorderWrapType.Mirror), dx.GetPixel(x, y, BorderWrapType.Mirror)) + Math.PI;
+                        var theta = (Math.Atan2(dy.GetPixel(x, y, BorderWrapType.Mirror), dx.GetPixel(x, y, BorderWrapType.Mirror)) + 2* Math.PI) % (2*Math.PI);
+
                         var magnitude = gradient.GetPixel(x, y, BorderWrapType.Mirror);
 
+                        // Обработка левого и правого бинов гистограммы
                         var leftBin = Math.Min((int)Math.Floor(theta / step), BinsCount - 1);
                         var rightBin = (leftBin + 1) % BinsCount;
 
@@ -58,6 +60,16 @@ namespace ImageProcessingLabs.Descriptor
 
             return descriptors;
         }
+
+
+
+
+
+
+
+
+
+
 
         public static Vector CalculateForPointWithRotation(Mat gradient, Mat dx, Mat dy, double sigma,
             int gridSize, int binsCount, InterestingPoint center, double alpha)
