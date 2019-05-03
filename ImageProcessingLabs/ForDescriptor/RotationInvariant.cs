@@ -10,7 +10,6 @@ namespace ImageProcessingLabs.ForDescriptor
 {
     public static class RotationInvariant
     {
-
         private const int GridSize = 4;
         private const int BlockSize = 4;
         private const int BinsCount = 36;

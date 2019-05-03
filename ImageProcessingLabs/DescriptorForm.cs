@@ -48,6 +48,7 @@ namespace ImageProcessingLabs
 
         }
 
+
         private void FindPointButton_Click(object sender, EventArgs e)
         {
             MinValueHarris = Convert.ToDouble(txb_minValue.Text);
@@ -60,34 +61,8 @@ namespace ImageProcessingLabs
             if (filter_checkBox.Checked == true) maxPoints = Convert.ToInt32(txb_Filter.Text);
             else maxPoints = 5000;
 
-            var pointPairs = processWithSift(imageA, imageB, gridSize, cellSize, binsCount, MinValueHarris, WindowSize, maxPoints);
-
-        }
-
-            public List<ValueTuple<ForDescriptor.Descriptor, ForDescriptor.Descriptor>> processWithSift(Mat imageA,
-            Mat imageB,
-            int gridSize,
-            int cellSize,
-            int binsCount,
-            double MinValueHarris,
-            int WindowSize,
-            int maxPoints
-            )
-        {
-
-            Mat xA = SobelHelper.GetSobelX(imageA, BorderWrapType.Mirror);
-            Mat yA = SobelHelper.GetSobelY(imageA, BorderWrapType.Mirror);
-            Mat xB = SobelHelper.GetSobelX(imageB, BorderWrapType.Mirror);
-            Mat yB = SobelHelper.GetSobelY(imageB, BorderWrapType.Mirror);
-
-            Mat gradientA = SobelHelper.getGradient(xA, yA);
-            Mat gradientAngleA = SobelHelper.getGradientAngle(xA, yA);
-            Mat gradientB = SobelHelper.getGradient(xB, yB);
-            Mat gradientAngleB = SobelHelper.getGradientAngle(xB, yB);
-
-
             List<InterestingPoint> pointsA =
-                  NonMaximumSuppression.FilterA(imageA, Harris.DoHarris(MinValueHarris, WindowSize, imageA), maxPoints);
+                NonMaximumSuppression.FilterA(imageA, Harris.DoHarris(MinValueHarris, WindowSize, imageA), maxPoints);
             List<InterestingPoint> pointsB =
                 NonMaximumSuppression.FilterA(imageB, Harris.DoHarris(MinValueHarris, WindowSize, imageB), maxPoints);
 
@@ -104,47 +79,20 @@ namespace ImageProcessingLabs
             lbl_PairCount.Text = "Найдено пар точек: " + match.Count;
 
             var image = DrawHelper.DrawTwoImages(
-               DrawHelper.DrawPoints(imageA, pointsA), DrawHelper.DrawPoints(imageB, pointsB), match);
+                DrawHelper.DrawPoints(imageA, pointsA), DrawHelper.DrawPoints(imageB, pointsB), match);
 
             IOHelper.WriteImageToFile(image, "..\\..\\..\\..\\Output\\OutputPicture.png");
 
             pictureBox1.Image = image;
-            
-            return match;
-            
+
         }
 
-
-
-
-        private static List<AbstractDescriptor> getDescriptors(Mat gradient,
-            Mat gradientAngle,
-            List<InterestingPoint> interestingPoints,
-            int gridSize,
-            int cellSize,
-            int binsCount)
+        private void button1_Click(object sender, EventArgs e)
         {
-            List<AbstractDescriptor> siftDescriptors =
-                interestingPoints
-                    .Select(interestingPoint => (AbstractDescriptor)SIFTDescriptor.at(gradient,
-                        gradientAngle,
-                        interestingPoint,
-                        gridSize,
-                        cellSize,
-                        binsCount)).ToList();
 
-
-            
-            foreach (var siftDescriptor in siftDescriptors)
-            {
-                double[] descriptor = siftDescriptor.getDescriptor();
-                double sum = descriptor.Sum();
-                if (Math.Abs(sum) >= 1e-2)
-                siftDescriptor.setDescriptor(descriptor.Select(operand => operand / sum).ToArray());
-            }
-
-            return siftDescriptors;
         }
+
+
 
     }
 }
