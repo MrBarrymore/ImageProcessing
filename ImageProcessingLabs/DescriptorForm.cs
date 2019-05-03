@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Text.RegularExpressions;
+using ImageProcessingLabs.Blobs;
 using ImageProcessingLabs.Convolution;
 using ImageProcessingLabs.Descriptor;
 using ImageProcessingLabs.ForDescriptor;
@@ -89,7 +90,34 @@ namespace ImageProcessingLabs
 
         private void button1_Click(object sender, EventArgs e)
         {
+            IOHelper.DeletePictures();
+            MinValueHarris = Convert.ToDouble(txb_minValue.Text);
+            WindowSize = Convert.ToInt32(txb_WindowSize.Text);
+            int maxPoints;
+            int gridSize = Convert.ToInt32(txb_gridSize.Text);
+            int cellSize = Convert.ToInt32(txb_cellSize.Text);
+            int binsCount = Convert.ToInt32(txb_binsCount.Text);
 
+            if (filter_checkBox.Checked == true) maxPoints = Convert.ToInt32(txb_Filter.Text);
+            else maxPoints = 5000;
+
+            List<ForDescriptor.Descriptor> descriptorsA = BlobsFinder.FindBlobs(imageA);
+            List<ForDescriptor.Descriptor> descriptorsB = BlobsFinder.FindBlobs(imageB);
+
+            List<ValueTuple<ForDescriptor.Descriptor, ForDescriptor.Descriptor>> match;
+            if (rbt_usual.Checked == true) match = DescriptorMatcher.Match(descriptorsA, descriptorsB);
+            else if (rbt_NNDR.Checked == true) match = DescriptorMatcher.Nndr(descriptorsA, descriptorsB);
+            else match = DescriptorMatcher.Match(descriptorsA, descriptorsB);
+
+            lbl_findPoints1.Text = "Найдено интересных точек(1): " + descriptorsA.Count;
+            lbl_findPoints2.Text = "Найдено интересных точек(2): " + descriptorsB.Count;
+            lbl_PairCount.Text = "Найдено пар точек: " + match.Count;
+
+            var image = DrawHelper.DrawTwoImages(
+                DrawHelper.DrawPoints(imageA, descriptorsA), DrawHelper.DrawPoints(imageB, descriptorsB), match);
+            IOHelper.WriteImageToFile(image, "..\\..\\..\\..\\Output\\OutputPicture.png");
+
+            pictureBox1.Image = image;
         }
 
 

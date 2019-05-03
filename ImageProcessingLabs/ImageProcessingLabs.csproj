@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Blobs\BlobsFinder.cs" />
     <Compile Include="Converter\ColorsConverter.cs" />
     <Compile Include="Convolution\ConvolutionHelper.cs" />
     <Compile Include="Convolution\Gauss.cs" />

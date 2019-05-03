@@ -12,14 +12,24 @@ namespace ImageProcessingLabs
         private int y;
         public double probability;
         public readonly int Octave;
-        public readonly int Radius;
+        public readonly double Radius;
         public List<double> Angles = new List<double>();
+        public double Value;
 
         public InterestingPoint(int x, int y, double probability)
         {
             this.x = x;
             this.y = y;
             this.probability = probability;
+        }
+
+        public InterestingPoint(int x, int y, double radius, double value, int octave)
+        {
+            this.x = x;
+            this.y = y;
+            Radius = radius;
+            Value = value;
+            Octave = octave;
         }
 
         public static double Distance(InterestingPoint a, InterestingPoint b)

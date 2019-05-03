@@ -81,8 +81,8 @@ namespace ImageProcessingLabs.ForDescriptor
                     int x = center.getX() + u,
                         y = center.getY() + v;
 
-                    var magnitude = gradient.GetPixel(x, y, BorderWrapType.Mirror);
-                    var theta = Math.Atan2(dy.GetPixel(x, y, BorderWrapType.Mirror), dx.GetPixel(x, y, BorderWrapType.Mirror));
+                    var magnitude = gradient.GetPixel(x, y, BorderWrapType.Wrap);
+                    var theta = Math.Atan2(dy.GetPixel(x, y, BorderWrapType.Wrap), dx.GetPixel(x, y, BorderWrapType.Wrap));
                     if (theta < 0) theta += Math.PI * 2;
 
                     var rotatedU = (int)Math.Round(u * cos + v * sin);

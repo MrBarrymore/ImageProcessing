@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using ImageProcessingLabs.Converter;
 
 namespace ImageProcessingLabs.Helper
@@ -23,6 +24,8 @@ namespace ImageProcessingLabs.Helper
 
         public static Bitmap MatToImage(Mat img)
         {
+            img.Normalize();
+
             var image = new Bitmap(img.Width, img.Height);
 
             for (var x = 0; x < image.Width; x++)
@@ -41,6 +44,15 @@ namespace ImageProcessingLabs.Helper
         {
             filePath = filePath + ".jpeg";
             image.Save(filePath, ImageFormat.Jpeg);
+        }
+
+        public static void DeletePictures()
+        {
+            DirectoryInfo dirInfo = new DirectoryInfo("..\\..\\..\\..\\Output\\");
+            foreach (FileInfo file in dirInfo.GetFiles())
+            {
+                file.Delete();
+            }
         }
 
 

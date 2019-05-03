@@ -60,8 +60,10 @@ namespace ImageProcessingLabs
                     y = (y + Height) % Height;
                     break;
                 case BorderWrapType.Mirror:
+                    x = Math.Abs(x);
+                    y = Math.Abs(y);
                     if (x < 0 || x >= Width) x = x - x % Width * 2 - 1;
-                    if (y < 0 || y >= Height) y = y - y % Height * 2 - 1;
+                    if (y < 0 || y >= Height) y = y - y % Height * 2 - 1; // Где то здесь есть косяк 
                     break;
 
                 default:
@@ -91,6 +93,24 @@ namespace ImageProcessingLabs
         public Mat Clone()
         {
             return new Mat(Width, Height, (double[])Data.Clone());
+        }
+
+        public void Normalize()
+        {
+            double maxIntensity = 0, minIntensity = 1;
+            double resultMaxIntensity = 1, resultMinIntensity = 0;
+            foreach (double value in Data)
+            {
+                maxIntensity = Math.Max(maxIntensity, value);
+                minIntensity = Math.Min(minIntensity, value);
+            }
+            double coef = (resultMaxIntensity - resultMinIntensity) / (maxIntensity - minIntensity);
+
+            for (int j = 0; j < Data.Length; j++)
+                {
+                    Data[j] = (Data[j] - minIntensity) * coef + resultMinIntensity;
+                }
+            
         }
     }
 }
