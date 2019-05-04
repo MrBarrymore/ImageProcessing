@@ -48,8 +48,8 @@ namespace ImageProcessingLabs
              // _interestingPointForm.ShowDialog();
 
 
-            pictureA = new Bitmap("..\\..\\..\\..\\..\\Pictures\\LennaA.png");
-            pictureB = new Bitmap("..\\..\\..\\..\\..\\Pictures\\LennaB.png");
+            pictureA = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Butterfly.PNG");
+            pictureB = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Butterfly.PNG");
 
             imageA = IOHelper.ImageToMat(pictureA);
             imageB = IOHelper.ImageToMat(pictureB);

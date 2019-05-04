@@ -46,7 +46,6 @@ namespace ImageProcessingLabs
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
             this.imageA = _imageA.Clone();
             this.imageB = _imageB.Clone();
-
         }
 
 
@@ -93,7 +92,7 @@ namespace ImageProcessingLabs
             IOHelper.DeletePictures();
             MinValueHarris = Convert.ToDouble(txb_minValue.Text);
             WindowSize = Convert.ToInt32(txb_WindowSize.Text);
-            int maxPoints;
+            int maxPoints = Convert.ToInt32(txb_Filter.Text);
             int gridSize = Convert.ToInt32(txb_gridSize.Text);
             int cellSize = Convert.ToInt32(txb_cellSize.Text);
             int binsCount = Convert.ToInt32(txb_binsCount.Text);
@@ -101,10 +100,11 @@ namespace ImageProcessingLabs
             if (filter_checkBox.Checked == true) maxPoints = Convert.ToInt32(txb_Filter.Text);
             else maxPoints = 5000;
 
-            List<ForDescriptor.Descriptor> descriptorsA = BlobsFinder.FindBlobs(imageA);
-            List<ForDescriptor.Descriptor> descriptorsB = BlobsFinder.FindBlobs(imageB);
+            List<ForDescriptor.Descriptor> descriptorsA = BlobsFinder.FindBlobs(imageA, maxPoints);
+            List<ForDescriptor.Descriptor> descriptorsB = BlobsFinder.FindBlobs(imageB, maxPoints);
 
             List<ValueTuple<ForDescriptor.Descriptor, ForDescriptor.Descriptor>> match;
+
             if (rbt_usual.Checked == true) match = DescriptorMatcher.Match(descriptorsA, descriptorsB);
             else if (rbt_NNDR.Checked == true) match = DescriptorMatcher.Nndr(descriptorsA, descriptorsB);
             else match = DescriptorMatcher.Match(descriptorsA, descriptorsB);
@@ -113,8 +113,12 @@ namespace ImageProcessingLabs
             lbl_findPoints2.Text = "Найдено интересных точек(2): " + descriptorsB.Count;
             lbl_PairCount.Text = "Найдено пар точек: " + match.Count;
 
+
             var image = DrawHelper.DrawTwoImages(
-                DrawHelper.DrawPoints(imageA, descriptorsA), DrawHelper.DrawPoints(imageB, descriptorsB), match);
+               DrawHelper.DrawPoints(imageA, descriptorsA), DrawHelper.DrawPoints(imageB, descriptorsB), match);
+
+            // var image = DrawHelper.DrawPoints(imageA, descriptorsA);
+
             IOHelper.WriteImageToFile(image, "..\\..\\..\\..\\Output\\OutputPicture.png");
 
             pictureBox1.Image = image;
