@@ -64,7 +64,7 @@ namespace ImageProcessingLabs.ForDescriptor
         }
 
         public static Vector CalculateForPointWithRotation(Mat gradient, Mat dx, Mat dy, Mat gauss,
-            int gridSize, int blockSize, int binsCount, InterestingPoint center, double alpha)
+            int gridSize, int blockSize, int binsCount, InterestingPoint center, double alpha, bool affine)
         {
             var gaussK = gauss.Width / 2;
             var bins = new Dictionary<ValueTuple<int, int>, List<double>>();
@@ -105,8 +105,26 @@ namespace ImageProcessingLabs.ForDescriptor
                     if (!bins.ContainsKey((row, column)))
                         bins.Add((row, column), Enumerable.Repeat(0D, binsCount).ToList());
 
-                    bins[(row, column)][leftBin] += magnitude * (1 - ratio);
-                    bins[(row, column)][rightBin] += magnitude * ratio;
+                    if (!affine)
+                    {
+                        PutToBins(bins, (int)row, (int)column, 1, leftBin, rightBin, ratio, magnitude);
+                    }
+                    else
+                    {
+                        var i = (int)row;
+                        if (row - i <= 0.5) i--;
+
+                        var j = (int)column;
+                        if (column - j <= 0.5) j--;
+
+                        var ki = 1 - Math.Abs(column - (j + 0.5));
+                        var kj = 1 - Math.Abs(row - (i + 0.5));
+
+                        PutToBins(bins, i, j, ki * kj, leftBin, rightBin, ratio, magnitude);
+                        PutToBins(bins, i, j + 1, (1 - ki) * kj, leftBin, rightBin, ratio, magnitude);
+                        PutToBins(bins, i + 1, j, ki * (1 - kj), leftBin, rightBin, ratio, magnitude);
+                        PutToBins(bins, i + 1, j + 1, (1 - ki) * (1 - kj), leftBin, rightBin, ratio, magnitude);
+                    }
                 }
             }
 
@@ -124,6 +142,15 @@ namespace ImageProcessingLabs.ForDescriptor
             }
 
             return result.Normalize();
+        }
+
+        private static void PutToBins(Dictionary<ValueTuple<int, int>, List<double>> bins, int row, int column,
+            double k, int leftBin, int rightBin, double ratio, double magnitude)
+        {
+            if (!bins.ContainsKey((row, column))) return;
+
+            bins[(row, column)][leftBin] += k * magnitude * (1 - ratio);
+            bins[(row, column)][rightBin] += k * magnitude * ratio;
         }
 
     }

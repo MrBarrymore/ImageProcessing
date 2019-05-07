@@ -27,7 +27,7 @@ namespace ImageProcessingLabs.ForDescriptor
             foreach (var point in points)
             {
                 var full = FindDescriptor.CalculateForPointWithRotation(gradient, dx, dy, gauss,
-                    1, GridSize * BlockSize, BinsCount, point, 0);
+                    1, GridSize * BlockSize, BinsCount, point, 0, true);
 
                 var peaks = FindPeaks(full);
 
@@ -46,7 +46,7 @@ namespace ImageProcessingLabs.ForDescriptor
                     {
                         Point = point,
                         Vector = FindDescriptor.CalculateForPointWithRotation(gradient, dx, dy, gauss,
-                            GridSize, BlockSize, BinsCount, point, angle)
+                            GridSize, BlockSize, BinsCount, point, angle, true)
                     });
                 }
             }
