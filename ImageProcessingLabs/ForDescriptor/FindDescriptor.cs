@@ -109,7 +109,7 @@ namespace ImageProcessingLabs.ForDescriptor
                     {
                         PutToBins(bins, (int)row, (int)column, 1, leftBin, rightBin, ratio, magnitude);
                     }
-                    else
+                    else // Афинное преобразование 
                     {
                         var i = (int)row;
                         if (row - i <= 0.5) i--;

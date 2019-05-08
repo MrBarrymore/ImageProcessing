@@ -25,14 +25,14 @@ namespace ImageProcessingLabs
             InitializeComponent();
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
 
-          //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Cat.jpg");
-            picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Поле.jpg");
-          //   picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\cube.jpg");
-            // picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\3d.png");
-            //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Star.jpg");
+          // `picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Cat.jpg");
+          // picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Поле.jpg");
+          // picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\cube.jpg");
+             picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Бабочка.PNG");
+          //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Star.jpg");
 
-            //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Simple.png");
-            //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Figures.jpg");
+          //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Simple.png");
+          //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Figures.jpg");
 
             pictureBox1.Image = picture;
 
@@ -48,8 +48,8 @@ namespace ImageProcessingLabs
              // _interestingPointForm.ShowDialog();
 
 
-            pictureA = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Butterfly.PNG");
-            pictureB = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Butterfly.PNG");
+            pictureA = new Bitmap("..\\..\\..\\..\\..\\Pictures\\1.jpg");
+            pictureB = new Bitmap("..\\..\\..\\..\\..\\Pictures\\2.jpg");
 
             imageA = IOHelper.ImageToMat(pictureA);
             imageB = IOHelper.ImageToMat(pictureB);

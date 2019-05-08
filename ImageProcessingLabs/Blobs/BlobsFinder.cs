@@ -30,9 +30,10 @@ namespace ImageProcessingLabs.Blobs
             for (var octave = 0; octave < Pyramid.Depth; octave++)
             {
                 var firstImage = pyramid.GetLayer(octave, 0);
+
                 var curPoints = points.Where(x => x.Octave == octave).ToList();
                 
-                // Сделать вывод точек на картинке
+             // Сделать вывод точек на картинке
              //   IOHelper.WriteImageToFile(DrawHelper.DrawPoints(pyramid.GetDoG(octave, 2), curPoints), "..\\..\\..\\..\\Output\\" + octave + ".png");
 
                 descriptors.AddRange(RotationInvariant.Calculate(firstImage, curPoints));
@@ -56,7 +57,7 @@ namespace ImageProcessingLabs.Blobs
                     var next = pyramid.GetDoG(octave, layer + 1);
 
                     
-              //      IOHelper.WriteImageToFile(DrawHelper.DrawPoints(pyramid.GetDoG(octave, layer), new List<InterestingPoint>()), 
+               //   IOHelper.WriteImageToFile(DrawHelper.DrawPoints(pyramid.GetDoG(octave, layer), new List<InterestingPoint>()), 
                //         "..\\..\\..\\..\\Output\\Октава " + octave + " Уровень " + layer);
 
                     var radius = Math.Ceiling(pyramid.GetLayer(octave, layer).LocalSigma * Math.Sqrt(2)); // Считаем радиус блобов на каждой октаве

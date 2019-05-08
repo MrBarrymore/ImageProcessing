@@ -61,7 +61,7 @@ namespace ImageProcessingLabs.Helper
                     var dx = (int)(Math.Cos(angle) * 1.5 * point.Radius);
                     var dy = (int)(Math.Sin(angle) * -1.5 * point.Radius);
 
-                    g.DrawLine(penAqua, point.getX(), point.getY(), point.getX() + dx, point.getY() + dy);
+                  //  g.DrawLine(penAqua, point.getX(), point.getY(), point.getX() + dx, point.getY() + dy);
                 }
             }
 

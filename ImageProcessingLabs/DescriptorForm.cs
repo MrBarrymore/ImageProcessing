@@ -37,7 +37,6 @@ namespace ImageProcessingLabs
         {
             InitializeComponent();
             this.imageA = image;
-
         }
 
         public DescriptorForm(Mat _imageA, Mat _imageB)
@@ -114,10 +113,10 @@ namespace ImageProcessingLabs
             lbl_PairCount.Text = "Найдено пар точек: " + match.Count;
 
 
-            var image = DrawHelper.DrawTwoImages(
-               DrawHelper.DrawPoints(imageA, descriptorsA), DrawHelper.DrawPoints(imageB, descriptorsB), match);
+             var image = DrawHelper.DrawTwoImages(
+              DrawHelper.DrawPoints(imageA, descriptorsA), DrawHelper.DrawPoints(imageB, descriptorsB), match);
 
-            // var image = DrawHelper.DrawPoints(imageA, descriptorsA);
+          //  var image = DrawHelper.DrawPoints(imageA, descriptorsA);
 
             IOHelper.WriteImageToFile(image, "..\\..\\..\\..\\Output\\OutputPicture.png");
 
