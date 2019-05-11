@@ -14,12 +14,12 @@ namespace ImageProcessingLabs.Transformation
 
     public class Hough
     {
-        private const int CoordinateStep = 70;
+        private int CoordinateStep = 100;
         private const int AngleCells = 12;
         private const double MinScale = 1 / 4D;
         private const double KScale = 2;
         private const int CellsScale = 4;
-        private const int VotersThreshold = 2;
+        private const int VotersThreshold = 4;
         private readonly Mat image;
         private readonly List<Point[]> objects = new List<Point[]>();
 
@@ -38,6 +38,8 @@ namespace ImageProcessingLabs.Transformation
 
         public List<Point[]> Find()
         {
+            CoordinateStep = Math.Min(image.Width, image.Height) / 5;
+
             var cellsX = (int)Math.Ceiling(image.Width * 1D / CoordinateStep);
             var cellsY = (int)Math.Ceiling(image.Height * 1D / CoordinateStep);
 
@@ -54,8 +56,8 @@ namespace ImageProcessingLabs.Transformation
                 DrawHelper.DrawLine(VotesImage, 0, y, image.Width - 1, y);
             }
 
-            var descriptors1 = BlobsFinder.FindBlobs(sample, 250);
-            var descriptors2 = BlobsFinder.FindBlobs(image, 250);
+            var descriptors1 = BlobsFinder.FindBlobs(sample, 500);
+            var descriptors2 = BlobsFinder.FindBlobs(image, 500);
             var matches = DescriptorMatcher.Nndr(descriptors2, descriptors1);
             ReverseMatches = matches.Select(x => new Match(x.Item2, x.Item1)).ToList();
 
@@ -91,7 +93,7 @@ namespace ImageProcessingLabs.Transformation
                         for (var s = 0; s < CellsScale; s++)
                             if (IsVotesLocalMaximum(x, y, a, s) && voters[x, y, a, s].Count > VotersThreshold)
                             {
-                                DrawHelper.DrawPolygon(VotesImage, GetPreliminary(x, y, a, s), true);
+                              //  DrawHelper.DrawPolygon(VotesImage, GetPreliminary(x, y, a, s), true);
                                 objects.Add(GetLocation(Ransac.CalculateTransform(voters[x, y, a, s])));
                             }
 

@@ -38,8 +38,8 @@ namespace ImageProcessingLabs
 
             image = IOHelper.ImageToMat(picture);
 
-            pictureA = new Bitmap("..\\..\\..\\..\\..\\Pictures\\City1.jpg");
-            pictureB = new Bitmap("..\\..\\..\\..\\..\\Pictures\\City2.jpg");
+            pictureA = new Bitmap("..\\..\\..\\..\\..\\Pictures\\bridge1.jpg");
+            pictureB = new Bitmap("..\\..\\..\\..\\..\\Pictures\\bridge2.jpg");
 
             imageA = IOHelper.ImageToMat(pictureA);
             imageB = IOHelper.ImageToMat(pictureB);

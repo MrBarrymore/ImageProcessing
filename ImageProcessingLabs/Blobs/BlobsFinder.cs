@@ -16,7 +16,7 @@ namespace ImageProcessingLabs.Blobs
      //   private const int PointCount = 300;
         private const double InitSigma = 0.5;
         private const double StartSigma = 1.6;
-        private const double MinHarris = 0.01;
+        private const double MinHarris = 0.005;
         private const int ImageBorder = 3;
         private const int OctaveSize = 4;
 

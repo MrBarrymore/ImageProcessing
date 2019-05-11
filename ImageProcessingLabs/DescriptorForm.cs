@@ -135,8 +135,8 @@ namespace ImageProcessingLabs
 
             string name = PathToWriteImage + "resultPicture.jpg";
 
-            Bitmap bmp1 = new Bitmap(PathToReadImage + "City1.jpg");
-            Bitmap bmp2 = new Bitmap(PathToReadImage + "City2.jpg");
+            Bitmap bmp1 = new Bitmap(PathToReadImage + "bridge1.jpg");
+            Bitmap bmp2 = new Bitmap(PathToReadImage + "bridge2.jpg");
 
             var descriptorsABlobs = BlobsFinder.FindBlobs(IOHelper.ImageToMat(bmp1), maxPoints);
             var descriptorsBBlobs = BlobsFinder.FindBlobs(IOHelper.ImageToMat(bmp2), maxPoints);

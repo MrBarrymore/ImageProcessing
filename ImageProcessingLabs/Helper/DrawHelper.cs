@@ -135,7 +135,7 @@ namespace ImageProcessingLabs.Helper
         {
             using (var g = Graphics.FromImage(img))
             {
-                var pen = new Pen(Color.Plum, 2);
+                var pen = new Pen(Color.Aqua, 2);
 
                 g.DrawLine(pen, x1, y1, x2, y2);
 
@@ -157,7 +157,7 @@ namespace ImageProcessingLabs.Helper
         {
             using (var g = Graphics.FromImage(image))
             {
-                var pen = new Pen(Color.Chartreuse, 2);
+                var pen = new Pen(Color.Chartreuse, 5);
                 g.DrawPolygon(pen, points);
                 if (corner)
                     g.DrawEllipse(pen, points[0].X - 8, points[0].Y - 8, 16, 16);

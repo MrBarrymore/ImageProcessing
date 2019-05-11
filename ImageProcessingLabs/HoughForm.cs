@@ -39,8 +39,8 @@ namespace ImageProcessingLabs
             OutputPictureBoxVotes.SizeMode = PictureBoxSizeMode.Zoom;
             OutputPictureBoxResult.SizeMode = PictureBoxSizeMode.Zoom;
 
-            pictureSample = new Bitmap(PathToReadImage + "hough-4-sample.jpg");
-            pictureFull = new Bitmap(PathToReadImage + "hough-4-full.jpg");
+            pictureSample = new Bitmap(PathToReadImage + "hough-5-sample2.jpg");
+            pictureFull = new Bitmap(PathToReadImage + "hough-5-full.jpg");
 
             InputSample_pictureBox.Image = pictureSample;
             InputFull_PictureBox.Image = pictureFull;
@@ -48,8 +48,8 @@ namespace ImageProcessingLabs
 
         private void FindPointButton_Click(object sender, EventArgs e)
         {
-            var result = new Bitmap(PathToReadImage + "hough-4-full.jpg");
-            string imageName = "hough-full";
+            var result = new Bitmap(PathToReadImage + "hough-5-full.jpg");
+            string imageName = "hough-5-full";
 
             var imageSample = IOHelper.ImageToMat(pictureSample);
             var imageFull = IOHelper.ImageToMat(pictureFull);
