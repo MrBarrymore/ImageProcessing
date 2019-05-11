@@ -25,10 +25,10 @@ namespace ImageProcessingLabs
             InitializeComponent();
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
 
-          // `picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Cat.jpg");
+           picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\LennaA.png");
           // picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Поле.jpg");
           // picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\cube.jpg");
-             picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Бабочка.PNG");
+          //   picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Бабочка.PNG");
           //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Star.jpg");
 
           //  picture = new Bitmap("..\\..\\..\\..\\..\\Pictures\\Simple.png");
@@ -38,6 +38,12 @@ namespace ImageProcessingLabs
 
             image = IOHelper.ImageToMat(picture);
 
+            pictureA = new Bitmap("..\\..\\..\\..\\..\\Pictures\\City1.jpg");
+            pictureB = new Bitmap("..\\..\\..\\..\\..\\Pictures\\City2.jpg");
+
+            imageA = IOHelper.ImageToMat(pictureA);
+            imageB = IOHelper.ImageToMat(pictureB);
+
             // SobelForm _sobelForm = new SobelForm(imageMat);
             // _sobelForm.Show();
 
@@ -45,17 +51,14 @@ namespace ImageProcessingLabs
             // _gaussForm.Show();
 
             //  InterestingPointForm _interestingPointForm = new InterestingPointForm(imageMat);
-             // _interestingPointForm.ShowDialog();
+            // _interestingPointForm.ShowDialog();
 
 
-            pictureA = new Bitmap("..\\..\\..\\..\\..\\Pictures\\1.jpg");
-            pictureB = new Bitmap("..\\..\\..\\..\\..\\Pictures\\2.jpg");
+            // DescriptorForm descriptorForm = new DescriptorForm(imageA, imageB);
+          //   descriptorForm.Show();
 
-            imageA = IOHelper.ImageToMat(pictureA);
-            imageB = IOHelper.ImageToMat(pictureB);
-
-            DescriptorForm descriptorForm = new DescriptorForm(imageA, imageB);
-            descriptorForm.Show();
+            HoughForm hougForm = new HoughForm();
+            hougForm.Show();
 
         }
 

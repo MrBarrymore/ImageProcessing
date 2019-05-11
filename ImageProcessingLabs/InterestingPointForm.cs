@@ -16,7 +16,7 @@ namespace ImageProcessingLabs
     public partial class InterestingPointForm : Form
     {
         private Bitmap picture;
-        private static Mat _image, _inputImage;
+        private static Mat _image;
 
 
         public InterestingPointForm()
@@ -31,11 +31,10 @@ namespace ImageProcessingLabs
             pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
 
             _image = image.Clone();
-            _inputImage = image.Clone();
-            picture = Transformer.FromUInt32ToBitmap(_image);
+
+            picture = Transformer.FromMatToBitmap(_image);
             pictureBox1.Image = picture;
         }
-
 
         private void FindPointButton_Click(object sender, EventArgs e)
         {
@@ -113,7 +112,7 @@ namespace ImageProcessingLabs
 
         public void DrawPoints(List<InterestingPoint> point)
         {
-            picture = Transformer.FromUInt32ToBitmap(_image);
+            picture = Transformer.FromMatToBitmap(_image);
 
             Graphics graph = Graphics.FromImage(picture);
             Color pen = Color.Blue;

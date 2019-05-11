@@ -55,7 +55,7 @@ namespace ImageProcessingLabs
             int levels = Convert.ToInt32(comboBox2.Text);
 
 
-            picture = Transformer.FromUInt32ToBitmap(_image);
+            picture = Transformer.FromMatToBitmap(_image);
             pictureBox1.Image = picture;
 
             DeletePictures();

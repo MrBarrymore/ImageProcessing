@@ -52,13 +52,13 @@ namespace ImageProcessingLabs
             }
 
             Bitmap picture;
-            picture = Transformer.FromUInt32ToBitmap(sobelMatX);
+            picture = Transformer.FromMatToBitmap(sobelMatX);
             pictureBox1.Image = picture;
 
-            picture = Transformer.FromUInt32ToBitmap(sobelMatY);
+            picture = Transformer.FromMatToBitmap(sobelMatY);
             pictureBox2.Image = picture;
 
-            picture = Transformer.FromUInt32ToBitmap(sobelMat);
+            picture = Transformer.FromMatToBitmap(sobelMat);
             pictureBox3.Image = picture;
         }
 

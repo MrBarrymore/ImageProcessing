@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,12 +12,13 @@ using System.IO;
 using System.Text.RegularExpressions;
 using ImageProcessingLabs.Blobs;
 using ImageProcessingLabs.Convolution;
-using ImageProcessingLabs.Descriptor;
 using ImageProcessingLabs.ForDescriptor;
 using ImageProcessingLabs.enums;
 using ImageProcessingLabs.Points;
 using ImageProcessingLabs.Scale;
 using ImageProcessingLabs.Helper;
+using ImageProcessingLabs.Properties;
+using ImageProcessingLabs.Transformation;
 
 
 namespace ImageProcessingLabs
@@ -27,6 +29,9 @@ namespace ImageProcessingLabs
         private static int POINTS = 100;
         private static double MinValueHarris = 0.05;
         private static int WindowSize = 5;
+
+        public const string PathToReadImage = "..\\..\\..\\input\\";
+        public const string PathToWriteImage = "..\\..\\..\\output\\";
 
         public DescriptorForm()
         {
@@ -43,8 +48,9 @@ namespace ImageProcessingLabs
         {
             InitializeComponent();
             pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
-            this.imageA = _imageA.Clone();
-            this.imageB = _imageB.Clone();
+             this.imageA = _imageA.Clone();
+             this.imageB = _imageB.Clone();
+
         }
 
 
@@ -112,7 +118,6 @@ namespace ImageProcessingLabs
             lbl_findPoints2.Text = "Найдено интересных точек(2): " + descriptorsB.Count;
             lbl_PairCount.Text = "Найдено пар точек: " + match.Count;
 
-
              var image = DrawHelper.DrawTwoImages(
               DrawHelper.DrawPoints(imageA, descriptorsA), DrawHelper.DrawPoints(imageB, descriptorsB), match);
 
@@ -123,6 +128,31 @@ namespace ImageProcessingLabs
             pictureBox1.Image = image;
         }
 
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            int maxPoints = Convert.ToInt32(txb_Filter.Text);
+
+            string name = PathToWriteImage + "resultPicture.jpg";
+
+            Bitmap bmp1 = new Bitmap(PathToReadImage + "City1.jpg");
+            Bitmap bmp2 = new Bitmap(PathToReadImage + "City2.jpg");
+
+            var descriptorsABlobs = BlobsFinder.FindBlobs(IOHelper.ImageToMat(bmp1), maxPoints);
+            var descriptorsBBlobs = BlobsFinder.FindBlobs(IOHelper.ImageToMat(bmp2), maxPoints);
+            var match = DescriptorMatcher.Nndr(descriptorsABlobs, descriptorsBBlobs);
+
+            lbl_findPoints1.Text = "Найдено интересных точек(1): " + descriptorsABlobs.Count;
+            lbl_findPoints2.Text = "Найдено интересных точек(2): " + descriptorsBBlobs.Count;
+            lbl_PairCount.Text = "Найдено пар точек: " + match.Count;
+
+            var (matrixA, matrixB) = Ransac.CalculateTransform(match);
+            var result = Transformer.Transform(bmp1, bmp2, matrixA, matrixB);
+
+            result.Save(name, ImageFormat.Jpeg);
+
+            pictureBox1.Image = result;
+        }
 
 
     }

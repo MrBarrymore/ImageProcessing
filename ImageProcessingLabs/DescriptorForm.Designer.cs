@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.rbt_NNDR = new System.Windows.Forms.RadioButton();
             this.rbt_usual = new System.Windows.Forms.RadioButton();
@@ -53,7 +55,6 @@
             this.txb_WindowSize = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.button1 = new System.Windows.Forms.Button();
             this.groupBox3.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox6.SuspendLayout();
@@ -64,6 +65,7 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.button2);
             this.groupBox3.Controls.Add(this.button1);
             this.groupBox3.Controls.Add(this.groupBox1);
             this.groupBox3.Controls.Add(this.groupBox6);
@@ -72,16 +74,36 @@
             this.groupBox3.Controls.Add(this.groupBox2);
             this.groupBox3.Location = new System.Drawing.Point(7, 416);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(857, 239);
+            this.groupBox3.Size = new System.Drawing.Size(982, 239);
             this.groupBox3.TabIndex = 24;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Построение пирамид";
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(319, 182);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(155, 48);
+            this.button2.TabIndex = 27;
+            this.button2.Text = "Панорама";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(158, 181);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(155, 51);
+            this.button1.TabIndex = 26;
+            this.button1.Text = "Блобы";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.rbt_NNDR);
             this.groupBox1.Controls.Add(this.rbt_usual);
-            this.groupBox1.Location = new System.Drawing.Point(438, 92);
+            this.groupBox1.Location = new System.Drawing.Point(508, 92);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(345, 56);
             this.groupBox1.TabIndex = 25;
@@ -115,7 +137,7 @@
             this.groupBox6.Controls.Add(this.lbl_PairCount);
             this.groupBox6.Controls.Add(this.lbl_findPoints2);
             this.groupBox6.Controls.Add(this.lbl_findPoints1);
-            this.groupBox6.Location = new System.Drawing.Point(438, 154);
+            this.groupBox6.Location = new System.Drawing.Point(508, 154);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(343, 78);
             this.groupBox6.TabIndex = 23;
@@ -153,7 +175,7 @@
             // 
             this.FindPointButton.Location = new System.Drawing.Point(6, 181);
             this.FindPointButton.Name = "FindPointButton";
-            this.FindPointButton.Size = new System.Drawing.Size(166, 51);
+            this.FindPointButton.Size = new System.Drawing.Size(146, 51);
             this.FindPointButton.TabIndex = 1;
             this.FindPointButton.Text = "Интересные точки";
             this.FindPointButton.UseVisualStyleBackColor = true;
@@ -164,7 +186,7 @@
             this.groupBox5.Controls.Add(this.filter_checkBox);
             this.groupBox5.Controls.Add(this.txb_Filter);
             this.groupBox5.Controls.Add(this.label4);
-            this.groupBox5.Location = new System.Drawing.Point(435, 24);
+            this.groupBox5.Location = new System.Drawing.Point(505, 24);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(333, 67);
             this.groupBox5.TabIndex = 22;
@@ -189,7 +211,7 @@
             this.txb_Filter.Name = "txb_Filter";
             this.txb_Filter.Size = new System.Drawing.Size(100, 20);
             this.txb_Filter.TabIndex = 13;
-            this.txb_Filter.Text = "50";
+            this.txb_Filter.Text = "1000";
             // 
             // label4
             // 
@@ -316,16 +338,6 @@
             this.pictureBox1.TabIndex = 23;
             this.pictureBox1.TabStop = false;
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(196, 181);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(155, 51);
-            this.button1.TabIndex = 26;
-            this.button1.Text = "Блобы";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
             // DescriptorForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -377,5 +389,6 @@
         private System.Windows.Forms.TextBox txb_gridSize;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
     }
 }

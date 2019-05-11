@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ImageProcessingLabs.Descriptor;
 using ImageProcessingLabs.Transformation;
 
 namespace ImageProcessingLabs.Helper
@@ -216,7 +215,7 @@ namespace ImageProcessingLabs.Helper
                 }
 
 
-            Bitmap picture = Transformer.FromUInt32ToBitmap(combinePicture);
+            Bitmap picture = Transformer.FromMatToBitmap(combinePicture);
 
             return picture;
         }
@@ -224,7 +223,7 @@ namespace ImageProcessingLabs.Helper
         public static Bitmap DrawPoints(List<InterestingPoint> point, Mat inputImage, int picture)
         {
             Bitmap image;
-            image = Transformer.FromUInt32ToBitmap(inputImage);
+            image = Transformer.FromMatToBitmap(inputImage);
             Graphics graph = Graphics.FromImage(image);
             Color pen = Color.Blue;
 
